@@ -1,4 +1,4 @@
-package com.example.sumnote.ui.home
+package com.example.sumnote.ui.MyNote
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

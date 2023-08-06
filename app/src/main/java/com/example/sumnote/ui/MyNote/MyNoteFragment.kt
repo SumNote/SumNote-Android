@@ -1,4 +1,4 @@
-package com.example.sumnote.ui.home
+package com.example.sumnote.ui.MyNote
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -22,14 +22,18 @@ class MyNoteFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(MyNoteViewModel::class.java)
+        // view모델과 연결
+        // view : 화면에 대한 정보,
+        // model : 데이터 관리, 비즈니스 로직 담당(함수 구현)
+        // view model : view와 모델간의 매개체
+        val myNoteViewModel =
+            ViewModelProvider(this)[MyNoteViewModel::class.java]
 
         _binding = FragmentMyNoteBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val textView: TextView = binding.textMyNote
-        homeViewModel.text.observe(viewLifecycleOwner) {
+        myNoteViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
         return root

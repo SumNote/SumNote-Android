@@ -26,10 +26,12 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_my_note, R.id.navigation_note_maker, R.id.navigation_my_workbook
+                R.id.navigation_my_note, R.id.navigation_note_maker, R.id.navigation_my_page
             )
         )
-        setupActionBarWithNavController(navController, appBarConfiguration)
+        //
+        // 엑션바(상단바) 사용 x => 사용하게 될 일 이 생기면 주석 풀것
+        // setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
 }

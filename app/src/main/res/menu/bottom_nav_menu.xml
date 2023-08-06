@@ -12,8 +12,8 @@
         android:title="@string/title_note_maker" />
 
     <item
-        android:id="@+id/navigation_my_workbook"
+        android:id="@+id/navigation_my_page"
         android:icon="@drawable/ic_my_workbook"
-        android:title="@string/title_my_workbook" />
+        android:title="마이 페이지" />
 
 </menu>

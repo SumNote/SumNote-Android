@@ -1,13 +1,13 @@
-package com.example.sumnote.ui.notifications
+package com.example.sumnote.ui.NoteMaker
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class MyWorkbookViewModel : ViewModel() {
+class NoteMakerViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is My Workbook Fragment"
+        value = "This is Note Maker Fragment"
     }
     val text: LiveData<String> = _text
 }

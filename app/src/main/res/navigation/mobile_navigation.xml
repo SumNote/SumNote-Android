@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_my_note"
-        android:name="com.example.sumnote.ui.home.MyNoteFragment"
+        android:name="com.example.sumnote.ui.MyNote.MyNoteFragment"
         android:label="@string/title_my_note"
         tools:layout="@layout/fragment_my_note" />
 
     <fragment
         android:id="@+id/navigation_note_maker"
-        android:name="com.example.sumnote.ui.dashboard.NoteMakerFragment"
+        android:name="com.example.sumnote.ui.NoteMaker.NoteMakerFragment"
         android:label="@string/title_note_maker"
         tools:layout="@layout/fragment_note_maker" />
 
     <fragment
-        android:id="@+id/navigation_my_workbook"
-        android:name="com.example.sumnote.ui.notifications.MyWorkbookFragment"
+        android:id="@+id/navigation_my_page"
+        android:name="com.example.sumnote.ui.MyPage.MyPageFragment"
         android:label="@string/title_my_workbook"
-        tools:layout="@layout/fragment_my_workbook" />
+        tools:layout="@layout/fragment_my_page" />
 </navigation>
