@@ -8,5 +8,8 @@
         <domain includeSubdomains="true">15.165.186.162</domain>
         <!--        localhost-->
         <domain includeSubdomains="true">127.0.0.1</domain>
+
+<!--        login test-->
+        <domain includeSubdomains="true">192.168.0.21</domain>
     </domain-config>
 </network-security-config>

@@ -1,0 +1,41 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/btn_kakao_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="카카오 로그인하기" />
+
+    <Button
+        android:id="@+id/btn_kakao_logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_kakao_login"
+        android:layout_alignStart="@id/btn_kakao_login"
+        android:text="카카오 로그아웃하기" />
+
+    <TextView
+        android:id="@+id/tv_login_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/btn_kakao_logout"
+        android:layout_alignStart="@id/btn_kakao_login"
+        android:layout_marginTop="16dp"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/buttonInfo"
+        android:layout_width="205dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_login_status"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="Button" />
+</RelativeLayout>
