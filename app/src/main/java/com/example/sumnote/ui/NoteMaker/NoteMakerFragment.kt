@@ -51,8 +51,8 @@ class NoteMakerFragment : Fragment() {
 
     lateinit var cameraButton: Button // 노트 촬영 버튼
 
-
-    val baseUrl = "http://15.165.186.162:8000/" //장고 통신시
+    //"http://10.0.2.2" => 안드로이드에서의 로컬 호스트를 의미
+    val baseUrl = "http://10.0.2.2:8000/" //장고 통신시
 
 
 

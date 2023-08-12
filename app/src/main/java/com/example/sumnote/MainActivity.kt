@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
             )
         )
         //
-        // 엑션바(상단바) 사용 x => 사용하게 될 일 이 생기면 주석 풀것
+        // 엑션바(상단바) 사용 x => 사용하게 될 일이 생기면 주석 풀것
         // setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
