@@ -15,11 +15,21 @@
         android:id="@+id/navigation_note_maker"
         android:name="com.example.sumnote.ui.NoteMaker.NoteMakerFragment"
         android:label="@string/title_note_maker"
-        tools:layout="@layout/fragment_note_maker" />
+        tools:layout="@layout/fragment_note_maker" >
+        <action
+            android:id="@+id/action_navigation_note_maker_to_newNoteFragment"
+            app:destination="@id/newNoteFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_my_page"
         android:name="com.example.sumnote.ui.MyPage.MyPageFragment"
         android:label="@string/title_my_workbook"
         tools:layout="@layout/fragment_my_page" />
+
+    <fragment
+        android:id="@+id/newNoteFragment"
+        android:name="com.example.sumnote.ui.NewNoteFragment"
+        android:label="fragment_new_note"
+        tools:layout="@layout/fragment_new_note" />
 </navigation>

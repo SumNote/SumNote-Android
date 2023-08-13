@@ -43,4 +43,10 @@ class MyNoteFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
+    //뷰 생성 시점
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
 }
