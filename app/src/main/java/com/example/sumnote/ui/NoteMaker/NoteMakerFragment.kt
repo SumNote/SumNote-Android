@@ -226,6 +226,11 @@ class NoteMakerFragment : Fragment() {
 //                        bundle.putString("textBook", textBook) //
 //                        findNavController().navigate(R.id.~~~, bundle) // 컨트롤러로 넘기기
 
+                        // 알약 정보 화면으로 이동
+                        val bundle = Bundle()
+                        bundle.putString("textBook", textBook) //일약 이름 번들에 넣기
+                        findNavController().navigate(R.id.action_navigation_note_maker_to_newNoteFragment, bundle)
+
 
                     } catch (e: JSONException) {
                         Log.e("check", "Error parsing JSON: ${e.message}")

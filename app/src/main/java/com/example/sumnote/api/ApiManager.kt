@@ -16,6 +16,12 @@ interface ApiManager {
     @POST("image-to-text")
     fun uploadImage(@Part image: MultipartBody.Part): Call<ResponseBody>
 
+
+    //안드로이드 스튜디오 캠 카메라 화질 이슈로 ocr이 제대로 되지 않기 때문에, 테스트 용으로 작성함
+    @Multipart
+    @POST("image-to-text-test")
+    fun uploadImageTest(@Part image: MultipartBody.Part): Call<ResponseBody>
+
     // login
     @POST("android")
     fun getLoginResponse(@Body user: User): Call<String>
