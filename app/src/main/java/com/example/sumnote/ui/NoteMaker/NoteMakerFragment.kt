@@ -33,6 +33,8 @@ import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
+import org.json.JSONException
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -52,7 +54,8 @@ class NoteMakerFragment : Fragment() {
     lateinit var cameraButton: Button // 노트 촬영 버튼
 
     //"http://10.0.2.2" => 안드로이드에서의 로컬 호스트를 의미
-    val baseUrl = "http://10.0.2.2:8000/" //장고 통신시
+    val baseUrl = "http://10.0.2.2:8000/" //장고 통신(가상 로컬 아이피)
+ //   val baseUrl = "http://127.0.0.1:8000/" //장고 통신(가상 로컬 아이피)
 
 
 
@@ -195,13 +198,47 @@ class NoteMakerFragment : Fragment() {
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                //통신 성공시 => 장고 서버로부터 값을 올바로 받아왔을 경우
                 if (response.isSuccessful) {
                     Toast.makeText(requireContext(), "Image upload successful", Toast.LENGTH_SHORT).show()
+
+                    val responseBody = response.body()?.string()
+                    try {
+                        // Parse JSON response
+                        val jsonObject = JSONObject(responseBody)
+
+                        Log.d("Django", "json : ${jsonObject.toString()}")
+
+                        // 받아온 josn데이터로부터, 값 얻어오기
+                        val textBook = jsonObject.getString("text")
+
+                        Log.d("Django", "textBook's text is : $textBook")
+
+                        var textBookView = binding.textTextBook
+
+                        textBookView.text = textBook
+
+                        // Show a toast message
+                        Toast.makeText(requireContext(), "Image upload successful", Toast.LENGTH_SHORT).show()
+
+                        // 노트 프레그먼트로 넘기기 => 노트 생성 과정(임시)
+//                        val bundle = Bundle()
+//                        bundle.putString("textBook", textBook) //
+//                        findNavController().navigate(R.id.~~~, bundle) // 컨트롤러로 넘기기
+
+
+                    } catch (e: JSONException) {
+                        Log.e("check", "Error parsing JSON: ${e.message}")
+                    }
+
+
                 } else {
                     Toast.makeText(requireContext(), "Image upload failed", Toast.LENGTH_SHORT).show()
                 }
 
-                Log.d("gang", "success")
+
+
+
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {

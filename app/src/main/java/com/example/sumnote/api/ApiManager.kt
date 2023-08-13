@@ -13,7 +13,7 @@ import retrofit2.http.Path
 
 interface ApiManager {
     @Multipart
-    @POST("upload")
+    @POST("image-to-text")
     fun uploadImage(@Part image: MultipartBody.Part): Call<ResponseBody>
 
     // login
