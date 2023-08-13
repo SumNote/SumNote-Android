@@ -194,7 +194,10 @@ class NoteMakerFragment : Fragment() {
         // Get ApiService instance from Retrofit
         apiManager = retrofit.create(ApiManager::class.java)
         // Call the upload image endpoint
-        val call = apiManager.uploadImage(data)
+//        val call = apiManager.uploadImage(data)
+
+        // 화질 이슈로 임시로 다른 api로 작성함 => 이슈 개선 후 위 uploadImage로 다시 변경할것
+        val call = apiManager.uploadImageTest(data)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
