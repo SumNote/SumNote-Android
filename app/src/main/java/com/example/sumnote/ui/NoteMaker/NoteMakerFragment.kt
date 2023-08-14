@@ -306,17 +306,4 @@ class NoteMakerFragment : Fragment() {
         _binding = null
     }
 
-    //    private fun checkCameraPermission(): Boolean {
-//        val cameraPermission = ContextCompat.checkSelfPermission(
-//            this.requireActivity().applicationContext,
-//            android.Manifest.permission.CAMERA
-//        )
-//        if (cameraPermission == PackageManager.PERMISSION_GRANTED) {
-//            Toast.makeText(this.context, "권한 갖고 있음", Toast.LENGTH_SHORT).show()
-//            return true
-//        } else {
-//            Toast.makeText(this.context, "권한 없음", Toast.LENGTH_SHORT).show()
-//            return false
-//        }
-//    }
 }
