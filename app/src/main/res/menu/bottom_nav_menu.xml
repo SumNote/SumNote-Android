@@ -12,6 +12,11 @@
         android:title="@string/title_note_maker" />
 
     <item
+        android:id="@+id/cameraFragement"
+        android:icon="@android:drawable/ic_menu_camera"
+        android:title="@string/title_note_maker" />
+
+    <item
         android:id="@+id/navigation_my_page"
         android:icon="@drawable/ic_my_workbook"
         android:title="마이 페이지" />

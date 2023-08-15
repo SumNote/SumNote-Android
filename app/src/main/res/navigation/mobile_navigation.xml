@@ -28,13 +28,21 @@
         android:id="@+id/navigation_my_page"
         android:name="com.example.sumnote.ui.MyPage.MyPageFragment"
         android:label="@string/title_my_workbook"
-        tools:layout="@layout/fragment_my_page" />
+        tools:layout="@layout/fragment_my_page" >
+        <action
+            android:id="@+id/action_navigation_my_page_to_navigation_note_maker"
+            app:destination="@id/navigation_note_maker" />
+    </fragment>
 
     <fragment
         android:id="@+id/newNoteFragment"
         android:name="com.example.sumnote.ui.NewNoteFragment"
         android:label="fragment_new_note"
-        tools:layout="@layout/fragment_new_note" />
+        tools:layout="@layout/fragment_new_note" >
+        <action
+            android:id="@+id/action_newNoteFragment_to_navigation_my_note"
+            app:destination="@id/navigation_my_note" />
+    </fragment>
     <fragment
         android:id="@+id/cameraFragement"
         android:name="com.example.sumnote.ui.Camera.CameraFragment"

@@ -6,13 +6,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentNewNoteBinding
-import com.example.sumnote.databinding.FragmentNoteMakerBinding
+
 
 class NewNoteFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-
     private var _binding: FragmentNewNoteBinding? = null
     private val binding get() = _binding!!
 

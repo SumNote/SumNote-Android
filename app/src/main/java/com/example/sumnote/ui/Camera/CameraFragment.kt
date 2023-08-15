@@ -119,7 +119,7 @@ class CameraFragment : Fragment() {
 
         onHiddenChanged(true)
 
-        get_permissions() //권한 얻어오기 위한 함수
+        //get_permissions() //권한 얻어오기 위한 함수
 
 
         textureView = binding.textureView // 카메라로부터 가져온 프리뷰를 보여주기 위한 화면?

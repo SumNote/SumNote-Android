@@ -32,42 +32,44 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_my_note, R.id.navigation_note_maker, R.id.navigation_my_page
-            )
-        )
-
-        //get_permissions() //카메라, 저장소 읽기, 쓰기 권한 얻어오기
+//        val appBarConfiguration = AppBarConfiguration(
+//            setOf(
+//                R.id.navigation_my_note, R.id.navigation_note_maker, R.id.navigation_my_page
+//            )
+//        )
 
         // 엑션바(상단바) 사용 x => 사용하게 될 일이 생기면 주석 풀것
         // setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
     }
 
-//    override fun onBackPressed() {
-//        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-//
-//        Log.d("onBackPressed","call")
-//        // 현재의 프래그먼트가 cameraFragement일 때만 전환
-//        if (navController.currentDestination?.id == R.id.cameraFragement) {
-//            Log.d("onBackPressed","cameraFragment")
-//            navController.navigate(R.id.action_cameraFragement_to_navigation_my_note)
-//            onHiddenChanged(false) //하단바 다시 보이게 하기
-//        } else {
-//            super.onBackPressed()
-//        }
-//    }
-//
-//
-//    fun onHiddenChanged(hidden: Boolean) {
-//        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
-//
-//        if (hidden) {
-//            bottomNavigationView?.visibility = View.GONE
-//        } else {
-//            bottomNavigationView?.visibility = View.VISIBLE
-//        }
-//    }
+    override fun onBackPressed() {
+        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+
+        //onHiddenChanged(false)
+        if (navController.currentDestination?.id == R.id.navigation_note_maker) {
+            navController.popBackStack() // 카메라 프래그먼트 스택에서 제거
+            //navController.navigate(R.id.action_navigation_note_maker_to_cameraFragement)
+            //onHiddenChanged(false)
+        }
+        else if(navController.currentDestination?.id == R.id.cameraFragement) {
+            navController.popBackStack() // 카메라 프래그먼트 스택에서 제거
+            // 카메라 프래그먼트가 현재 화면에 보일 때
+            //navController.popBackStack() // 카메라 프래그먼트 스택에서 제거
+            //onHiddenChanged(false)
+        }
+    }
+
+
+
+
+    fun onHiddenChanged(hidden: Boolean) {
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
+
+        if (hidden) {
+            bottomNavigationView?.visibility = View.GONE
+        } else {
+            bottomNavigationView?.visibility = View.VISIBLE
+        }
+    }
 }
