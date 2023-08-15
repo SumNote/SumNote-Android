@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_navigation_note_maker_to_newNoteFragment"
             app:destination="@id/newNoteFragment" />
+        <action
+            android:id="@+id/action_navigation_note_maker_to_cameraFragement"
+            app:destination="@id/cameraFragement" />
     </fragment>
 
     <fragment
@@ -32,4 +35,12 @@
         android:name="com.example.sumnote.ui.NewNoteFragment"
         android:label="fragment_new_note"
         tools:layout="@layout/fragment_new_note" />
+    <fragment
+        android:id="@+id/cameraFragement"
+        android:name="com.example.sumnote.ui.Camera.CameraFragment"
+        android:label="CameraFragement" >
+        <action
+            android:id="@+id/action_cameraFragement_to_navigation_my_note"
+            app:destination="@id/navigation_my_note" />
+    </fragment>
 </navigation>

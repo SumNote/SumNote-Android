@@ -2,7 +2,6 @@ package com.example.sumnote.ui.MyPage
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,11 +9,9 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.example.sumnote.MainActivity
 import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentMyPageBinding
 import com.example.sumnote.loginActivity
-import com.example.sumnote.ui.kakaoLogin.KakaoFragment
 
 class MyPageFragment : Fragment() {
 
@@ -43,8 +40,6 @@ class MyPageFragment : Fragment() {
         myPageViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
-
-
 
         return root
     }
