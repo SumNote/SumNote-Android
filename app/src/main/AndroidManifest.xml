@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.sumnote">
 
-    <!-- 서버 연동 : 인터넷 연결 권한 -->
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- 카메라 권한 -->
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -12,6 +11,9 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <!-- 서버 연동 : 인터넷 연결 권한 -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name=".MyApplication"

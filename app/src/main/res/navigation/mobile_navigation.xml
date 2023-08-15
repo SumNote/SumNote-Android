@@ -50,5 +50,8 @@
         <action
             android:id="@+id/action_cameraFragement_to_navigation_my_note"
             app:destination="@id/navigation_my_note" />
+        <action
+            android:id="@+id/action_cameraFragement_to_newNoteFragment"
+            app:destination="@id/newNoteFragment" />
     </fragment>
 </navigation>

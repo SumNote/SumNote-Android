@@ -33,6 +33,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.sumnote.MainActivity
 import com.example.sumnote.R
 import com.example.sumnote.api.ApiManager
@@ -42,6 +43,8 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
+import org.json.JSONException
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Converter
 import retrofit2.Retrofit
@@ -56,7 +59,6 @@ class CameraFragment : Fragment() {
 
     private var _binding: FragmentCameraBinding? = null
     private val binding get() = _binding!!
-
 
     lateinit var capReq : CaptureRequest.Builder
     lateinit var handler : Handler
@@ -77,7 +79,6 @@ class CameraFragment : Fragment() {
     lateinit var apiManager: ApiManager
 
     val baseUrl = "http://15.165.186.162:8000/" //장고 통신시
-
 
     private val nullOnEmptyConverterFactory = object : Converter.Factory() {
         fun converterFactory() = this
@@ -118,8 +119,6 @@ class CameraFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         onHiddenChanged(true)
-
-        //get_permissions() //권한 얻어오기 위한 함수
 
 
         textureView = binding.textureView // 카메라로부터 가져온 프리뷰를 보여주기 위한 화면?
@@ -183,12 +182,6 @@ class CameraFragment : Fragment() {
 
         // 사진 촬영 버튼 클릭 이벤트 설정
         binding.btnCapture.apply {
-//            setOnClickListener {
-//                if (!isCapturing) {
-//                    isCapturing = true
-//                    captureStillPhoto()
-//                }
-//            }
             setOnTouchListener { view, event ->
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
@@ -213,6 +206,7 @@ class CameraFragment : Fragment() {
 
     }
 
+
     // 사진 촬영 함수
     private fun captureStillPhoto() {
         // 기존 카메라 프리뷰 중지 => 사진 촬영이 완료되었음으로
@@ -236,6 +230,7 @@ class CameraFragment : Fragment() {
     }
 
 
+
     private fun sendImageToServer(imageBytes: ByteArray){
         Log.d("sendImage","sendImageToServer Call")
         val retrofit = Retrofit.Builder()
@@ -257,6 +252,33 @@ class CameraFragment : Fragment() {
                     // 서버 응답에 대한 추가 처리 코드 작성
                     //
                     //
+
+                    val responseBody = response.body()?.string()
+                    Toast.makeText(this@CameraFragment.activity, "Image upload successful", Toast.LENGTH_SHORT).show()
+
+
+                    try {
+                        // Parse JSON response
+                        val jsonObject = JSONObject(responseBody)
+                        val predictedClass = jsonObject.getString("predicted_class")
+                        val predictedProb = jsonObject.getDouble("predicted_prob")
+
+                        Log.d("gang", "Predicted Class: $predictedClass, Predicted Probability: $predictedProb")
+
+                        // Show a toast message
+                        Toast.makeText(this@CameraFragment.activity, "Image upload successful", Toast.LENGTH_SHORT).show()
+
+//                        // 알약 정보 화면으로 이동
+//                        val bundle = Bundle()
+//                        bundle.putString("pillName", predictedClass) //일약 이름 번들에 넣기
+//                        findNavController().navigate(R.id.action_menuFragment_to_pillInfoFragment, bundle)
+
+
+                    } catch (e: JSONException) {
+                        Log.e("gang", "Error parsing JSON: ${e.message}")
+                    }
+
+
                 } else {
                     // 서버로 이미지 전송 실패시
                     Toast.makeText(this@CameraFragment.activity, "Image upload failed", Toast.LENGTH_SHORT).show()
@@ -270,6 +292,7 @@ class CameraFragment : Fragment() {
         })
         Log.d("sendImage","sendImageToServer Exit")
     }
+
 
 
 
@@ -287,7 +310,6 @@ class CameraFragment : Fragment() {
         // TextureView 숨기기
         textureView.visibility = View.INVISIBLE
     }
-
 
     private fun saveImageToMediaStore(imageBytes: ByteArray) {
         Log.d("sendImage","saveIamgeToMediaStore call")
@@ -320,6 +342,7 @@ class CameraFragment : Fragment() {
             }
         }
 
+
     }
 
     //사진이 90도 뒤집혀 저장되는 사태 방지 => 다시 90도 회전(이미지 크기 때문인듯)
@@ -328,7 +351,6 @@ class CameraFragment : Fragment() {
         matrix.postRotate(angle.toFloat())
         return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
     }
-
 
 
     //권한이 허용되어 있는 경우에만 작동
@@ -367,43 +389,7 @@ class CameraFragment : Fragment() {
         },handler)
     }
 
-    fun get_permissions(){
-        //허용받을 권한을 저장할 리스트
-        var permissionList = mutableListOf<String>()
 
-        //허용된 권한(packageManager)으로 부터 카메라 권한 확인 => 허용되어 있지 않다면
-        if(activity?.checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-            permissionList.add(android.Manifest.permission.CAMERA) // 카메라 권한을 허용받기 위해 리스트에 삽입
-        //허용된 권한(packageManager)으로 부터 외부저장소 읽기 권한 확인 => 허용되어 있지 않다면
-        if(activity?.checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-            permissionList.add(android.Manifest.permission.READ_EXTERNAL_STORAGE) // 외부저장소 읽기 권한 허용받기 위해 리스트에 삽입
-        //허용된 권한(packageManager)으로 부터 외부저장소 쓰기 권한 확인 => 허용되어 있지 않다면
-        if(activity?.checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-            permissionList.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) // 내부저장소 쓰기 권한 허용받기 위해 리스트에 삽입
-
-        //허용 받을 권한이 존재한다면 => 아직 허용받지 않은 권한들이 있다면 요청
-        if(permissionList.size > 0){
-            //permissionList에 존재하는 기능들 권한 요청
-            requestPermissions(permissionList.toTypedArray(),101)
-        }
-    }
-
-    //권한 허용 요청에 대한 함수 => 앱 시작시 권한 확인인듯?
-    //예상 : 앱 시작시 권한들 확인하고 아직 허용받지 않은 권한 있으면 get_permission함수 호출하여 앱에서 필요한 3가지 권한에 대해서 요청?
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        // 요청된 각 권한에 대해서
-        grantResults.forEach {
-            //해당 요청이(CAMERA, READ_EXTERNAL_STORAGE, 등) 허용받지 않은 권한이라면
-            if(it != PackageManager.PERMISSION_GRANTED){
-                get_permissions() //권한 요청 함수 호출(내가 작성한)
-            }
-        }
-    }
 
 
     //카메라 화면에서는 바텀네비게이션 뷰 숨기기
