@@ -8,7 +8,7 @@ properties.load(project.rootProject.file('local.properties').newDataInputStream(
 
 android {
     namespace 'com.example.sumnote'
-    compileSdk 33
+    compileSdk 34
 
     buildFeatures {
         buildConfig true

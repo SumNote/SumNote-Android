@@ -3,8 +3,6 @@ package com.example.sumnote.ui.Camera
 import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageFormat
@@ -16,7 +14,6 @@ import android.hardware.camera2.CameraManager
 import android.hardware.camera2.CaptureRequest
 import android.hardware.camera2.TotalCaptureResult
 import android.media.ImageReader
-import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.os.Handler
@@ -29,12 +26,8 @@ import android.view.Surface
 import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
-import com.example.sumnote.MainActivity
 import com.example.sumnote.R
 import com.example.sumnote.api.ApiManager
 import com.example.sumnote.databinding.FragmentCameraBinding
@@ -42,6 +35,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.ResponseBody
 import org.json.JSONException
 import org.json.JSONObject
@@ -161,6 +155,8 @@ class CameraFragment : Fragment() {
         imageReader.setOnImageAvailableListener(object: ImageReader.OnImageAvailableListener{
             override fun onImageAvailable(reader: ImageReader?) {
 
+
+                Log.d("test : ", "##3")
                 Log.d("CameraApp", "onImageAvailable: Image captured and processing started.")
 
                 //이미지 저장 작업 수행?
@@ -170,7 +166,9 @@ class CameraFragment : Fragment() {
                 buffer.get(bytes)
 
                 //캡처한 이미지 저장 => bytes정보 imagebytes
-                saveImageToMediaStore(bytes)
+                //saveImageToMediaStore(bytes)
+                //저장하지 않고 이미지 서버로 바로 전송
+                sendImageToServer(bytes) // 이미지 바이트 배열 전달
 
                 image.close()
                 Toast.makeText(this@CameraFragment.activity,"image captured",Toast.LENGTH_SHORT).show()
@@ -182,26 +180,36 @@ class CameraFragment : Fragment() {
 
         // 사진 촬영 버튼 클릭 이벤트 설정
         binding.btnCapture.apply {
-            setOnTouchListener { view, event ->
-                when (event.action) {
-                    MotionEvent.ACTION_DOWN -> {
-                        // 버튼을 눌렀을 때의 동작
-                        if (!isCapturing) {
-                            isCapturing = true
-                            captureStillPhoto()
-                        }
-                        true // 이벤트 소비
-                    }
+            setOnClickListener{
 
-                    MotionEvent.ACTION_UP -> {
-                        // 버튼을 뗀 순간의 동작 (필요한 경우)
-                        // 눌린 상태를 해제하거나 추가 동작 수행
-                        true // 이벤트 소비
-                    }
-
-                    else -> false // 나머지 이벤트는 처리하지 않음
+                if (!isCapturing) {
+                    Log.d("test : ", "##1")
+                    isCapturing = true
+                    captureStillPhoto()
                 }
             }
+
+
+//            setOnTouchListener { view, event ->
+//                when (event.action) {
+//                    MotionEvent.ACTION_DOWN -> {
+//                        // 버튼을 눌렀을 때의 동작
+//                        if (!isCapturing) {
+//                            isCapturing = true
+//                            captureStillPhoto()
+//                        }
+//                        true // 이벤트 소비
+//                    }
+//
+//                    MotionEvent.ACTION_UP -> {
+//                        // 버튼을 뗀 순간의 동작 (필요한 경우)
+//                        // 눌린 상태를 해제하거나 추가 동작 수행
+//                        true // 이벤트 소비
+//                    }
+//
+//                    else -> false // 나머지 이벤트는 처리하지 않음
+//                }
+//            }
         }
 
     }
@@ -209,19 +217,25 @@ class CameraFragment : Fragment() {
 
     // 사진 촬영 함수
     private fun captureStillPhoto() {
+
+        Log.d("test : ", "##2")
         // 기존 카메라 프리뷰 중지 => 사진 촬영이 완료되었음으로
         cameraCaptureSession.stopRepeating()
 
         // CaptureRequest 설정
         capReq = camerDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE)
+        //imageReader 호출
         capReq.addTarget(imageReader.surface)
+
 
         // 사진 촬영 실행
         cameraCaptureSession.capture(capReq.build(), object : CameraCaptureSession.CaptureCallback() {
             override fun onCaptureCompleted(session: CameraCaptureSession, request: CaptureRequest, result: TotalCaptureResult) {
                 super.onCaptureCompleted(session, request, result)
+                Log.d("test : ", "##4")
                 // 사진 촬영 완료 시 작업 수행
                 activity?.runOnUiThread {
+                    Log.d("test : ", "##5")
                     isCapturing = false //사진 촬영된 상태로 변경
                     showCapturedImagePreview() // 정지된 화면 표시
                 }
@@ -233,6 +247,29 @@ class CameraFragment : Fragment() {
 
     private fun sendImageToServer(imageBytes: ByteArray){
         Log.d("sendImage","sendImageToServer Call")
+
+        Log.d("test : ", "##8")
+
+//        val file = File(requireContext().cacheDir, "cache.jpg")
+//            FileOutputStream(file).use {
+//                it.write(imageBytes)
+//        }
+//
+//
+//        //개선한 방식 => 파일 객체 그 자체를 보내도록 코드 변경
+//        val body = file.asRequestBody(
+//            "image/*".toMediaTypeOrNull()
+//        )
+//
+//        //폼 데이터 형식으로 key : image, value : data로 파일 전송
+//        val data = MultipartBody.Part.createFormData(
+//            name = "image",
+//            filename = file.name,
+//            body = body
+//        )
+
+
+
         val retrofit = Retrofit.Builder()
             .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
@@ -244,18 +281,16 @@ class CameraFragment : Fragment() {
         val imagePart = MultipartBody.Part.createFormData("image", "image.jpg", requestBody)
 
         val call = apiManager.uploadImage(imagePart)
+       //val call = apiManager.uploadImage(imagePart)
         call.enqueue(object : retrofit2.Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
                 if (response.isSuccessful) {
                     // 서버로 이미지 전송 성공시
+                    Log.d("sendImage","send success")
                     Toast.makeText(this@CameraFragment.activity, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
                     // 서버 응답에 대한 추가 처리 코드 작성
-                    //
-                    //
 
                     val responseBody = response.body()?.string()
-                    Toast.makeText(this@CameraFragment.activity, "Image upload successful", Toast.LENGTH_SHORT).show()
-
 
                     try {
                         // Parse JSON response
@@ -266,9 +301,9 @@ class CameraFragment : Fragment() {
                         Log.d("gang", "Predicted Class: $predictedClass, Predicted Probability: $predictedProb")
 
                         // Show a toast message
-                        Toast.makeText(this@CameraFragment.activity, "Image upload successful", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@CameraFragment.activity, "Image upload successful!!", Toast.LENGTH_SHORT).show()
 
-//                        // 알약 정보 화면으로 이동
+                        //노트 생성 화면으로 이동
 //                        val bundle = Bundle()
 //                        bundle.putString("pillName", predictedClass) //일약 이름 번들에 넣기
 //                        findNavController().navigate(R.id.action_menuFragment_to_pillInfoFragment, bundle)
@@ -296,10 +331,12 @@ class CameraFragment : Fragment() {
 
 
 
-    // 정지된 화면을 TextureView에 표시
+    // 정지된 화면을 ImageView에 표시
     private fun showCapturedImagePreview() {
+        Log.d("test : ", "##6")
+
         // 이미지 캡처 리더 중지
-        imageReader.setOnImageAvailableListener(null, null)
+        //imageReader.setOnImageAvailableListener(null, null)
 
         // 이미지 프리뷰 표시
         val bitmap = textureView.bitmap
@@ -312,6 +349,9 @@ class CameraFragment : Fragment() {
     }
 
     private fun saveImageToMediaStore(imageBytes: ByteArray) {
+        Log.d("test : ", "##7")
+
+
         Log.d("sendImage","saveIamgeToMediaStore call")
         // 사진 촬영 완료 후 서버로 이미지 전송
         sendImageToServer(bytes) // 이미지 바이트 배열 전달
@@ -390,6 +430,12 @@ class CameraFragment : Fragment() {
     }
 
 
+    override fun onDestroy() {
+        super.onDestroy()
+        imageReader.setOnImageAvailableListener(null, null)
+        camerDevice.close()
+
+    }
 
 
     //카메라 화면에서는 바텀네비게이션 뷰 숨기기
@@ -403,7 +449,5 @@ class CameraFragment : Fragment() {
             bottomNavigationView?.visibility = View.VISIBLE
         }
     }
-
-
 
 }
