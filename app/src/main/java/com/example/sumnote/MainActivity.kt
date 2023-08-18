@@ -1,11 +1,8 @@
 package com.example.sumnote
 
-import android.content.Intent
+
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
-import android.provider.Settings
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -17,7 +14,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -28,57 +24,52 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
+        // 엑션바(상단바) 사용 x => 사용하게 될 일이 생기면 주석 풀것
 //        val appBarConfiguration = AppBarConfiguration(
 //            setOf(
 //                R.id.navigation_my_note, R.id.navigation_note_maker, R.id.navigation_my_page
 //            )
 //        )
-
-        // 엑션바(상단바) 사용 x => 사용하게 될 일이 생기면 주석 풀것
-        // setupActionBarWithNavController(navController, appBarConfiguration)
+//      setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        get_permissions() //=> 이곳에 적으면 무한루프 빠져서 바텀 네비게이션 바 비작동처리됨
+        getPermissions() //앱을 실행했을때 최초 한번만 권한을 요청하도록 변경
     }
 
+    //뒤로가기 키가 눌렸을때에 대한 동작
     override fun onBackPressed() {
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
 
-        //onHiddenChanged(false)
-        if (navController.currentDestination?.id == R.id.navigation_note_maker) {
-            navController.popBackStack() // 카메라 프래그먼트 스택에서 제거
-            //navController.navigate(R.id.action_navigation_note_maker_to_cameraFragement)
-            //onHiddenChanged(false)
-        }
-        else if(navController.currentDestination?.id == R.id.cameraFragement) {
-            navController.popBackStack() // 카메라 프래그먼트 스택에서 제거
-            // 카메라 프래그먼트가 현재 화면에 보일 때
-            //navController.popBackStack() // 카메라 프래그먼트 스택에서 제거
-            //onHiddenChanged(false)
+        //만약 navController의 현재 프래그먼트 아이디가.. ~ 라면
+        when(navController.currentDestination?.id){
+            // 노트 메이커 프래그먼트에서 뒤로가기 누를경우 스택에서 제거(테스트용)
+            R.id.navigation_note_maker -> navController.popBackStack()
+            // 카메라 프래그먼트에서 사용자가 사진 촬영없이 뒤로가기 하는 상황 고려 : 카메라 프래그먼트를 스택에서 제거
+            R.id.cameraFragement -> navController.navigate(R.id.action_cameraFragement_to_navigation_my_note)
+            else -> navController.popBackStack() //다른 모든 경우 뒤로가기 누를경우, 이전 프래그먼트로 이동
         }
     }
 
 
-    fun get_permissions(){
-        //허용받을 권한을 저장할 리스트
-        var permissionList = mutableListOf<String>()
+    private fun getPermissions() {
+        // 허용받을 권한을 저장할 리스트
+        val permissions = arrayOf(
+            android.Manifest.permission.CAMERA,
+            android.Manifest.permission.READ_EXTERNAL_STORAGE,
+            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+        )
 
-        //허용된 권한(packageManager)으로 부터 카메라 권한 확인 => 허용되어 있지 않다면
-        if(checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-            permissionList.add(android.Manifest.permission.CAMERA) // 카메라 권한을 허용받기 위해 리스트에 삽입
-        //허용된 권한(packageManager)으로 부터 외부저장소 읽기 권한 확인 => 허용되어 있지 않다면
-        if(checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-            permissionList.add(android.Manifest.permission.READ_EXTERNAL_STORAGE) // 외부저장소 읽기 권한 허용받기 위해 리스트에 삽입
-        //허용된 권한(packageManager)으로 부터 외부저장소 쓰기 권한 확인 => 허용되어 있지 않다면
-        if(checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-            permissionList.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) // 내부저장소 쓰기 권한 허용받기 위해 리스트에 삽입
+        val permissionList = permissions.filter {
+            //filer에 적용될 조건문을 의미, it은 permission의 각 요소들을 의미한다.
+            checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED
+        }
 
-        //허용 받을 권한이 존재한다면 => 아직 허용받지 않은 권한들이 있다면 요청
-        if(permissionList.size > 0){
-            //permissionList에 존재하는 기능들 권한 요청
-            requestPermissions(permissionList.toTypedArray(),101)
+        // 허용 받을 권한이 존재한다면 => 아직 허용받지 않은 권한들이 있다면 요청
+        if (permissionList.isNotEmpty()) {
+            requestPermissions(permissionList.toTypedArray(), 101)
         }
     }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -96,17 +87,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
-
-
-
-    fun onHiddenChanged(hidden: Boolean) {
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
-
-        if (hidden) {
-            bottomNavigationView?.visibility = View.GONE
-        } else {
-            bottomNavigationView?.visibility = View.VISIBLE
-        }
-    }
+//    fun onHiddenChanged(hidden: Boolean) {
+//        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
+//
+//        if (hidden) {
+//            bottomNavigationView?.visibility = View.GONE
+//        } else {
+//            bottomNavigationView?.visibility = View.VISIBLE
+//        }
+//    }
 }

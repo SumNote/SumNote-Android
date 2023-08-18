@@ -31,25 +31,13 @@ class NoteMakerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //카메라 프래그먼트로 임시 이동하여 사진 촬영해오기
-        //findNavController().navigate(R.id.action_navigation_note_maker_to_cameraFragement)
-
-        onHiddenChanged(true) //해당 프레그먼트에서는 바텀 바 안보이게 하기
+        //사진 촬영 -> 장고 -> 안드로이드(cameraFragment) - json 전달 -> 안드로이드(noteMaker Fragment) -> 스프링(GPT API) -> 안드로이드(noteMaker Fragment)
+        findNavController().navigate(R.id.action_navigation_note_maker_to_cameraFragement)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-
-    override fun onHiddenChanged(hidden: Boolean) {
-        val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.nav_view)
-
-        if (hidden) {
-            bottomNavigationView?.visibility = View.GONE
-        } else {
-            bottomNavigationView?.visibility = View.VISIBLE
-        }
     }
 
 }

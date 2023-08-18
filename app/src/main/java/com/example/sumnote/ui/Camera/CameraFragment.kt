@@ -28,6 +28,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.sumnote.R
 import com.example.sumnote.api.ApiManager
 import com.example.sumnote.databinding.FragmentCameraBinding
@@ -49,6 +50,7 @@ import java.io.IOException
 import java.io.OutputStream
 import java.lang.reflect.Type
 
+//
 class CameraFragment : Fragment() {
 
     private var _binding: FragmentCameraBinding? = null
@@ -72,8 +74,10 @@ class CameraFragment : Fragment() {
     // 서버 통신 테스트
     lateinit var apiManager: ApiManager
 
-    val baseUrl = "http://15.165.186.162:8000/" //장고 통신시
+//    val baseUrl = "http://15.165.186.162:8000/" //ec2 서버 테스트시
+    private val baseUrl = "http://10.0.2.2:8000/"
 
+    // 전달받은 json값이 null인 경우에 대한 예외처리 => 아직 적용 안했음
     private val nullOnEmptyConverterFactory = object : Converter.Factory() {
         fun converterFactory() = this
         override fun responseBodyConverter(type: Type, annotations: Array<out Annotation>, retrofit: Retrofit) = object :
@@ -112,11 +116,10 @@ class CameraFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        onHiddenChanged(true)
+        onHiddenChanged(true) //하단바 안보이게 하기 => 실제 카메라 처럼 보이도록
 
-
-        textureView = binding.textureView // 카메라로부터 가져온 프리뷰를 보여주기 위한 화면?
-        cameraManager = activity?.getSystemService(Context.CAMERA_SERVICE) as CameraManager //카메라 매니저 가져오기
+        textureView = binding.textureView // 카메라로부터 가져온 프리뷰를 보여주기 위한 화면
+        cameraManager = activity?.getSystemService(Context.CAMERA_SERVICE) as CameraManager //카메라 매니저 가져오기 => 나중에 닫아야함
         handlerThread = HandlerThread("videoThread")
         handlerThread.start()
         handler = Handler((handlerThread).looper)
@@ -154,10 +157,7 @@ class CameraFragment : Fragment() {
         imageReader = ImageReader.newInstance(1080,1920,ImageFormat.JPEG,1)
         imageReader.setOnImageAvailableListener(object: ImageReader.OnImageAvailableListener{
             override fun onImageAvailable(reader: ImageReader?) {
-
-
                 Log.d("test : ", "##3")
-                Log.d("CameraApp", "onImageAvailable: Image captured and processing started.")
 
                 //이미지 저장 작업 수행?
                 var image = reader?.acquireLatestImage()
@@ -167,7 +167,7 @@ class CameraFragment : Fragment() {
 
                 //캡처한 이미지 저장 => bytes정보 imagebytes
                 //saveImageToMediaStore(bytes)
-                //저장하지 않고 이미지 서버로 바로 전송
+                //저장하지 않고 이미지 서버로 바로 전송 => 저장 희망하면 아래 주석하고 위 주석 풀기
                 sendImageToServer(bytes) // 이미지 바이트 배열 전달
 
                 image.close()
@@ -188,8 +188,7 @@ class CameraFragment : Fragment() {
                     captureStillPhoto()
                 }
             }
-
-
+            //사진 촬영 너무 느리면 아래 터치 리스너로 변경할것
 //            setOnTouchListener { view, event ->
 //                when (event.action) {
 //                    MotionEvent.ACTION_DOWN -> {
@@ -214,7 +213,6 @@ class CameraFragment : Fragment() {
 
     }
 
-
     // 사진 촬영 함수
     private fun captureStillPhoto() {
 
@@ -226,7 +224,6 @@ class CameraFragment : Fragment() {
         capReq = camerDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE)
         //imageReader 호출
         capReq.addTarget(imageReader.surface)
-
 
         // 사진 촬영 실행
         cameraCaptureSession.capture(capReq.build(), object : CameraCaptureSession.CaptureCallback() {
@@ -247,29 +244,7 @@ class CameraFragment : Fragment() {
 
     private fun sendImageToServer(imageBytes: ByteArray){
         Log.d("sendImage","sendImageToServer Call")
-
         Log.d("test : ", "##8")
-
-//        val file = File(requireContext().cacheDir, "cache.jpg")
-//            FileOutputStream(file).use {
-//                it.write(imageBytes)
-//        }
-//
-//
-//        //개선한 방식 => 파일 객체 그 자체를 보내도록 코드 변경
-//        val body = file.asRequestBody(
-//            "image/*".toMediaTypeOrNull()
-//        )
-//
-//        //폼 데이터 형식으로 key : image, value : data로 파일 전송
-//        val data = MultipartBody.Part.createFormData(
-//            name = "image",
-//            filename = file.name,
-//            body = body
-//        )
-
-
-
         val retrofit = Retrofit.Builder()
             .baseUrl(baseUrl)
             .addConverterFactory(GsonConverterFactory.create())
@@ -280,37 +255,34 @@ class CameraFragment : Fragment() {
         val requestBody = RequestBody.create("image/*".toMediaTypeOrNull(), imageBytes)
         val imagePart = MultipartBody.Part.createFormData("image", "image.jpg", requestBody)
 
-        val call = apiManager.uploadImage(imagePart)
-       //val call = apiManager.uploadImage(imagePart)
+        val call = apiManager.uploadImageTest(imagePart) // 모바일 카메라 화질 이슈로 인한 테스트용 api
+        //val call = apiManager.uploadImage(imagePart)
+
         call.enqueue(object : retrofit2.Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
                 if (response.isSuccessful) {
                     // 서버로 이미지 전송 성공시
-                    Log.d("sendImage","send success")
+                    Log.d("DjangoServer","send success")
                     Toast.makeText(this@CameraFragment.activity, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
                     // 서버 응답에 대한 추가 처리 코드 작성
 
                     val responseBody = response.body()?.string()
 
                     try {
-                        // Parse JSON response
+                        // JSON 응답 파싱
                         val jsonObject = JSONObject(responseBody)
-                        val predictedClass = jsonObject.getString("predicted_class")
-                        val predictedProb = jsonObject.getDouble("predicted_prob")
+                        //String 값 받아오기  => 책의 모든 문자열(추후 ocr코드 개발되면 개선)
+                        val textBook = jsonObject.getString("text")
 
-                        Log.d("gang", "Predicted Class: $predictedClass, Predicted Probability: $predictedProb")
+                        Log.d("DjangoServer", "Text Book's Text : $textBook")
 
-                        // Show a toast message
-                        Toast.makeText(this@CameraFragment.activity, "Image upload successful!!", Toast.LENGTH_SHORT).show()
-
-                        //노트 생성 화면으로 이동
-//                        val bundle = Bundle()
-//                        bundle.putString("pillName", predictedClass) //일약 이름 번들에 넣기
-//                        findNavController().navigate(R.id.action_menuFragment_to_pillInfoFragment, bundle)
-
+                        //noteMaker Fragment로 이동
+                        val bundle = Bundle()
+                        bundle.putString("textBook", textBook) //노트 데이터 번들에 넣기
+                        findNavController().navigate(R.id.action_cameraFragement_to_newNoteFragment,bundle)
 
                     } catch (e: JSONException) {
-                        Log.e("gang", "Error parsing JSON: ${e.message}")
+                        Log.e("DjangoServer", "Error parsing JSON: ${e.message}")
                     }
 
 
@@ -335,7 +307,7 @@ class CameraFragment : Fragment() {
     private fun showCapturedImagePreview() {
         Log.d("test : ", "##6")
 
-        // 이미지 캡처 리더 중지
+        // 이미지 캡처 리스너 중지
         //imageReader.setOnImageAvailableListener(null, null)
 
         // 이미지 프리뷰 표시
@@ -348,9 +320,9 @@ class CameraFragment : Fragment() {
         textureView.visibility = View.INVISIBLE
     }
 
+    //ByteArray를 MediaStore객체 사용해서 이미지로 저장
     private fun saveImageToMediaStore(imageBytes: ByteArray) {
         Log.d("test : ", "##7")
-
 
         Log.d("sendImage","saveIamgeToMediaStore call")
         // 사진 촬영 완료 후 서버로 이미지 전송
@@ -385,15 +357,14 @@ class CameraFragment : Fragment() {
 
     }
 
-    //사진이 90도 뒤집혀 저장되는 사태 방지 => 다시 90도 회전(이미지 크기 때문인듯)
+    //비트맵을 90도 회전하여 사진이 90도 뒤집혀 저장되는 사태를 방지(이미지 크기가 너무 큰것이 원인으로 보임)
     private fun rotateBitmap(source: Bitmap, angle: Int): Bitmap {
         val matrix = Matrix()
         matrix.postRotate(angle.toFloat())
         return Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
     }
 
-
-    //권한이 허용되어 있는 경우에만 작동
+    //권한이 허용되어 있는 경우에만 작동 => 권한은 MainActivity에서
     @SuppressLint("MissingPermission")
     fun open_camera(){
         cameraManager.openCamera(cameraManager.cameraIdList[0],object:CameraDevice.StateCallback(){
@@ -434,11 +405,12 @@ class CameraFragment : Fragment() {
         super.onDestroy()
         imageReader.setOnImageAvailableListener(null, null)
         camerDevice.close()
+        handlerThread.quit()
 
     }
 
 
-    //카메라 화면에서는 바텀네비게이션 뷰 숨기기
+    //카메라 화면에서는 바텀네비게이션 뷰 숨기기 => 실제 카메라 처럼 보이도록
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.nav_view)
