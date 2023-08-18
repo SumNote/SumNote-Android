@@ -307,7 +307,7 @@ class CameraFragment : Fragment() {
     private fun showCapturedImagePreview() {
         Log.d("test : ", "##6")
 
-        // 이미지 캡처 리스너 중지
+        // 이미지 캡처 리스너 중지 => 무한 루프 방지(프래그먼트 종료시점에 닫기)
         //imageReader.setOnImageAvailableListener(null, null)
 
         // 이미지 프리뷰 표시
@@ -401,6 +401,7 @@ class CameraFragment : Fragment() {
     }
 
 
+    //프래그먼트 종료 시점 => 이미지리더, 카메라 디바이스 닫기
     override fun onDestroy() {
         super.onDestroy()
         imageReader.setOnImageAvailableListener(null, null)

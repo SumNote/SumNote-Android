@@ -1,6 +1,5 @@
 package com.example.sumnote
 
-
 import android.app.Application
 import android.util.Log
 

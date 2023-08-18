@@ -14,6 +14,13 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    // 허용받을 권한들
+    private val permissions = arrayOf(
+        android.Manifest.permission.CAMERA,
+        android.Manifest.permission.READ_EXTERNAL_STORAGE,
+        android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -52,16 +59,9 @@ class MainActivity : AppCompatActivity() {
 
 
     private fun getPermissions() {
-        // 허용받을 권한을 저장할 리스트
-        val permissions = arrayOf(
-            android.Manifest.permission.CAMERA,
-            android.Manifest.permission.READ_EXTERNAL_STORAGE,
-            android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
-
         val permissionList = permissions.filter {
             //filer에 적용될 조건문을 의미, it은 permission의 각 요소들을 의미한다.
-            checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED
+            checkSelfPermission(it) != PackageManager.PERMISSION_GRANTED //해당 권한이 허용되어있지 않은 상태라면
         }
 
         // 허용 받을 권한이 존재한다면 => 아직 허용받지 않은 권한들이 있다면 요청
