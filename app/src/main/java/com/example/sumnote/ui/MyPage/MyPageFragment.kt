@@ -9,7 +9,7 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentMyPageBinding
-import com.example.sumnote.loginActivity
+import com.example.sumnote.LoginActivity
 
 class MyPageFragment : Fragment() {
 
@@ -31,7 +31,7 @@ class MyPageFragment : Fragment() {
         val button = view?.findViewById<Button>(R.id.goLogin)
 
         button?.setOnClickListener {
-            val intent = Intent(context, loginActivity::class.java)
+            val intent = Intent(context, LoginActivity::class.java)
             startActivity(intent)
 
         }
