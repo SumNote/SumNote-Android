@@ -4,16 +4,16 @@
     <item
         android:id="@+id/navigation_my_note"
         android:icon="@drawable/ic_my_note"
-        android:title="@string/title_my_note" />
+        android:title="my note" />
 
     <item
         android:id="@+id/navigation_note_maker"
         android:icon="@drawable/ic_note_maker"
-        android:title="@string/title_note_maker" />
+        android:title="note maker" />
 
     <item
         android:id="@+id/navigation_my_page"
-        android:icon="@drawable/ic_my_workbook"
-        android:title="마이 페이지" />
+        android:icon="@drawable/ic_my_page"
+        android:title="my page" />
 
 </menu>

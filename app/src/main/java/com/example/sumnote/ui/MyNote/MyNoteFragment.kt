@@ -4,17 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentMyNoteBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MyNoteFragment : Fragment() {
 
     private var _binding: FragmentMyNoteBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -22,25 +19,31 @@ class MyNoteFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // view모델과 연결
-        // view : 화면에 대한 정보,
-        // model : 데이터 관리, 비즈니스 로직 담당(함수 구현)
-        // view model : view와 모델간의 매개체
-        val myNoteViewModel =
-            ViewModelProvider(this)[MyNoteViewModel::class.java]
-
         _binding = FragmentMyNoteBinding.inflate(inflater, container, false)
-        val root: View = binding.root
 
-        val textView: TextView = binding.textMyNote
-        myNoteViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
-        return root
+        return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    //뷰 생성 시점
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        onHiddenChanged(false) //카메라 프래그먼트에서 가렸던 바텀 뷰 다시 보이게 하기
+    }
+
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.nav_view)
+
+        if (hidden) {
+            bottomNavigationView?.visibility = View.GONE
+        } else {
+            bottomNavigationView?.visibility = View.VISIBLE
+        }
     }
 }
