@@ -26,19 +26,19 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
-        <!-- SplashScreenActivity에 LAUNCHER intent filter 추가 => 시작 엑티비티로 지정?-->
         <activity
-            android:name=".ui.SplashScreenActivity"
-            android:exported="true">  <!-- exported를 true로 설정 -->
+            android:name=".LoginActivity"
+            android:exported="true"
+            android:theme="@style/Theme.SumNote.Splash">
+            <!-- Splash Screen Configuration -->
+            <meta-data
+                android:name="android.splash_screen_drawable"
+                android:resource="@drawable/img_splash_screen" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".LoginActivity"
-            android:exported="true" />
 
         <activity
             android:name=".MainActivity"

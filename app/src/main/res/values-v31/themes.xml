@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.SumNote.Splash" parent="Theme.SumNote">
+        <item name="android:windowSplashScreenBackground">@color/green</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/img_sum_note</item>
+        <item name="android:windowSplashScreenAnimationDuration">1000</item>
+    </style>
+</resources>
