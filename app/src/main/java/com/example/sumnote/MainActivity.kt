@@ -3,6 +3,7 @@ package com.example.sumnote
 
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -25,6 +26,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // 상태바 숨기기
+        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         val navView: BottomNavigationView = binding.navView
 
