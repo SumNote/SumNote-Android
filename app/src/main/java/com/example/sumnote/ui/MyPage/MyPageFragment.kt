@@ -2,19 +2,28 @@ package com.example.sumnote.ui.MyPage
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.core.content.ContentProviderCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.asLiveData
 import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentMyPageBinding
 import com.example.sumnote.LoginActivity
+import com.example.sumnote.ui.kakaoLogin.KakaoOauthViewModelFactory
+import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
+import com.example.sumnote.ui.kakaoLogin.User
 
 class MyPageFragment : Fragment() {
 
     private var _binding: FragmentMyPageBinding? = null
-
+    private lateinit var kakaoViewModel: KakaoViewModel
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -23,6 +32,28 @@ class MyPageFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMyPageBinding.inflate(inflater, container, false)
+        // ViewModel 인스턴스 생성 후 프로퍼티에 할당
+        kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(requireActivity().application)).get(KakaoViewModel::class.java)
+
+
+        val logoutBtn = binding.logout
+        logoutBtn.setOnClickListener {
+            kakaoViewModel.kakaoLogout()
+            // 로그아웃 성공 시 실행되는 콜백
+            val intent = Intent(requireContext(), LoginActivity::class.java)
+            startActivity(intent)
+            requireActivity().finish() // Optional: 현재 프래그먼트를 종료하고 LoginActivity만 보여주는 것
+        }
+
+        val nickname = binding.nickname
+
+        kakaoViewModel.kakaoUser.observe(viewLifecycleOwner, Observer { userInfo ->
+            // 옵저버가 활성화되면 호출되는 코드
+            // userInfo를 사용하여 UI 업데이트 등을 수행할 수 있습니다.
+            val userName = userInfo.name
+            nickname.text = userName
+            Log.d("user의 이름은?", "${userName}입니다!!")
+        })
         return binding.root
     }
 
@@ -35,6 +66,9 @@ class MyPageFragment : Fragment() {
             startActivity(intent)
 
         }
+
+
+
     }
     override fun onDestroyView() {
         super.onDestroyView()

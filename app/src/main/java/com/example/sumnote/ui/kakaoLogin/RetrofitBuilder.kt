@@ -8,7 +8,7 @@ object RetrofitBuilder {
     var api: ApiManager
     init{
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://192.168.0.21:8080/") // 요청 보내는 API 서버 url. /로 끝나야 함함
+            .baseUrl("http://172.30.1.80:8080/") // 요청 보내는 API 서버 url. /로 끝나야 함함
             .addConverterFactory(GsonConverterFactory.create()) // Gson을 역직렬화
             .build()
         api = retrofit.create(ApiManager::class.java)

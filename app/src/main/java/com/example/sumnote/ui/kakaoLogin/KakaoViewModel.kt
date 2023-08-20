@@ -1,9 +1,14 @@
 package com.example.sumnote.ui.kakaoLogin
 
 import android.app.Application
+import android.content.Intent
 import android.util.Log
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.core.content.ContextCompat.startActivity
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.sumnote.LoginActivity
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -25,6 +30,9 @@ class KakaoViewModel(application : Application) : ViewModel() {
 
     // 로그인 여부 초기값 false, 바인딩
     val isLoggedIn = MutableStateFlow<Boolean>(false)
+
+    val kakaoUser = MutableLiveData<User>()
+
 
     // 코루틴
     fun kakaoLogin(){
