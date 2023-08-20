@@ -4,16 +4,19 @@ package com.example.sumnote
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.WindowManager
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.sumnote.databinding.ActivityMainBinding
+import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private lateinit var kakaoViewModel: KakaoViewModel
 
     // 허용받을 권한들
     private val permissions = arrayOf(
@@ -45,6 +48,7 @@ class MainActivity : AppCompatActivity() {
         navView.setupWithNavController(navController)
 
         getPermissions() //앱을 실행했을때 최초 한번만 권한을 요청하도록 변경
+
     }
 
     //뒤로가기 키가 눌렸을때에 대한 동작
