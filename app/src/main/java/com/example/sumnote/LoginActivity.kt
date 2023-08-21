@@ -85,7 +85,8 @@ class LoginActivity : AppCompatActivity() {
                 val userInfo = User()
                 userInfo.name = user.kakaoAccount?.profile?.nickname.toString()
                 userInfo.email = user.kakaoAccount?.email.toString()
-                kakaoViewModel.kakaoUser.postValue(userInfo)
+                kakaoViewModel.kakaoUser.value = userInfo
+                Log.d("KakaoUser", "After postValue: ${kakaoViewModel.kakaoUser.value?.name}")
 
 
                 Log.d("BUTTON CLICKED", "id: " + userInfo.name + ", pw: " + userInfo.email)

@@ -35,6 +35,16 @@ class MyPageFragment : Fragment() {
         // ViewModel 인스턴스 생성 후 프로퍼티에 할당
         kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(requireActivity().application)).get(KakaoViewModel::class.java)
 
+        val nickname = binding.nickname
+        nickname.text = "test"
+
+        kakaoViewModel.kakaoUser.observe(this, Observer { userInfo ->
+            // 옵저버가 활성화되면 호출되는 코드
+            // userInfo를 사용하여 UI 업데이트 등을 수행할 수 있습니다.
+            val myName = userInfo.name
+            Log.d("userNameTest", "${myName}입니다!!")
+            nickname.text = myName
+        })
 
         val logoutBtn = binding.logout
         logoutBtn.setOnClickListener {
@@ -45,15 +55,7 @@ class MyPageFragment : Fragment() {
             requireActivity().finish() // Optional: 현재 프래그먼트를 종료하고 LoginActivity만 보여주는 것
         }
 
-        val nickname = binding.nickname
 
-        kakaoViewModel.kakaoUser.observe(viewLifecycleOwner, Observer { userInfo ->
-            // 옵저버가 활성화되면 호출되는 코드
-            // userInfo를 사용하여 UI 업데이트 등을 수행할 수 있습니다.
-            val userName = userInfo.name
-            nickname.text = userName
-            Log.d("user의 이름은?", "${userName}입니다!!")
-        })
         return binding.root
     }
 
@@ -66,7 +68,6 @@ class MyPageFragment : Fragment() {
             startActivity(intent)
 
         }
-
 
 
     }
