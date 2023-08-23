@@ -51,6 +51,9 @@ android {
 
 dependencies {
 
+    //Circle ImageView
+    implementation 'de.hdodenhof:circleimageview:3.1.0' //Circle ImageView
+
     //스플래시 API
     implementation 'androidx.core:core-splashscreen:1.0.0-alpha01'
 

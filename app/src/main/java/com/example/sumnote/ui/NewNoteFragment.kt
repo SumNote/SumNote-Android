@@ -67,7 +67,7 @@ class NewNoteFragment : Fragment() {
         }
     }
 
-    //뷰 -> 비트맵 전환 : 이미지 저장을 위
+    //뷰 -> 비트맵 전환 : 이미지 저장을 위해
     private fun viewToBitmap(view: View): Bitmap {
         val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)

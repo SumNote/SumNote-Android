@@ -7,18 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import androidx.core.content.ContentProviderCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.asLiveData
 import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentMyPageBinding
 import com.example.sumnote.LoginActivity
 import com.example.sumnote.ui.kakaoLogin.KakaoOauthViewModelFactory
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
-import com.example.sumnote.ui.kakaoLogin.User
 
 class MyPageFragment : Fragment() {
 
@@ -33,12 +29,12 @@ class MyPageFragment : Fragment() {
     ): View {
         _binding = FragmentMyPageBinding.inflate(inflater, container, false)
         // ViewModel 인스턴스 생성 후 프로퍼티에 할당
-        kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(requireActivity().application)).get(KakaoViewModel::class.java)
+        kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(requireActivity().application))[KakaoViewModel::class.java]
 
         val nickname = binding.nickname
         nickname.text = "test"
 
-        kakaoViewModel.kakaoUser.observe(this, Observer { userInfo ->
+        kakaoViewModel.kakaoUser.observe(viewLifecycleOwner, Observer { userInfo ->
             // 옵저버가 활성화되면 호출되는 코드
             // userInfo를 사용하여 UI 업데이트 등을 수행할 수 있습니다.
             val myName = userInfo.name
@@ -59,18 +55,18 @@ class MyPageFragment : Fragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        val button = view?.findViewById<Button>(R.id.goLogin)
-
-        button?.setOnClickListener {
-            val intent = Intent(context, LoginActivity::class.java)
-            startActivity(intent)
-
-        }
-
-
-    }
+//    override fun onActivityCreated(savedInstanceState: Bundle?) {
+//        super.onActivityCreated(savedInstanceState)
+//        val button = view?.findViewById<Button>(R.id.goLogin)
+//
+//        button?.setOnClickListener {
+//            val intent = Intent(context, LoginActivity::class.java)
+//            startActivity(intent)
+//
+//        }
+//
+//
+//    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
