@@ -5,11 +5,11 @@
         <item name="colorPrimary">@color/green</item>
         <item name="colorPrimaryVariant">#4EC853</item>
         <!--        colorPrimary에 쓰이는 텍스트나 아이콘의 색상, Primary와 대조되는 색상이 좋음-->
-        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnPrimary">@color/black_200</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/green</item>
         <item name="colorSecondaryVariant">#4EC853</item>
-        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorOnSecondary">@color/black_200</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
 

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -51,6 +52,9 @@ class MyPageFragment : Fragment() {
             requireActivity().finish() // Optional: 현재 프래그먼트를 종료하고 LoginActivity만 보여주는 것
         }
 
+        var switchModeChange = binding.switchModeChange
+
+        //이곳에 스위치의 변화를 감지하여 테마 변경하는 코드 작성할것
 
         return binding.root
     }
