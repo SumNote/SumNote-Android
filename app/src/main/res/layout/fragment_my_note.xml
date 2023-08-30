@@ -36,7 +36,7 @@
                 android:id="@+id/txt_recent_note"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
+                android:layout_marginStart="20dp"
                 android:layout_marginBottom="1dp"
                 android:text="최근 노트 보기"
                 android:textColor="@color/black"
@@ -52,7 +52,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:layout_marginEnd="12dp"
+                android:layout_marginEnd="20dp"
                 android:text="전체 보기"
                 android:textColor="@color/gray"
                 android:textSize="12dp"
@@ -71,9 +71,10 @@
 
 
             <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="387dp"
-                android:layout_height="251dp"
-                android:layout_marginTop="8dp"
+                android:id="@+id/note_list_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
                 app:layout_constraintBottom_toTopOf="@+id/guideline5"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.48"
@@ -86,13 +87,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                app:layout_constraintGuide_begin="314dp" />
+                app:layout_constraintGuide_begin="334dp" />
 
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
+                android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:text="최근 푼 문제 보기"
                 android:textColor="@color/black"
@@ -106,7 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:layout_marginEnd="12dp"
+                android:layout_marginEnd="20dp"
                 android:text="전체 보기"
                 android:textColor="@color/gray"
                 android:textSize="12dp"

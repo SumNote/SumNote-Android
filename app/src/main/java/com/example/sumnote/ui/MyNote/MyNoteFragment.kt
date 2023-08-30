@@ -5,8 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentMyNoteBinding
+import com.example.sumnote.ui.Note.NoteItem
+import com.example.sumnote.ui.Note.NoteRecyclerViewAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MyNoteFragment : Fragment() {
@@ -36,6 +41,20 @@ class MyNoteFragment : Fragment() {
         onHiddenChanged(false) //카메라 프래그먼트에서 가렸던 바텀 뷰 다시 보이게 하기
 
         //리사이클러뷰 관련 코드 작성
+        //id : note_list_recycler_view
+
+        //리사이클러뷰에 사용할 아이템 리스트(테스트용)
+        var noteList = ArrayList<NoteItem>()
+        //data class NoteItem constructor(var id:Int, var title:String, var generatedDate:String)
+        for(i in 0 until 10){
+            noteList.add(NoteItem(i, "노트$i","2023-08-30"))
+
+        }
+
+        val adapter = NoteRecyclerViewAdapter(noteList, LayoutInflater.from(this.context))
+        val recyclerView = binding.noteListRecyclerView //리사이클러뷰를 붙여줄 레이아웃 위치 가져오기
+        recyclerView.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false) //선형적으로 표현할 경우
+        recyclerView.adapter = adapter
 
 
     }
