@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--이미지뷰의 테두리를 둥글게 만들기 위한 디자인-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/white"/>
+    <stroke
+        android:width="2dp"
+        android:color="#111" />
+    <corners
+        android:radius="50dp"/>
+</shape>

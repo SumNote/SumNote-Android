@@ -34,6 +34,10 @@ class MyNoteFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         onHiddenChanged(false) //카메라 프래그먼트에서 가렸던 바텀 뷰 다시 보이게 하기
+
+        //리사이클러뷰 관련 코드 작성
+
+
     }
 
 
