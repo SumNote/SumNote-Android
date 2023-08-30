@@ -1,10 +1,10 @@
 package com.example.sumnote.ui.Note
 
-import android.icu.text.CaseMap.Title
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sumnote.R
@@ -20,22 +20,27 @@ class NoteRecyclerViewAdapter(
     //해당 위치에서 각 아이템에 대한 이벤트를 달 수 있음
     //data class NoteItem constructor(var id:Int, var title:String, var generatedDate:String)
     inner class ViewHoler(itemView: View): RecyclerView.ViewHolder(itemView){
-        val id : TextView
+        //노트 이미지
+        val noteImage : ImageView
+        //노트 값들
         val title : TextView
         val generatedDate : TextView
         //어댑터가 만들어지면 각 뷰의 값 초기화
-        //3. init블럭 호출 => carName과 carEngine 텍스트 뷰가 세팅됨
+        //3. init블럭 호출 => title과 generatedDate 텍스트 뷰가 세팅됨
         init {
-//             = itemView.findViewById(R.id.car_name)
-//            carEngine = itemView.findViewById(R.id.car_engine)
+            noteImage = itemView.findViewById(R.id.imgView_note)
+            //생성한 노트 값들
+            title = itemView.findViewById(R.id.txt_note_title)
+            generatedDate = itemView.findViewById(R.id.txt_gen_date)
 
             //각 아이템 클릭에 대한 이벤트 달기
+            //intent 활용하여 페이지 변환하는 부분 작성할 것
             itemView.setOnClickListener{
                 val position: Int = absoluteAdapterPosition //아이템 위치 가져오기
-                val engineName = itemList.get(position).engine
-                val carName = itemList.get(position).name
-                Log.d("engine",engineName)
-
+                val titleText = itemList[position].title
+                val getnDate = itemList[position].generatedDate
+                val id = itemList[position].id
+                Log.d("noteList", "$titleText,$getnDate,$id")
             }
         }
     }
@@ -59,7 +64,14 @@ class NoteRecyclerViewAdapter(
     // 4. 세팅해둔 텍스트뷰에 값 채워줌
     override fun onBindViewHolder(holder: ViewHoler, position: Int) {
         //홀더(위에서 생성한 홀더)에 값 할당
-        holder.carName.setText(itemList.get(position).name)
-        holder.carEngine.setText(itemList.get(position).engine)
+        holder.title.text = itemList[position].title
+        holder.generatedDate.text = itemList[position].generatedDate
+
+        //이미지는 position에 해당하는 값으로
+        // 이미지의 리소스 ID 얻어오기
+        val imageNumber = (position % 9) + 1 //모듈러연산 => img_note의 개수를 벗어나지 않도록
+        val imageName = "img_note_$imageNumber"
+        val resId = holder.itemView.context.resources.getIdentifier(imageName, "drawable", holder.itemView.context.packageName)
+        holder.noteImage.setImageResource(resId)
     }
 }
