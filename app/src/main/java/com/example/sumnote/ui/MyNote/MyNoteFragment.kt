@@ -47,7 +47,7 @@ class MyNoteFragment : Fragment() {
         var noteList = ArrayList<NoteItem>()
         //data class NoteItem constructor(var id:Int, var title:String, var generatedDate:String)
         for(i in 0 until 10){
-            noteList.add(NoteItem(i, "노트$i","2023-08-30"))
+            noteList.add(NoteItem(i, "Note $i","2023.08.30 pm 16:53"))
 
         }
 
