@@ -53,9 +53,6 @@ class MyPageFragment : Fragment() {
         }
 
         var switchModeChange = binding.switchModeChange
-
-        //이곳에 스위치의 변화를 감지하여 테마 변경하는 코드 작성할것
-
         return binding.root
     }
 
