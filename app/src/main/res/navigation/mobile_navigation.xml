@@ -9,7 +9,11 @@
         android:id="@+id/navigation_my_note"
         android:name="com.example.sumnote.ui.MyNote.MyNoteFragment"
         android:label="@string/title_my_note"
-        tools:layout="@layout/fragment_my_note" />
+        tools:layout="@layout/fragment_my_note" >
+        <action
+            android:id="@+id/action_navigation_my_note_to_allNoteFragment"
+            app:destination="@id/allNoteFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_note_maker"
@@ -51,4 +55,10 @@
             android:id="@+id/action_cameraFragement_to_newNoteFragment"
             app:destination="@id/newNoteFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/allNoteFragment"
+        android:name="com.example.sumnote.ui.Note.AllNoteFragment"
+        android:label="fragment_all_note_list"
+        tools:layout="@layout/fragment_all_note" />
+
 </navigation>
