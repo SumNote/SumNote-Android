@@ -45,7 +45,7 @@
             app:layout_constraintVertical_bias="0.705" />
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/txt_go_all_note"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"

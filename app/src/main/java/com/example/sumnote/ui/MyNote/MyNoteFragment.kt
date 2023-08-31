@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -56,6 +57,14 @@ class MyNoteFragment : Fragment() {
         val noteRecyclerView = binding.noteListRecyclerView //리사이클러뷰를 붙여줄 레이아웃 위치 가져오기
         noteRecyclerView.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false) //좌우로 보여주기
         noteRecyclerView.adapter = noteRecyclerViewAdapter
+
+        //전체 보기
+        val goAllNote = binding.txtGoAllNote
+        goAllNote.setOnClickListener{
+            findNavController().navigate(R.id.action_navigation_my_note_to_allNoteFragment)
+        }
+
+
 
         //리사이클러뷰 관련 코드 작성(퀴즈)
         //id : quiz_list_recycler_view
