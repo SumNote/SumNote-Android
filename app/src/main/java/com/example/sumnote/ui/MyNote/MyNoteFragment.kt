@@ -53,7 +53,7 @@ class MyNoteFragment : Fragment() {
             noteList.add(NoteItem(i, "Note $i","2023.08.30 pm 16:53"))
         }
 
-        val noteRecyclerViewAdapter = NoteRecyclerViewAdapter(noteList, LayoutInflater.from(this.context))
+        val noteRecyclerViewAdapter = NoteRecyclerViewAdapter(noteList)
         val noteRecyclerView = binding.noteListRecyclerView //리사이클러뷰를 붙여줄 레이아웃 위치 가져오기
         noteRecyclerView.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false) //좌우로 보여주기
         noteRecyclerView.adapter = noteRecyclerViewAdapter

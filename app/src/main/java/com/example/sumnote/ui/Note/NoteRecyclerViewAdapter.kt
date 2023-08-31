@@ -8,12 +8,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sumnote.R
+import kotlinx.coroutines.NonDisposableHandle.parent
 
 //리사이클러뷰 어댑터 작성 => 재활용을 위해
 class NoteRecyclerViewAdapter(
     val itemList : ArrayList<NoteItem>, //리사이클러뷰로 그려줄 노트들
-    val inflater : LayoutInflater //화면에 붙이기 위한 inflater
+//    val inflater : LayoutInflater //화면에 붙이기 위한 inflater
 ): RecyclerView.Adapter<NoteRecyclerViewAdapter.ViewHoler>(){ //리사이클러뷰 어댑터 상속받기 템플릿은 자기 자신
+
+    private lateinit var inflater : LayoutInflater
 
     //생성자를 통해 받은 뷰를 부모 클래스로 넘겨주기
     //2. onCreateViewHolder에서 만든 뷰를 생성자로 전달받음
@@ -51,6 +54,7 @@ class NoteRecyclerViewAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHoler {
         //각 뷰를 생성하는 부분
         //아이템에 해당하는 인플레이터 정의
+        inflater = LayoutInflater.from(parent.context)
         val view = inflater.inflate(R.layout.note_list_item,parent,false)
         return ViewHoler(view) //뷰 홀더에 위에서 만든 뷰 넣어주기 => class ViewHolder의 생성자가 호출됨?
     }
