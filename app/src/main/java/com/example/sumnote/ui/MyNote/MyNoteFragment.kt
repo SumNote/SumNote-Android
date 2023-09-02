@@ -6,14 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentMyNoteBinding
 import com.example.sumnote.ui.Note.NoteItem
 import com.example.sumnote.ui.Note.NoteRecyclerViewAdapter
-import com.example.sumnote.ui.Quiz.QuizItem
+import com.example.sumnote.ui.Quiz.QuizListItem
 import com.example.sumnote.ui.Quiz.QuizRecyclerViewAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
@@ -70,10 +68,10 @@ class MyNoteFragment : Fragment() {
         //id : quiz_list_recycler_view
 
         //리사이클러뷰에 사용할 아이템 리스트(테스트용)
-        var quizList = ArrayList<QuizItem>()
+        var quizList = ArrayList<QuizListItem>()
         //data class QuizItem constructor(var id:Int, var date:Int, var month:Int)
         for(i in 0 until 10){
-            quizList.add(QuizItem(i, 14+i,"Aguest"))
+            quizList.add(QuizListItem(i, 14+i,"Aguest"))
         }
 
         val quizRecyclerViewAdapter = QuizRecyclerViewAdapter(quizList, LayoutInflater.from(this.context))
@@ -95,3 +93,4 @@ class MyNoteFragment : Fragment() {
         }
     }
 }
+

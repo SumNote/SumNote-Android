@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_navigation_my_note_to_allNoteFragment"
             app:destination="@id/allNoteFragment" />
+        <action
+            android:id="@+id/action_navigation_my_note_to_quizViewerFragment"
+            app:destination="@id/quizViewerFragment" />
     </fragment>
 
     <fragment
@@ -60,5 +63,9 @@
         android:name="com.example.sumnote.ui.Note.AllNoteFragment"
         android:label="fragment_all_note_list"
         tools:layout="@layout/fragment_all_note" />
+    <fragment
+        android:id="@+id/quizViewerFragment"
+        android:name="com.example.sumnote.ui.Quiz.QuizViewerFragment"
+        android:label="QuizViewerFragment" />
 
 </navigation>
