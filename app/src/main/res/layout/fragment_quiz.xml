@@ -6,6 +6,7 @@
 
 
     <TextView
+        android:id="@+id/txt_query"
         android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -64,5 +65,19 @@
             android:textStyle="bold" />
 
     </LinearLayout>
+
+
+
+    <TextView
+        android:id="@+id/txt_explanation"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="30dp"
+        android:text="정답 : 3번, 아무렇게나 만든 문제이므로 의미는 없습니다."
+        android:textSize="15dp"
+        android:gravity="center"
+        android:textColor="@color/green"
+        android:textStyle="bold" />
 
 </LinearLayout>

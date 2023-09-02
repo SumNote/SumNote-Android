@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.sumnote.databinding.FragmentQuizBinding
-import com.example.sumnote.databinding.FragmentQuizViewerBinding
 
 //data class Question(val quest: String, val answerList: ArrayList<String>, val answerNum : Int, val explanation : String)
 //quest : 질문
@@ -16,7 +15,7 @@ import com.example.sumnote.databinding.FragmentQuizViewerBinding
 //answerNum : 정답 번호(사용자 선택과 비교)
 
 data class Quiz(
-    val quest: String,
+    val query: String,
     val answerList: ArrayList<String>,
     val answerNum: Int,
     val explanation: String
@@ -29,7 +28,7 @@ data class Quiz(
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(quest)
+        parcel.writeString(query)
         parcel.writeList(answerList)
         parcel.writeInt(answerNum)
         parcel.writeString(explanation)
@@ -71,7 +70,24 @@ class QuizFragment : Fragment() {
     ): View? {
         _binding = FragmentQuizBinding.inflate(inflater, container, false)
 
+        //받아온 퀴즈 정보 화면에 보여주기
+        var query = binding.txtQuery
+        query.text = quiz.query
 
+        var answer1 = binding.answer1
+        answer1.text = quiz.answerList[0]
+
+        var answer2 = binding.answer2
+        answer2.text = quiz.answerList[1]
+
+        var answer3 = binding.answer3
+        answer3.text = quiz.answerList[2]
+
+        var answer4 = binding.answer4
+        answer4.text = quiz.answerList[3]
+
+        var explanation = binding.txtExplanation
+        explanation.text = quiz.explanation
 
         return binding.root
     }

@@ -26,20 +26,20 @@ class QuizViewerFragment : Fragment() {
         //테스트용 더미 데이터 생성 => 여기서 서버로부터 정보 받아와 파싱하는 코드 작성 필요
         val quizzes = listOf(
             Quiz(
-                quest = "What is the capital of France?",
-                answerList = arrayListOf("Paris", "London", "Rome", "Berlin"),
+                query = "What is the capital of France?",
+                answerList = arrayListOf("① Paris", "② London", "③ Rome", "④ Berlin"),
                 answerNum = 1,
                 explanation = "The capital of France is Paris."
             ),
             Quiz(
-                quest = "What is the largest planet in the solar system?",
-                answerList = arrayListOf("Earth", "Mars", "Jupiter", "Saturn"),
+                query = "What is the largest planet in the solar system?",
+                answerList = arrayListOf("① Earth", "② Mars", "③ Jupiter", "④ Saturn"),
                 answerNum = 3,
                 explanation = "The largest planet in the solar system is Jupiter."
             ),
             Quiz(
-                quest = "What is the square root of 81?",
-                answerList = arrayListOf("7", "8", "9", "10"),
+                query = "What is the square root of 81?",
+                answerList = arrayListOf("① 7", "② 8", "③ 9", "④ 10"),
                 answerNum = 3,
                 explanation = "The square root of 81 is 9."
             )

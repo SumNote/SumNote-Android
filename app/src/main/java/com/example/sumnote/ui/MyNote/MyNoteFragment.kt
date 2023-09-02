@@ -1,6 +1,7 @@
 package com.example.sumnote.ui.MyNote
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,10 +16,16 @@ import com.example.sumnote.ui.Quiz.QuizListItem
 import com.example.sumnote.ui.Quiz.QuizRecyclerViewAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class MyNoteFragment : Fragment() {
+class MyNoteFragment : Fragment(), QuizRecyclerViewAdapter.OnItemClickListener {
 
     private var _binding: FragmentMyNoteBinding? = null
     private val binding get() = _binding!!
+
+    override fun onItemClick(position: Int) {
+        Log.d("itemClickTest",position.toString() +"is Clicked")
+        // 여기에서 프래그먼트 전환할것(position을 번들에 넣어서?)
+        findNavController().navigate(R.id.action_navigation_my_note_to_quizViewerFragment)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -74,7 +81,7 @@ class MyNoteFragment : Fragment() {
             quizList.add(QuizListItem(i, 14+i,"Aguest"))
         }
 
-        val quizRecyclerViewAdapter = QuizRecyclerViewAdapter(quizList, LayoutInflater.from(this.context))
+        val quizRecyclerViewAdapter = QuizRecyclerViewAdapter(quizList, LayoutInflater.from(this.context),this)
         val quizRecyclerView = binding.quizListRecyclerView //리사이클러뷰를 붙여줄 레이아웃 위치 가져오기
         quizRecyclerView.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)//위아래로 보여주기
         quizRecyclerView.adapter = quizRecyclerViewAdapter

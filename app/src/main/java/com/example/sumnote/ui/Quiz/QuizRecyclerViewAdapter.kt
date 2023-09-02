@@ -1,21 +1,25 @@
 package com.example.sumnote.ui.Quiz
 
-import android.content.Intent
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sumnote.R
 
 //리사이클러뷰 어댑터 작성 => 재활용을 위해
 class QuizRecyclerViewAdapter(
     val itemList : ArrayList<QuizListItem>, //리사이클러뷰로 그려줄 퀴즈들
-    val inflater : LayoutInflater //화면에 붙이기 위한 inflater
+    val inflater : LayoutInflater, //화면에 붙이기 위한 inflater
+    val onItemClickListener: OnItemClickListener // 클릭 리스너 => 사용자가 아이템 클릭시 화면 이동
 ): RecyclerView.Adapter<QuizRecyclerViewAdapter.ViewHoler>(){ //리사이클러뷰 어댑터 상속받기 템플릿은 자기 자신
+
+    interface OnItemClickListener {
+        fun onItemClick(position: Int)
+    }
+
 
     //생성자를 통해 받은 뷰를 부모 클래스로 넘겨주기
     //2. onCreateViewHolder에서 만든 뷰를 생성자로 전달받음
@@ -39,17 +43,20 @@ class QuizRecyclerViewAdapter(
             //intent 활용하여 페이지 변환하는 부분 작성할 것
             itemView.setOnClickListener{
                 val position: Int = absoluteAdapterPosition //아이템 위치 가져오기
+                //문제집 번호와 함께 fragment_quiz_viewer로 이동
+                //-> 이동 시점에서 문제집 번호를 서버로 보내어, 원하는 문제집 요청
+                //-> 서버로부터 받아온 문제집을 뷰 페이저를 통해 화면에 보여줌
+                //findNavController().navigate(R.id.action_navigation_my_note_to_allNoteFragment)
+                Log.d("itemClickedTest",position.toString()+"is Clicked before Listner")
+                onItemClickListener.onItemClick(position) //클릭 리스너로 현재 위치(아이템 아이디)를 보냄
 //                val titleText = itemList[position].title
 //                val getnDate = itemList[position].generatedDate
 //                val id = itemList[position].id
 //                Log.d("noteList", "$titleText,$getnDate,$id")
 
-                //문제집 번호와 함께 fragment_quiz_viewer로 이동
-                //-> 이동 시점에서 문제집 번호를 서버로 보내어, 원하는 문제집 요청
-                //-> 서버로부터 받아온 문제집을 뷰 페이저를 통해 화면에 보여줌
-//                findNavController().navigate(R.id.action_navigation_my_note_to_allNoteFragment)
             }
         }
+
     }
 
     //각 아이템을 그려줌
