@@ -3,10 +3,18 @@ package com.example.sumnote.ui.Quiz
 import android.os.Bundle
 import android.os.Parcel
 import android.os.Parcelable
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CompoundButton
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
+import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentQuizBinding
 
 //data class Question(val quest: String, val answerList: ArrayList<String>, val answerNum : Int, val explanation : String)
@@ -74,20 +82,58 @@ class QuizFragment : Fragment() {
         var query = binding.txtQuery
         query.text = quiz.query
 
-        var answer1 = binding.answer1
-        answer1.text = quiz.answerList[0]
+        val radioGroup = binding.radioGroup
+        val radioButton1 = binding.radioButton1
+        val radioButton2 = binding.radioButton2
+        val radioButton3 = binding.radioButton3
+        val radioButton4 = binding.radioButton4
 
-        var answer2 = binding.answer2
-        answer2.text = quiz.answerList[1]
-
-        var answer3 = binding.answer3
-        answer3.text = quiz.answerList[2]
-
-        var answer4 = binding.answer4
-        answer4.text = quiz.answerList[3]
+        radioButton1.text = quiz.answerList[0]
+        radioButton2.text = quiz.answerList[1]
+        radioButton3.text = quiz.answerList[2]
+        radioButton4.text = quiz.answerList[3]
 
         var explanation = binding.txtExplanation
         explanation.text = quiz.explanation
+
+
+        val listener = { buttonView: CompoundButton, isChecked: Boolean ->
+            if (isChecked) {
+                val selectedAnswer = when(buttonView.id) {
+                    R.id.radioButton1 -> 0
+                    R.id.radioButton2 -> 1
+                    R.id.radioButton3 -> 2
+                    R.id.radioButton4 -> 3
+                    else -> -1
+                }
+                Log.d("quiz","$selectedAnswer, ${quiz.answerNum}")
+                if (selectedAnswer+1 == quiz.answerNum) {
+                    buttonView.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
+                    Toast.makeText(context, "Correct!", Toast.LENGTH_SHORT).show()
+                } else {
+                    buttonView.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+                    when(quiz.answerNum) {
+                        1 -> radioButton1.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
+                        2 -> radioButton2.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
+                        3 -> radioButton3.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
+                        4 -> radioButton4.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
+                    }
+                    Toast.makeText(context, "Wrong. Try again.", Toast.LENGTH_SHORT).show()
+                }
+                explanation.visibility = View.VISIBLE
+                explanation.text = quiz.explanation
+                radioGroup.clearCheck()
+                radioButton1.isEnabled = false
+                radioButton2.isEnabled = false
+                radioButton3.isEnabled = false
+                radioButton4.isEnabled = false
+            }
+        }
+
+        radioButton1.setOnCheckedChangeListener(listener)
+        radioButton2.setOnCheckedChangeListener(listener)
+        radioButton3.setOnCheckedChangeListener(listener)
+        radioButton4.setOnCheckedChangeListener(listener)
 
         return binding.root
     }
