@@ -1,26 +1,31 @@
 package com.example.sumnote.ui.MyNote
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentMyNoteBinding
 import com.example.sumnote.ui.Note.NoteItem
 import com.example.sumnote.ui.Note.NoteRecyclerViewAdapter
-import com.example.sumnote.ui.Quiz.QuizItem
+import com.example.sumnote.ui.Quiz.QuizListItem
 import com.example.sumnote.ui.Quiz.QuizRecyclerViewAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class MyNoteFragment : Fragment() {
+class MyNoteFragment : Fragment(), QuizRecyclerViewAdapter.OnItemClickListener {
 
     private var _binding: FragmentMyNoteBinding? = null
     private val binding get() = _binding!!
+
+    override fun onItemClick(position: Int) {
+        Log.d("itemClickTest",position.toString() +"is Clicked")
+        // 여기에서 프래그먼트 전환할것(position을 번들에 넣어서?)
+        findNavController().navigate(R.id.action_navigation_my_note_to_quizViewerFragment)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,7 +58,7 @@ class MyNoteFragment : Fragment() {
             noteList.add(NoteItem(i, "Note $i","2023.08.30 pm 16:53"))
         }
 
-        val noteRecyclerViewAdapter = NoteRecyclerViewAdapter(noteList, LayoutInflater.from(this.context))
+        val noteRecyclerViewAdapter = NoteRecyclerViewAdapter(noteList)
         val noteRecyclerView = binding.noteListRecyclerView //리사이클러뷰를 붙여줄 레이아웃 위치 가져오기
         noteRecyclerView.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false) //좌우로 보여주기
         noteRecyclerView.adapter = noteRecyclerViewAdapter
@@ -70,13 +75,13 @@ class MyNoteFragment : Fragment() {
         //id : quiz_list_recycler_view
 
         //리사이클러뷰에 사용할 아이템 리스트(테스트용)
-        var quizList = ArrayList<QuizItem>()
+        var quizList = ArrayList<QuizListItem>()
         //data class QuizItem constructor(var id:Int, var date:Int, var month:Int)
         for(i in 0 until 10){
-            quizList.add(QuizItem(i, 14+i,"Aguest"))
+            quizList.add(QuizListItem(i, 14+i,"Aguest"))
         }
 
-        val quizRecyclerViewAdapter = QuizRecyclerViewAdapter(quizList, LayoutInflater.from(this.context))
+        val quizRecyclerViewAdapter = QuizRecyclerViewAdapter(quizList, LayoutInflater.from(this.context),this)
         val quizRecyclerView = binding.quizListRecyclerView //리사이클러뷰를 붙여줄 레이아웃 위치 가져오기
         quizRecyclerView.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)//위아래로 보여주기
         quizRecyclerView.adapter = quizRecyclerViewAdapter
@@ -95,3 +100,4 @@ class MyNoteFragment : Fragment() {
         }
     }
 }
+
