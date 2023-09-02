@@ -42,7 +42,14 @@ class QuizViewerFragment : Fragment() {
                 answerList = arrayListOf("① 7", "② 8", "③ 9", "④ 10"),
                 answerNum = 3,
                 explanation = "The square root of 81 is 9."
+            ),
+            Quiz(
+                query = "What is the capital of France?",
+                answerList = arrayListOf("① Paris", "② London", "③ Rome", "④ Berlin"),
+                answerNum = 1,
+                explanation = "The capital of France is Paris."
             )
+
         )
 
         //뷰 페이저에 붙일 어댑터 생성
@@ -51,13 +58,17 @@ class QuizViewerFragment : Fragment() {
 
         val progressBar = binding.progressBar
         progressBar.max = quizzes.size
-
+        //txt_current_question_num
+        var currQuizNum = binding.txtCurrentQuestionNum
+        currQuizNum.text = "1"
         //현재 뷰 페이지만큼 프로그래스바에 반영하기
         quizViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 progressBar.progress = position + 1
+                currQuizNum.text = (position + 1).toString()
             }
         })
+
 
         return binding.root
     }
