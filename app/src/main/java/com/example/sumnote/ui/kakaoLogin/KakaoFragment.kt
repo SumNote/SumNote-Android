@@ -88,6 +88,7 @@ class KakaoFragment : Fragment() {
         }
     }
 
+    // 스프링과 통신
     fun Login(user: User){
 
         val call = RetrofitBuilder.api.getLoginResponse(user)

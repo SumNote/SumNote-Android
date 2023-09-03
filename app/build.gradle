@@ -14,6 +14,10 @@ android {
         buildConfig true
     }
 
+    viewBinding{
+        enabled = true
+    }
+
     defaultConfig {
         applicationId "com.example.sumnote"
         minSdk 24
