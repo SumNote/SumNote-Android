@@ -1,4 +1,4 @@
-package com.example.sumnote.ui.Note
+package com.example.sumnote.ui.Quiz
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,21 +8,17 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sumnote.R
-import com.example.sumnote.ui.Quiz.QuizRecyclerViewAdapter
 
 //리사이클러뷰 어댑터 작성 => 재활용을 위해
-class NoteRecyclerViewAdapter(
-    val itemList : ArrayList<NoteItem>, //리사이클러뷰로 그려줄 노트들
+class AllQuizRecyclerViewAdapter(
+    val itemList : ArrayList<QuizListItem>, //리사이클러뷰로 그려줄 노트들
+    val inflater : LayoutInflater, //화면에 붙이기 위한 inflater
     val onItemClickListener: OnItemClickListener // 클릭 리스너 => 사용자가 아이템 클릭시 화면 이동
-//    val inflater : LayoutInflater //화면에 붙이기 위한 inflater
-): RecyclerView.Adapter<NoteRecyclerViewAdapter.ViewHoler>(){ //리사이클러뷰 어댑터 상속받기 템플릿은 자기 자신
-
-    private lateinit var inflater : LayoutInflater
+): RecyclerView.Adapter<AllQuizRecyclerViewAdapter.ViewHoler>(){ //리사이클러뷰 어댑터 상속받기 템플릿은 자기 자신
 
     interface OnItemClickListener {
-        fun onNoteItemClick(position: Int)
+        fun onAllQuizItemClick(position: Int)
     }
-
 
     //생성자를 통해 받은 뷰를 부모 클래스로 넘겨주기
     //2. onCreateViewHolder에서 만든 뷰를 생성자로 전달받음
@@ -32,25 +28,21 @@ class NoteRecyclerViewAdapter(
         //노트 이미지
         val noteImage : ImageView
         //노트 값들
-        val title : TextView
-        val generatedDate : TextView
+        val month : TextView
+        val date : TextView
         //어댑터가 만들어지면 각 뷰의 값 초기화
         //3. init블럭 호출 => title과 generatedDate 텍스트 뷰가 세팅됨
         init {
-            noteImage = itemView.findViewById(R.id.imgView_note)
+            noteImage = itemView.findViewById(R.id.imgView_quiz)
             //생성한 노트 값들
-            title = itemView.findViewById(R.id.txt_note_title)
-            generatedDate = itemView.findViewById(R.id.txt_gen_date)
+            month = itemView.findViewById(R.id.txt_all_quiz_gen_month)
+            date = itemView.findViewById(R.id.txt_all_quiz_gen_date)
 
             //각 아이템 클릭에 대한 이벤트 달기
             //intent 활용하여 페이지 변환하는 부분 작성할 것
             itemView.setOnClickListener{
                 val position: Int = absoluteAdapterPosition //아이템 위치 가져오기
-                val titleText = itemList[position].title
-                val getnDate = itemList[position].generatedDate
-                val id = itemList[position].id
-                Log.d("noteList", "$titleText,$getnDate,$id")
-                onItemClickListener.onNoteItemClick(position) //클릭 리스너로 현재 위치(아이템 아이디)를 보냄
+                onItemClickListener.onAllQuizItemClick(position) //클릭 리스너로 현재 위치(아이템 아이디)를 보냄
             }
         }
     }
@@ -61,8 +53,7 @@ class NoteRecyclerViewAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHoler {
         //각 뷰를 생성하는 부분
         //아이템에 해당하는 인플레이터 정의
-        inflater = LayoutInflater.from(parent.context)
-        val view = inflater.inflate(R.layout.note_list_item,parent,false)
+        val view = inflater.inflate(R.layout.all_quiz_list_item,parent,false)
         return ViewHoler(view) //뷰 홀더에 위에서 만든 뷰 넣어주기 => class ViewHolder의 생성자가 호출됨?
     }
 
@@ -75,8 +66,8 @@ class NoteRecyclerViewAdapter(
     // 4. 세팅해둔 텍스트뷰에 값 채워줌
     override fun onBindViewHolder(holder: ViewHoler, position: Int) {
         //홀더(위에서 생성한 홀더)에 값 할당
-        holder.title.text = itemList[position].title
-        holder.generatedDate.text = itemList[position].generatedDate
+        holder.month.text = itemList[position].month
+        holder.date.text = itemList[position].date.toString()
 
         //이미지는 position에 해당하는 값으로
         // 이미지의 리소스 ID 얻어오기

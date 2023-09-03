@@ -109,7 +109,7 @@ class QuizFragment : Fragment() {
                 Log.d("quiz","$selectedAnswer, ${quiz.answerNum}")
                 if (selectedAnswer+1 == quiz.answerNum) {
                     buttonView.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
-                    Toast.makeText(context, "Correct!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "정답입니다!", Toast.LENGTH_SHORT).show()
                 } else {
                     buttonView.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
                     when(quiz.answerNum) {
@@ -118,7 +118,7 @@ class QuizFragment : Fragment() {
                         3 -> radioButton3.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
                         4 -> radioButton4.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
                     }
-                    Toast.makeText(context, "Wrong. Try again.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "틀렸습니다!", Toast.LENGTH_SHORT).show()
                 }
                 explanation.visibility = View.VISIBLE
                 explanation.text = quiz.explanation

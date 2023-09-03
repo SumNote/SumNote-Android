@@ -17,7 +17,7 @@ class QuizRecyclerViewAdapter(
 ): RecyclerView.Adapter<QuizRecyclerViewAdapter.ViewHoler>(){ //리사이클러뷰 어댑터 상속받기 템플릿은 자기 자신
 
     interface OnItemClickListener {
-        fun onItemClick(position: Int)
+        fun onQuizItemClick(position: Int)
     }
 
 
@@ -40,7 +40,6 @@ class QuizRecyclerViewAdapter(
             month = itemView.findViewById(R.id.txt_quiz_month)
 
             //각 아이템 클릭에 대한 이벤트 달기
-            //intent 활용하여 페이지 변환하는 부분 작성할 것
             itemView.setOnClickListener{
                 val position: Int = absoluteAdapterPosition //아이템 위치 가져오기
                 //문제집 번호와 함께 fragment_quiz_viewer로 이동
@@ -48,12 +47,7 @@ class QuizRecyclerViewAdapter(
                 //-> 서버로부터 받아온 문제집을 뷰 페이저를 통해 화면에 보여줌
                 //findNavController().navigate(R.id.action_navigation_my_note_to_allNoteFragment)
                 Log.d("itemClickedTest",position.toString()+"is Clicked before Listner")
-                onItemClickListener.onItemClick(position) //클릭 리스너로 현재 위치(아이템 아이디)를 보냄
-//                val titleText = itemList[position].title
-//                val getnDate = itemList[position].generatedDate
-//                val id = itemList[position].id
-//                Log.d("noteList", "$titleText,$getnDate,$id")
-
+                onItemClickListener.onQuizItemClick(position) //클릭 리스너로 현재 위치(아이템 아이디)를 보냄
             }
         }
 

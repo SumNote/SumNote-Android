@@ -5,9 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.sumnote.databinding.FragmentQuizViewerBinding
+import com.example.sumnote.ui.Note.NoteViewerFragment
 
 class QuizViewerFragment : Fragment() {
     private var _binding: FragmentQuizViewerBinding? = null
@@ -70,6 +72,12 @@ class QuizViewerFragment : Fragment() {
         })
 
 
+        //뒤로가기 버튼
+        val btmBack = binding.imgBtnBack
+        btmBack.setOnClickListener{
+            findNavController().navigateUp()
+        }
+
         return binding.root
     }
 
@@ -83,14 +91,14 @@ class QuizViewerFragment : Fragment() {
 // QuestionPagerAdapter 클래스
 class QuizPagerAdapter(
     fragmentActivity: QuizViewerFragment,
-    private val questions: List<Quiz>
+    private val quizzes: List<Quiz>
 ) : FragmentStateAdapter(fragmentActivity) {
 
     override fun getItemCount(): Int {
-        return questions.size
+        return quizzes.size
     }
 
     override fun createFragment(position: Int): Fragment {
-        return QuizFragment.newInstance(questions[position])
+        return QuizFragment.newInstance(quizzes[position])
     }
 }
