@@ -16,16 +16,10 @@ import com.example.sumnote.ui.Quiz.QuizListItem
 import com.example.sumnote.ui.Quiz.QuizRecyclerViewAdapter
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class MyNoteFragment : Fragment(), QuizRecyclerViewAdapter.OnItemClickListener {
+class MyNoteFragment : Fragment(){
 
     private var _binding: FragmentMyNoteBinding? = null
     private val binding get() = _binding!!
-
-    override fun onItemClick(position: Int) {
-        Log.d("itemClickTest",position.toString() +"is Clicked")
-        // 여기에서 프래그먼트 전환할것(position을 번들에 넣어서?)
-        findNavController().navigate(R.id.action_navigation_my_note_to_quizViewerFragment)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -58,7 +52,12 @@ class MyNoteFragment : Fragment(), QuizRecyclerViewAdapter.OnItemClickListener {
             noteList.add(NoteItem(i, "Note $i","2023.08.30 pm 16:53"))
         }
 
-        val noteRecyclerViewAdapter = NoteRecyclerViewAdapter(noteList)
+        val noteRecyclerViewAdapter = NoteRecyclerViewAdapter(noteList, object: NoteRecyclerViewAdapter.OnItemClickListener {
+            override fun onNoteItemClick(position: Int) {
+                // 노트 아이템 클릭시 동작
+                findNavController().navigate(R.id.action_navigation_my_note_to_noteViewerFragment)
+            }
+        })
         val noteRecyclerView = binding.noteListRecyclerView //리사이클러뷰를 붙여줄 레이아웃 위치 가져오기
         noteRecyclerView.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false) //좌우로 보여주기
         noteRecyclerView.adapter = noteRecyclerViewAdapter
@@ -81,7 +80,12 @@ class MyNoteFragment : Fragment(), QuizRecyclerViewAdapter.OnItemClickListener {
             quizList.add(QuizListItem(i, 14+i,"Aguest"))
         }
 
-        val quizRecyclerViewAdapter = QuizRecyclerViewAdapter(quizList, LayoutInflater.from(this.context),this)
+        val quizRecyclerViewAdapter = QuizRecyclerViewAdapter(quizList, LayoutInflater.from(this.context), object: QuizRecyclerViewAdapter.OnItemClickListener {
+            override fun onQuizItemClick(position: Int) {
+                // 퀴즈 아이템 클릭시 동작
+                findNavController().navigate(R.id.action_navigation_my_note_to_quizViewerFragment)
+            }
+        })
         val quizRecyclerView = binding.quizListRecyclerView //리사이클러뷰를 붙여줄 레이아웃 위치 가져오기
         quizRecyclerView.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)//위아래로 보여주기
         quizRecyclerView.adapter = quizRecyclerViewAdapter

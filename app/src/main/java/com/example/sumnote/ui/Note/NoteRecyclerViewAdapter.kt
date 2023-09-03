@@ -8,15 +8,21 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.sumnote.R
-import kotlinx.coroutines.NonDisposableHandle.parent
+import com.example.sumnote.ui.Quiz.QuizRecyclerViewAdapter
 
 //리사이클러뷰 어댑터 작성 => 재활용을 위해
 class NoteRecyclerViewAdapter(
     val itemList : ArrayList<NoteItem>, //리사이클러뷰로 그려줄 노트들
+    val onItemClickListener: OnItemClickListener // 클릭 리스너 => 사용자가 아이템 클릭시 화면 이동
 //    val inflater : LayoutInflater //화면에 붙이기 위한 inflater
 ): RecyclerView.Adapter<NoteRecyclerViewAdapter.ViewHoler>(){ //리사이클러뷰 어댑터 상속받기 템플릿은 자기 자신
 
     private lateinit var inflater : LayoutInflater
+
+    interface OnItemClickListener {
+        fun onNoteItemClick(position: Int)
+    }
+
 
     //생성자를 통해 받은 뷰를 부모 클래스로 넘겨주기
     //2. onCreateViewHolder에서 만든 뷰를 생성자로 전달받음
@@ -44,6 +50,7 @@ class NoteRecyclerViewAdapter(
                 val getnDate = itemList[position].generatedDate
                 val id = itemList[position].id
                 Log.d("noteList", "$titleText,$getnDate,$id")
+                onItemClickListener.onNoteItemClick(position) //클릭 리스너로 현재 위치(아이템 아이디)를 보냄
             }
         }
     }
