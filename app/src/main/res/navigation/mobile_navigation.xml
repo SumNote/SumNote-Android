@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_navigation_my_note_to_noteViewerFragment"
             app:destination="@id/noteViewerFragment" />
+        <action
+            android:id="@+id/action_navigation_my_note_to_allQuizFragment"
+            app:destination="@id/allQuizFragment" />
     </fragment>
 
     <fragment
@@ -78,5 +81,13 @@
         android:id="@+id/noteViewerFragment"
         android:name="com.example.sumnote.ui.Note.NoteViewerFragment"
         android:label="NoteViewerFragment" />
+    <fragment
+        android:id="@+id/allQuizFragment"
+        android:name="com.example.sumnote.ui.Quiz.AllQuizFragment"
+        android:label="AllQuizFragment" >
+        <action
+            android:id="@+id/action_allQuizFragment_to_quizViewerFragment"
+            app:destination="@id/quizViewerFragment" />
+    </fragment>
 
 </navigation>

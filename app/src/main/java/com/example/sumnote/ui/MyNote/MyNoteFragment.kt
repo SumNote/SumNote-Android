@@ -62,12 +62,18 @@ class MyNoteFragment : Fragment(){
         noteRecyclerView.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false) //좌우로 보여주기
         noteRecyclerView.adapter = noteRecyclerViewAdapter
 
-        //전체 보기
+        //노트 전체 보기
         val goAllNote = binding.txtGoAllNote
         goAllNote.setOnClickListener{
             findNavController().navigate(R.id.action_navigation_my_note_to_allNoteFragment)
         }
 
+        //퀴즈 전체 보기
+        val goAllQuiz = binding.txtGoAllQuiz
+        goAllQuiz.setOnClickListener{
+            Log.d("debug!","#1")
+            findNavController().navigate(R.id.action_navigation_my_note_to_allQuizFragment)
+        }
 
 
         //리사이클러뷰 관련 코드 작성(퀴즈)
