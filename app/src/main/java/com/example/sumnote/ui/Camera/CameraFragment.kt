@@ -21,22 +21,23 @@ import android.os.HandlerThread
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.Surface
 import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.sumnote.R
 import com.example.sumnote.api.ApiManager
 import com.example.sumnote.databinding.FragmentCameraBinding
+import com.example.sumnote.ui.Dialog.CircleProgressDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
 import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.ResponseBody
 import org.json.JSONException
 import org.json.JSONObject
@@ -44,11 +45,11 @@ import retrofit2.Call
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
 import java.lang.reflect.Type
+import java.util.concurrent.TimeUnit
+
 
 //
 class CameraFragment : Fragment() {
@@ -73,6 +74,9 @@ class CameraFragment : Fragment() {
 
     // 서버 통신 테스트
     lateinit var apiManager: ApiManager
+
+    // 로딩 dialog
+    private val loadingDialog = CircleProgressDialog()
 
 //    val baseUrl = "http://15.165.186.162:8000/" //ec2 서버 테스트시
     private val baseUrl = "http://10.0.2.2:8000/"
@@ -245,8 +249,17 @@ class CameraFragment : Fragment() {
     private fun sendImageToServer(imageBytes: ByteArray){
         Log.d("sendImage","sendImageToServer Call")
         Log.d("test : ", "##8")
+
+        // timeout setting 해주기
+        val okHttpClient = OkHttpClient().newBuilder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .build()
+
         val retrofit = Retrofit.Builder()
             .baseUrl(baseUrl)
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
@@ -257,6 +270,9 @@ class CameraFragment : Fragment() {
 
         val call = apiManager.uploadImageTest(imagePart) // 모바일 카메라 화질 이슈로 인한 테스트용 api
         //val call = apiManager.uploadImage(imagePart)
+
+        // 다이얼로그 표시
+        loadingDialog.show(requireActivity().supportFragmentManager, loadingDialog.tag)
 
         call.enqueue(object : retrofit2.Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
@@ -276,6 +292,10 @@ class CameraFragment : Fragment() {
 
                         Log.d("DjangoServer", "Text Book's Text : $textBook")
 
+                        // GPT 요약된 노트 가져오기
+                        val textGpt = jsonObject.getString("sum_result")
+                        Log.d("DjangoServer", "Text GPT's Text : $textGpt")
+
                         //noteMaker Fragment로 이동
                         val bundle = Bundle()
                         bundle.putString("textBook", textBook) //노트 데이터 번들에 넣기
@@ -290,16 +310,21 @@ class CameraFragment : Fragment() {
                     // 서버로 이미지 전송 실패시
                     Toast.makeText(this@CameraFragment.activity, "Image upload failed", Toast.LENGTH_SHORT).show()
                 }
+
+                // 응답 처리 후 다이얼로그 닫기
+                loadingDialog.dismiss()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 // 통신 실패 처리
                 Log.e("ImageUpload", "Image upload error: ${t.message}")
+
+                // 응답 처리 후 다이얼로그 닫기
+                loadingDialog.dismiss()
             }
         })
         Log.d("sendImage","sendImageToServer Exit")
     }
-
 
 
 

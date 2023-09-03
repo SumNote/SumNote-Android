@@ -14,13 +14,20 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentMyPageBinding
 import com.example.sumnote.LoginActivity
+import com.example.sumnote.ui.Dialog.CircleProgressDialog
 import com.example.sumnote.ui.kakaoLogin.KakaoOauthViewModelFactory
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MyPageFragment : Fragment() {
 
     private var _binding: FragmentMyPageBinding? = null
     private lateinit var kakaoViewModel: KakaoViewModel
+    private val loadingDialog = CircleProgressDialog()
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -31,6 +38,10 @@ class MyPageFragment : Fragment() {
         _binding = FragmentMyPageBinding.inflate(inflater, container, false)
         // ViewModel 인스턴스 생성 후 프로퍼티에 할당
         kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(requireActivity().application))[KakaoViewModel::class.java]
+
+        binding.test.setOnClickListener {
+            showLoading()
+        }
 
         val nickname = binding.nickname
         nickname.text = "test"
@@ -68,6 +79,15 @@ class MyPageFragment : Fragment() {
 //
 //
 //    }
+
+    // 테스트 용
+    private fun showLoading() {
+        CoroutineScope(Dispatchers.Main).launch {
+            loadingDialog.show(requireActivity().supportFragmentManager, loadingDialog.tag)
+            withContext(Dispatchers.Default) { delay(3000) }
+            loadingDialog.dismiss()
+        }
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

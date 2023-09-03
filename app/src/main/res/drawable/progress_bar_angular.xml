@@ -1,0 +1,60 @@
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<layer-list xmlns:android="http://schemas.android.com/apk/res/android">-->
+<!--    <item android:id="@android:id/background">-->
+<!--        <shape-->
+<!--            android:innerRadiusRatio="3"-->
+<!--            android:shape="ring"-->
+<!--            android:thicknessRatio="10"-->
+<!--            android:useLevel="false">-->
+<!--            <solid android:color="#D3D3D3" /> &lt;!&ndash; Background color for the circular part &ndash;&gt;-->
+<!--        </shape>-->
+<!--    </item>-->
+<!--    <item android:id="@android:id/progress">-->
+<!--        <rotate-->
+<!--            android:fromDegrees="0"-->
+<!--            android:pivotX="50%"-->
+<!--            android:pivotY="50%"-->
+<!--            android:toDegrees="360">-->
+<!--            <shape-->
+<!--                android:innerRadiusRatio="3"-->
+<!--                android:shape="ring"-->
+<!--                android:thicknessRatio="10"-->
+<!--                android:useLevel="true">-->
+<!--                <solid android:color="#07C97C" /> &lt;!&ndash; Progress color &ndash;&gt;-->
+<!--            </shape>-->
+<!--        </rotate>-->
+<!--    </item>-->
+<!--</layer-list>-->
+
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <shape
+            android:innerRadiusRatio="3"
+            android:shape="ring"
+            android:thicknessRatio="10"
+            android:useLevel="false">
+            <solid android:color="#D3D3D3" /> <!-- Background color for the circular part -->
+        </shape>
+    </item>
+    <item android:id="@android:id/progress">
+        <rotate
+            android:fromDegrees="0"
+            android:toDegrees="360"
+            android:pivotX="50%"
+            android:pivotY="50%">
+            <shape
+                android:innerRadiusRatio="3"
+                android:shape="ring"
+                android:thicknessRatio="8"
+                android:useLevel="false">
+                <gradient
+                    android:startColor="#FFFFFF"
+                    android:useLevel="false"
+                    android:endColor="#07C97C"
+                    android:angle="0"
+                    android:type="sweep" />
+            </shape>
+        </rotate>
+    </item>
+</layer-list>
+
