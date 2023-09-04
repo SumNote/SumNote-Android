@@ -28,28 +28,29 @@ class QuizViewerFragment : Fragment() {
         //테스트용 더미 데이터 생성 => 여기서 서버로부터 정보 받아와 파싱하는 코드 작성 필요
         val quizzes = listOf(
             Quiz(
-                query = "What is the capital of France?",
-                answerList = arrayListOf("① Paris", "② London", "③ Rome", "④ Berlin"),
-                answerNum = 1,
-                explanation = "The capital of France is Paris."
-            ),
-            Quiz(
-                query = "What is the largest planet in the solar system?",
-                answerList = arrayListOf("① Earth", "② Mars", "③ Jupiter", "④ Saturn"),
+                query = "데이터의 구조와 설계를 나타내는 것은?",
+                answerList = arrayListOf("① 레코드", "② 필드", "③ 스키마", "④ 데이터베이스"),
                 answerNum = 3,
-                explanation = "The largest planet in the solar system is Jupiter."
+                explanation = "스키마는 데이터베이스의 구조와 설계를 나타냅니다."
+            )
+            ,
+            Quiz(
+                query = "데이터를 조회하는 SQL 명령은?",
+                answerList = arrayListOf("① INSERT", "② DELETE", "③ UPDATE", "④ SELECT"),
+                answerNum = 4,
+                explanation = "SELECT는 데이터를 조회하는 SQL 명령입니다."
             ),
             Quiz(
-                query = "What is the square root of 81?",
-                answerList = arrayListOf("① 7", "② 8", "③ 9", "④ 10"),
+                query = "데이터 중복을 최소화하는 설계 방법은?",
+                answerList = arrayListOf("① 인덱스", "② 정규화", "③ 뷰", "④ 무결성"),
+                answerNum = 2,
+                explanation = "정규화는 데이터 중복을 최소화하는 설계 방법입니다."
+            ),
+            Quiz(
+                query = "여러 연산의 묶음으로, 모두 성공하거나 모두 실패하는 것은?",
+                answerList = arrayListOf("① 인증", "② 인가", "③ 트랜잭션", "④ 암호화"),
                 answerNum = 3,
-                explanation = "The square root of 81 is 9."
-            ),
-            Quiz(
-                query = "What is the capital of France?",
-                answerList = arrayListOf("① Paris", "② London", "③ Rome", "④ Berlin"),
-                answerNum = 1,
-                explanation = "The capital of France is Paris."
+                explanation = "트랜잭션은 여러 연산의 묶음으로, 모두 성공하거나 모두 실패합니다."
             )
 
         )

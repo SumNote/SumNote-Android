@@ -13,9 +13,9 @@
             android:id="@+id/txt_query"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
             android:text="질의 언어는 데이터 베이스에서 무엇을 요구하기 위해 사용되는 언어인가요?"
-            android:textSize="22dp"
+            android:textSize="20dp"
             android:gravity="center"
             android:textColor="@color/black"
             android:textStyle="bold" />
