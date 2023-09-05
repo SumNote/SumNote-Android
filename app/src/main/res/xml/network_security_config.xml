@@ -10,6 +10,6 @@
         <domain includeSubdomains="true">127.0.0.1</domain>
 
 <!--        login test-->
-        <domain includeSubdomains="true">172.30.1.80</domain>
+        <domain includeSubdomains="true">192.168.45.192</domain>
     </domain-config>
 </network-security-config>

@@ -43,7 +43,7 @@ class LoginActivity : AppCompatActivity() {
 //            fadeOut.start()
 //        }
         // ViewModelProvider를 통해 ViewModel 인스턴스 생성
-        kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(application)).get(KakaoViewModel::class.java)
+        kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(application))[KakaoViewModel::class.java]
 
         val intent = Intent(this, MainActivity::class.java)
         //로그인 버튼 클릭시 : 카카오 로그인 수행하고 MainActivity로 넘어가기
@@ -54,6 +54,7 @@ class LoginActivity : AppCompatActivity() {
                 kakaoViewModel.kakaoLogin()
             }
         }
+
         // 로그인 완료까지 대기하는 코드 작성 (예: LiveData, Flow, 코루틴의 delay 등)
         Log.d("test", "activity start")
         kakaoViewModel.isLoggedIn.asLiveData().observe(this) { isLoggedIn ->
@@ -80,14 +81,14 @@ class LoginActivity : AppCompatActivity() {
                 Log.i(TAG, "사용자 정보 요청 성공" +
                         "\n회원번호: ${user.id}" +
                         "\n이메일: ${user.kakaoAccount?.email}" +
-                        "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" )
+                        "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" +
+                        "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}")
 
                 val userInfo = User()
                 userInfo.name = user.kakaoAccount?.profile?.nickname.toString()
                 userInfo.email = user.kakaoAccount?.email.toString()
+                userInfo.imageUrl = user.kakaoAccount?.profile?.thumbnailImageUrl.toString()
                 kakaoViewModel.kakaoUser.value = userInfo
-                Log.d("KakaoUser", "After postValue: ${kakaoViewModel.kakaoUser.value?.name}")
-
 
                 Log.d("BUTTON CLICKED", "id: " + userInfo.name + ", pw: " + userInfo.email)
 

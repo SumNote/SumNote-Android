@@ -10,7 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import androidx.lifecycle.Observer
 import androidx.lifecycle.asLiveData
+import com.example.sumnote.MyApplication
 import com.example.sumnote.R
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel.Companion.TAG
 import com.kakao.sdk.user.UserApiClient
@@ -25,12 +27,12 @@ class KakaoFragment : Fragment() {
     }
 
     private lateinit var viewModel: KakaoViewModel
-    var name: String = ""
-    var email: String = ""
+    private var appUser: User? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.d("최강", "#1")
         return inflater.inflate(R.layout.fragment_kakao, container, false)
     }
 
@@ -38,7 +40,7 @@ class KakaoFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(requireActivity().application)).get(KakaoViewModel::class.java)
-        // TODO: Use the ViewModel
+        // TODO: Use the ViewModel강
 
         val btnKakaoLogin = view?.findViewById<Button>(R.id.btn_kakao_login)
         val btnKakaoLogout = view?.findViewById<Button>(R.id.btn_kakao_logout)
@@ -62,6 +64,13 @@ class KakaoFragment : Fragment() {
             getInfo()
         }
 
+        Log.d("viewModel Test", "userInfo : " + appUser?.name + ", " + appUser?.email)
+
+        viewModel.kakaoUser.value = appUser
+
+        Log.d("viewModel Test2", "userInfo : " + viewModel.kakaoUser.toString())
+        Log.d("viewModel Test2", "userInfo : " + appUser?.name + ", " + appUser?.email)
+
     }
 
     fun getInfo(){
@@ -74,16 +83,18 @@ class KakaoFragment : Fragment() {
                 Log.i(TAG, "사용자 정보 요청 성공" +
                         "\n회원번호: ${user.id}" +
                         "\n이메일: ${user.kakaoAccount?.email}" +
-                        "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" )
+                        "\n닉네임: ${user.kakaoAccount?.profile?.nickname}" +
+                        "\n프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}")
 
-                name = user.kakaoAccount?.profile?.nickname.toString()
-                email = user.kakaoAccount?.email.toString()
-                val userInfo = User()
-                userInfo.name = user.kakaoAccount?.profile?.nickname.toString()
-                userInfo.email = user.kakaoAccount?.email.toString()
-                Log.d("BUTTON CLICKED", "id: " + userInfo.name + ", pw: " + userInfo.email)
 
-                Login(userInfo)
+                appUser?.name = user.kakaoAccount?.profile?.nickname.toString()
+                appUser?.email = user.kakaoAccount?.email.toString()
+                appUser?.imageUrl = user.kakaoAccount?.profile?.thumbnailImageUrl.toString()
+
+                Log.d("BUTTON CLICKED", "id2: " + appUser?.name + ", pw2: " + appUser?.email + ", Image url : " + appUser?.imageUrl)
+
+
+                Login(appUser ?: User())
             }
         }
     }

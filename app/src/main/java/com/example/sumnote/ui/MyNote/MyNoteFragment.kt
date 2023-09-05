@@ -8,13 +8,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentMyNoteBinding
 import com.example.sumnote.ui.Note.NoteItem
 import com.example.sumnote.ui.Note.NoteRecyclerViewAdapter
 import com.example.sumnote.ui.Quiz.QuizListItem
 import com.example.sumnote.ui.Quiz.QuizRecyclerViewAdapter
+import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.kakao.sdk.user.UserApiClient
 
 class MyNoteFragment : Fragment(){
 
@@ -96,6 +99,21 @@ class MyNoteFragment : Fragment(){
         quizRecyclerView.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)//위아래로 보여주기
         quizRecyclerView.adapter = quizRecyclerViewAdapter
 
+        UserApiClient.instance.me { user, error ->
+            if (error != null) {
+                Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
+            }
+            else if (user != null) {
+
+                // 프로필 사진
+                val profile = binding.usrProfile
+                val imageUrl = user.kakaoAccount?.profile?.thumbnailImageUrl
+                // 이미지 로딩 라이브러리 (Glide, Picasso 등)를 사용하여 URL 이미지 설정 시:
+                Glide.with(this)
+                    .load(imageUrl)
+                    .into(profile)
+            }
+        }
 
     }
 

@@ -11,12 +11,16 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentMyPageBinding
 import com.example.sumnote.LoginActivity
+import com.example.sumnote.MyApplication
 import com.example.sumnote.ui.Dialog.CircleProgressDialog
 import com.example.sumnote.ui.kakaoLogin.KakaoOauthViewModelFactory
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
+import com.example.sumnote.ui.kakaoLogin.User
+import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -43,16 +47,8 @@ class MyPageFragment : Fragment() {
             showLoading()
         }
 
-        val nickname = binding.nickname
-        nickname.text = "test"
-
-        kakaoViewModel.kakaoUser.observe(viewLifecycleOwner, Observer { userInfo ->
-            // 옵저버가 활성화되면 호출되는 코드
-            // userInfo를 사용하여 UI 업데이트 등을 수행할 수 있습니다.
-            val myName = userInfo.name
-            Log.d("userNameTest", "${myName}입니다!!")
-            nickname.text = myName
-        })
+        // 프로필 세팅
+        setInfo()
 
         val logoutBtn = binding.logout
         logoutBtn.setOnClickListener {
@@ -79,6 +75,33 @@ class MyPageFragment : Fragment() {
 //
 //
 //    }
+
+    // 프로필 세팅하기
+    fun setInfo(){
+        // 사용자 정보 요청 (기본)
+        UserApiClient.instance.me { user, error ->
+            if (error != null) {
+                Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
+            }
+            else if (user != null) {
+                //이름
+                val nickname = binding.nickname
+                nickname.text = user.kakaoAccount?.profile?.nickname.toString()
+
+                //이메일
+                val email = binding.userEmail
+                email.text = user.kakaoAccount?.email
+
+                // 프로필 사진
+                val profile = binding.usrProfile
+                val imageUrl = user.kakaoAccount?.profile?.thumbnailImageUrl
+                // 이미지 로딩 라이브러리 (Glide, Picasso 등)를 사용하여 URL 이미지 설정 시:
+                Glide.with(this)
+                    .load(imageUrl)
+                    .into(profile)
+            }
+        }
+    }
 
     // 테스트 용
     private fun showLoading() {
