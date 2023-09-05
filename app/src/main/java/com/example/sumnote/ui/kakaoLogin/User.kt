@@ -8,4 +8,7 @@ class User {
     var email: String? = null
         get(){ return field }
         set(value){field = value}
+
+    var imageUrl : String? = null
+
 }

@@ -16,7 +16,8 @@ class CircleProgressDialog: DialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = ProgressDialogBinding.inflate(inflater, container, false)
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) // 투명 배경
+        dialog?.setCanceledOnTouchOutside(false) // 주변 터치 방지
 
         return binding.root
     }
