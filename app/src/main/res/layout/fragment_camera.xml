@@ -14,13 +14,35 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+
     <ImageView
         android:id="@+id/btn_capture"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="-45dp"
-        app:srcCompat="@drawable/camera_bottom" />
+        android:layout_marginStart="160dp"
+        android:layout_marginBottom="40dp"
+        app:srcCompat="@drawable/img_camera_button" />
+
+
+<!--    <androidx.cardview.widget.CardView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="130dp"-->
+<!--        app:cardBackgroundColor="@android:color/transparent"-->
+<!--        android:layout_centerHorizontal="true">-->
+<!--        -->
+<!--        -->
+<!--    </androidx.cardview.widget.CardView>-->
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="-38dp"
+        app:srcCompat="@drawable/img_camera_bottom" />
+
+
+
 
     <ImageView
         android:id="@+id/imgview_preview"
