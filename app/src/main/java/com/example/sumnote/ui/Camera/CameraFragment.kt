@@ -7,12 +7,16 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageFormat
 import android.graphics.Matrix
+import android.graphics.Rect
 import android.graphics.SurfaceTexture
+import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCaptureSession
 import android.hardware.camera2.CameraDevice
 import android.hardware.camera2.CameraManager
+import android.hardware.camera2.CameraMetadata
 import android.hardware.camera2.CaptureRequest
 import android.hardware.camera2.TotalCaptureResult
+import android.hardware.camera2.params.MeteringRectangle
 import android.media.ImageReader
 import android.os.Bundle
 import android.os.Environment
@@ -21,10 +25,13 @@ import android.os.HandlerThread
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.Surface
 import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
@@ -78,7 +85,6 @@ class CameraFragment : Fragment() {
     // 로딩 dialog
     private val loadingDialog = CircleProgressDialog()
 
-//    val baseUrl = "http://15.165.186.162:8000/" //ec2 서버 테스트시
     private val baseUrl = "http://10.0.2.2:8000/"
 
     // 전달받은 json값이 null인 경우에 대한 예외처리 => 아직 적용 안했음
@@ -149,7 +155,6 @@ class CameraFragment : Fragment() {
             override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
                 return false
             }
-
             override fun onSurfaceTextureUpdated(surface: SurfaceTexture) {
 
             }
@@ -192,30 +197,12 @@ class CameraFragment : Fragment() {
                     captureStillPhoto()
                 }
             }
-            //사진 촬영 너무 느리면 아래 터치 리스너로 변경할것
-//            setOnTouchListener { view, event ->
-//                when (event.action) {
-//                    MotionEvent.ACTION_DOWN -> {
-//                        // 버튼을 눌렀을 때의 동작
-//                        if (!isCapturing) {
-//                            isCapturing = true
-//                            captureStillPhoto()
-//                        }
-//                        true // 이벤트 소비
-//                    }
-//
-//                    MotionEvent.ACTION_UP -> {
-//                        // 버튼을 뗀 순간의 동작 (필요한 경우)
-//                        // 눌린 상태를 해제하거나 추가 동작 수행
-//                        true // 이벤트 소비
-//                    }
-//
-//                    else -> false // 나머지 이벤트는 처리하지 않음
-//                }
-//            }
         }
 
     }
+
+
+
 
     // 사진 촬영 함수
     private fun captureStillPhoto() {
