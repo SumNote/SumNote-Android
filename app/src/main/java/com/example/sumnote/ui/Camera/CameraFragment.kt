@@ -283,9 +283,16 @@ class CameraFragment : Fragment() {
                         val textGpt = jsonObject.getString("sum_result")
                         Log.d("DjangoServer", "Text GPT's Text : $textGpt")
 
+                        val noteTitle = jsonObject.getString("title")
+                        val summary = jsonObject.getString("summary")
+
+
+
                         //noteMaker Fragment로 이동
                         val bundle = Bundle()
-                        bundle.putString("textBook", textBook) //노트 데이터 번들에 넣기
+                        bundle.putString("title", noteTitle) //노트 데이터 번들에 넣기
+                        bundle.putString("textBook", summary) //노트 데이터 번들에 넣기
+                        
                         findNavController().navigate(R.id.action_cameraFragement_to_newNoteFragment,bundle)
 
                     } catch (e: JSONException) {

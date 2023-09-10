@@ -10,15 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import androidx.lifecycle.Observer
 import androidx.lifecycle.asLiveData
-import com.example.sumnote.MyApplication
 import com.example.sumnote.R
+import com.example.sumnote.ui.DTO.User
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel.Companion.TAG
 import com.kakao.sdk.user.UserApiClient
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class KakaoFragment : Fragment() {
 
@@ -89,9 +85,8 @@ class KakaoFragment : Fragment() {
 
                 appUser?.name = user.kakaoAccount?.profile?.nickname.toString()
                 appUser?.email = user.kakaoAccount?.email.toString()
-                appUser?.imageUrl = user.kakaoAccount?.profile?.thumbnailImageUrl.toString()
 
-                Log.d("BUTTON CLICKED", "id2: " + appUser?.name + ", pw2: " + appUser?.email + ", Image url : " + appUser?.imageUrl)
+                Log.d("BUTTON CLICKED", "id2: " + appUser?.name + ", pw2: " + appUser?.email)
 
 
                 Login(appUser ?: User())
@@ -103,26 +98,26 @@ class KakaoFragment : Fragment() {
     fun Login(user: User){
 
         val call = RetrofitBuilder.api.getLoginResponse(user)
-        Log.d("Login", "정보를 받았습니다 ${call}")
-        call.enqueue(object : Callback<String> { // 비동기 방식 통신 메소드
-            override fun onResponse( // 통신에 성공한 경우
-                call: Call<String>,
-                response: Response<String>
-            ) {
-                if(response.isSuccessful()){ // 응답 잘 받은 경우
-                    Log.d("RESPONSE: ", response.body().toString())
-
-                }else{
-                    // 통신 성공 but 응답 실패
-                    Log.d("RESPONSE", "FAILURE")
-                }
-            }
-
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                // 통신에 실패한 경우
-                Log.d("CONNECTION FAILURE: ", t.localizedMessage)
-            }
-        })
+//        Log.d("Login", "정보를 받았습니다 ${call}")
+//        call.enqueue(object : Callback<String> { // 비동기 방식 통신 메소드
+//            override fun onResponse( // 통신에 성공한 경우
+//                call: Call<String>,
+//                response: Response<String>
+//            ) {
+//                if(response.isSuccessful()){ // 응답 잘 받은 경우
+//                    Log.d("RESPONSE: ", response.body().toString())
+//
+//                }else{
+//                    // 통신 성공 but 응답 실패
+//                    Log.d("RESPONSE", "FAILURE")
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<String>, t: Throwable) {
+//                // 통신에 실패한 경우
+//                Log.d("CONNECTION FAILURE: ", t.localizedMessage)
+//            }
+//        })
     }
 
 }

@@ -1,26 +1,20 @@
 package com.example.sumnote
 
-import android.animation.ObjectAnimator
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.view.WindowManager
-import android.widget.Button
-import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
-import androidx.lifecycle.lifecycleScope
 import com.example.sumnote.databinding.ActivityLoginBinding
-import com.example.sumnote.databinding.ActivityMainBinding
 import com.example.sumnote.ui.kakaoLogin.KakaoOauthViewModelFactory
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel.Companion.TAG
 import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
-import com.example.sumnote.ui.kakaoLogin.User
+import com.example.sumnote.ui.DTO.User
 import com.kakao.sdk.user.UserApiClient
-import kotlinx.coroutines.launch
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -87,10 +81,9 @@ class LoginActivity : AppCompatActivity() {
                 val userInfo = User()
                 userInfo.name = user.kakaoAccount?.profile?.nickname.toString()
                 userInfo.email = user.kakaoAccount?.email.toString()
-                userInfo.imageUrl = user.kakaoAccount?.profile?.thumbnailImageUrl.toString()
-                kakaoViewModel.kakaoUser.value = userInfo
+//                kakaoViewModel.kakaoUser.value = userInfo
 
-                Log.d("BUTTON CLICKED", "id: " + userInfo.name + ", pw: " + userInfo.email)
+                Log.d("BUTTON CLICKED", "id: " + userInfo.name + ", pw: ")
 
                 Login(userInfo)
             }
@@ -101,24 +94,28 @@ class LoginActivity : AppCompatActivity() {
     fun Login(user: User) {
 
         val call = RetrofitBuilder.api.getLoginResponse(user)
-        call.enqueue(object : Callback<String> { // 비동기 방식 통신 메소드
-            override fun onResponse( // 통신에 성공한 경우
-                call: Call<String>,
-                response: Response<String>
-            ) {
-                if (response.isSuccessful()) { // 응답 잘 받은 경우
-                    Log.d("RESPONSE: ", response.body().toString())
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        val jsonString = responseBody.string()
+                        Log.d("#SPRING Success:", jsonString)
 
+                    } else {
+                        // 응답 본문이 null인 경우 처리
+                    }
                 } else {
                     // 통신 성공 but 응답 실패
-                    Log.d("RESPONSE", "FAILURE")
+                    Log.d("#SPRING SERVER:", "FAILURE")
                 }
             }
 
-            override fun onFailure(call: Call<String>, t: Throwable) {
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 // 통신에 실패한 경우
-                Log.d("CONNECTION FAILURE: ", t.localizedMessage)
+                Log.d("CONNECTION FAILURE #SPRING SERVER: ", t.localizedMessage)
             }
         })
+
     }
 }

@@ -6,28 +6,33 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentMyPageBinding
 import com.example.sumnote.LoginActivity
-import com.example.sumnote.MyApplication
+import com.example.sumnote.api.ApiManager
 import com.example.sumnote.ui.Dialog.CircleProgressDialog
 import com.example.sumnote.ui.kakaoLogin.KakaoOauthViewModelFactory
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
-import com.example.sumnote.ui.kakaoLogin.User
 import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
+import org.json.JSONException
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 class MyPageFragment : Fragment() {
+    lateinit var apiManager: ApiManager
+    private val baseUrl = "http://10.0.2.2:8000/"
 
     private var _binding: FragmentMyPageBinding? = null
     private lateinit var kakaoViewModel: KakaoViewModel
@@ -44,7 +49,9 @@ class MyPageFragment : Fragment() {
         kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(requireActivity().application))[KakaoViewModel::class.java]
 
         binding.test.setOnClickListener {
-            showLoading()
+//            showLoading()
+            // 서버 테스트
+            serverToGetPro()
         }
 
         // 프로필 세팅
@@ -78,6 +85,12 @@ class MyPageFragment : Fragment() {
 
     // 프로필 세팅하기
     fun setInfo(){
+
+        // ViewModel에서 가져온 사용자 이름을 TextView에 설정
+//        kakaoViewModel.kakaoUser.observe(viewLifecycleOwner) { user ->
+//            binding.nickname.text = user.name
+//        }
+
         // 사용자 정보 요청 (기본)
         UserApiClient.instance.me { user, error ->
             if (error != null) {
@@ -101,6 +114,74 @@ class MyPageFragment : Fragment() {
                     .into(profile)
             }
         }
+    }
+
+    private fun serverToGetPro(){
+
+        // timeout setting 해주기
+        val okHttpClient = OkHttpClient().newBuilder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .build()
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        apiManager = retrofit.create(ApiManager::class.java)
+
+        // 요약된 노트 내용을 바탕으로 문제 생성
+        val call = apiManager.generateProblem("")
+        //val call = apiManager.uploadImage(imagePart)
+
+        // 다이얼로그 표시
+        loadingDialog.show(requireActivity().supportFragmentManager, loadingDialog.tag)
+
+        call.enqueue(object : retrofit2.Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    // 서버로 이미지 전송 성공시
+                    Log.d("DjangoServer","send success")
+
+                    // 서버 응답에 대한 추가 처리 코드 작성
+                    val responseBody = response.body()?.string()
+
+                    try {
+                        // JSON 응답 파싱
+                        val jsonObject = JSONObject(responseBody)
+                        //String 값 받아오기  => 책의 모든 문자열(추후 ocr코드 개발되면 개선)
+                        val question = jsonObject.getString("query")
+                        val answerList = jsonObject.getJSONArray("answerList")
+                        val answerNum = jsonObject.getString("answerNum")
+
+                        Log.d("DjangoServer", "question's Text : $question")
+                        Log.d("DjangoServer", "answer_list's Text : $answerList")
+                        Log.d("DjangoServer", "answer_num's Text : $answerNum")
+
+
+
+                    } catch (e: JSONException) {
+                        Log.e("DjangoServer", "Error parsing JSON: ${e.message}")
+                    }
+
+
+                } else {
+                    Log.e("DjangoServer", "Error response")
+                }
+
+                loadingDialog.dismiss()
+
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                // 통신 실패 처리
+                Log.e("ImageUpload", "Image upload error: ${t.message}")
+                loadingDialog.dismiss()
+            }
+        })
     }
 
     // 테스트 용

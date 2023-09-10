@@ -15,6 +15,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.example.sumnote.databinding.FragmentNewNoteBinding
+import com.example.sumnote.ui.DTO.CreateNoteRequest
+import com.example.sumnote.ui.Note.NoteItem
+import com.example.sumnote.ui.DTO.Summary
+import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
+import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
+import com.example.sumnote.ui.DTO.User
+import com.kakao.sdk.user.UserApiClient
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.File
 import java.io.IOException
 import java.io.OutputStream
@@ -23,10 +34,13 @@ import java.util.Date
 import java.util.Locale
 
 
+
 class NewNoteFragment : Fragment() {
+
     private var _binding: FragmentNewNoteBinding? = null
     private val binding get() = _binding!!
 
+    lateinit var textTitle: String // ocr을 통해 얻어온 교과서의 텍스트들
     lateinit var textBook: String // ocr을 통해 얻어온 교과서의 텍스트들
 
 
@@ -45,10 +59,18 @@ class NewNoteFragment : Fragment() {
 
         //번들을 통해 전닯 받은 값 화면에 뿌리기 => 추후 스프링에 전송하여 요약된 결과값 얻는 코드 작성 필요
         arguments?.let {
+
+            textTitle = it.getString("title").toString()
+            var title = binding.textView
+            title.text = textTitle
+
             textBook = it.getString("textBook").toString()
             Log.d("newnote", textBook)
             var summaryNote = binding.textSummaryNote
             summaryNote.text = textBook
+
+
+
         }
         return view
     }
@@ -63,6 +85,28 @@ class NewNoteFragment : Fragment() {
                 Log.d("newNote","note saved!")
                 val bitmap = viewToBitmap(note) // 프래그먼트의 뷰 전체를 Bitmap으로 변환
                 saveNoteImageToMediaStore(bitmap) // Bitmap을 저장
+
+                arguments?.let {
+
+                    textTitle = it.getString("title").toString()
+                    var title = binding.textView
+                    title.text = textTitle
+
+                    textBook = it.getString("textBook").toString()
+                    Log.d("newnote", textBook)
+                    var summaryNote = binding.textSummaryNote
+                    summaryNote.text = textBook
+
+//                    val newNote = NoteItem(10, textTitle, "2023-09-12")
+
+                    val summary = Summary()
+                    summary.title = textTitle
+                    summary.content = textBook
+
+                    makeNote(summary)
+
+                }
+
             }
         }
     }
@@ -115,4 +159,51 @@ class NewNoteFragment : Fragment() {
         }
     }
 
-}
+
+    private fun makeNote(summary: Summary){
+        // 사용자 정보 요청 (기본)
+        UserApiClient.instance.me { user, error ->
+            if (error != null) {
+                Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
+            } else if (user != null) {
+                var userInfo = User()
+                userInfo.name = user.kakaoAccount?.profile?.nickname.toString()
+                userInfo.email = user.kakaoAccount?.email.toString()
+
+                Log.d("NOTELIST TEST : ", "name : " + userInfo.name + ", email" + userInfo.email)
+                serverNote(userInfo, summary)
+            }
+        }
+
+    }
+    }
+    private fun serverNote(user : User, summary: Summary) {
+
+        val request = CreateNoteRequest(user, summary)
+        val call = RetrofitBuilder.api.createNote(request)
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        val jsonString = responseBody.string()
+                        Log.d("#MAKE_NOTE: ", jsonString)
+
+                    } else {
+                        // 응답 본문이 null인 경우 처리
+                    }
+                } else {
+                    // 통신 성공 but 응답 실패
+                    Log.d("#MAKE_NOTE:", "FAILURE")
+                }
+
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                // 통신에 실패한 경우
+                Log.d("#MAKE_NOTE FAIL: ", t.localizedMessage)
+            }
+        })
+    }
+
+

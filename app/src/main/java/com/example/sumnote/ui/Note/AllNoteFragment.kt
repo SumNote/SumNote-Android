@@ -1,23 +1,26 @@
 package com.example.sumnote.ui.Note
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentAllNoteBinding
+import java.time.LocalDateTime
 
 
 class AllNoteFragment : Fragment() {
 
-
     private var _binding: FragmentAllNoteBinding? = null
     private val binding get() = _binding!!
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -32,6 +35,7 @@ class AllNoteFragment : Fragment() {
         for(i in 0 until 10){
             noteList.add(NoteItem(i, "Note $i","2023.08.30 pm 16:53"))
         }
+
 
         //모든 노트 보기 리사이클러뷰 적용
         val allNoteRecyclerViewAdapter = AllNoteRecyclerViewAdapter(noteList, LayoutInflater.from(this.context),
@@ -55,5 +59,6 @@ class AllNoteFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 
 }
