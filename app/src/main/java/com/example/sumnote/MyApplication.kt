@@ -2,7 +2,6 @@ package com.example.sumnote
 
 import android.app.Application
 import android.util.Log
-import com.example.sumnote.ui.kakaoLogin.User
 
 import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.common.util.Utility

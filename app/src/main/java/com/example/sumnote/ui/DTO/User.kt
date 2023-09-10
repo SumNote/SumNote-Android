@@ -1,4 +1,4 @@
-package com.example.sumnote.ui.kakaoLogin
+package com.example.sumnote.ui.DTO
 
 class User {
     var name: String? = null
@@ -9,6 +9,5 @@ class User {
         get(){ return field }
         set(value){field = value}
 
-    var imageUrl : String? = null
 
 }
