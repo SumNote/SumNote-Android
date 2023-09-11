@@ -1,6 +1,7 @@
 package com.example.sumnote.ui.Note
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,16 +11,22 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentNoteViewerBinding
+import kotlin.properties.Delegates
 
 class NoteViewerFragment : Fragment() {
 
     private var _binding: FragmentNoteViewerBinding? = null
     private val binding get() = _binding!!
 
+    var position by Delegates.notNull<Int>()
+    lateinit var noteTitle : String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-
+            position = it.getInt("position")
+            noteTitle = it.getString("notetitle").toString()
+            Log.d("noteClicked #2","$position")
+            Log.d("noteClicked #2","$noteTitle")
         }
     }
 
@@ -30,8 +37,23 @@ class NoteViewerFragment : Fragment() {
     ): View? {
         _binding = FragmentNoteViewerBinding.inflate(inflater, container, false)
 
+
         //노트들을 보여주기 위한 뷰 페이저
         var noteViewPager = binding.noteViewPager
+
+        var noteTitle = binding.txtNoteViewrTitle
+        noteTitle.text = "Note "+position.toString()
+
+        //서버 요청 받고 파싱하면됨
+
+
+
+
+
+
+
+        //번들로부터 값 얻어오기
+
 
         //테스트용 더미 데이터 생성 => 여기서 서버로부터 정보 받아와 파싱하는 코드 작성 필요
         val notes = listOf(

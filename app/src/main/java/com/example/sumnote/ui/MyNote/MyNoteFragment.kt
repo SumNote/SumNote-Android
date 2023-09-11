@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -27,6 +28,7 @@ import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.kakao.sdk.user.UserApiClient
 import okhttp3.ResponseBody
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -67,7 +69,7 @@ class MyNoteFragment : Fragment(){
         //id : note_list_recycler_view
 
         //리사이클러뷰에 사용할 아이템 리스트(테스트용)
-//        var noteList = ArrayList<NoteItem>()
+        var noteList = ArrayList<NoteItem>()
         //data class NoteItem constructor(var id:Int, var title:String, var generatedDate:String)
         for(i in 0 until 10){
             noteList.add(NoteItem(i, "Note $i","2023.08.30 pm 16:53"))
@@ -79,7 +81,17 @@ class MyNoteFragment : Fragment(){
         noteRecyclerViewAdapter = NoteRecyclerViewAdapter(noteList, object: NoteRecyclerViewAdapter.OnItemClickListener {
             override fun onNoteItemClick(position: Int) {
                 // 노트 아이템 클릭시 동작
-                findNavController().navigate(R.id.action_navigation_my_note_to_noteViewerFragment)
+
+                Log.d("noteClicked", "$position")
+
+                var name = noteList[position].title
+
+                // 선택한 노트 번호 번들에 넘기기
+                val bundle = Bundle()
+                bundle.putString("notetitle",name) //노트 제목 넘기기
+                bundle.putInt("position", position) //번호 넘기기
+
+                findNavController().navigate(R.id.action_navigation_my_note_to_noteViewerFragment,bundle)
             }
         })
         val noteRecyclerView = binding.noteListRecyclerView //리사이클러뷰를 붙여줄 레이아웃 위치 가져오기
