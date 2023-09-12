@@ -23,7 +23,7 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.properties.Delegates
+
 
 class NoteViewerFragment : Fragment() {
 
@@ -32,10 +32,15 @@ class NoteViewerFragment : Fragment() {
     private lateinit var notes : MutableList<Note>
     private lateinit var noteViewAdapter : NotePagerAdapter
 
+    var position by Delegates.notNull<Int>()
+    lateinit var noteTitle : String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-
+            position = it.getInt("position")
+            noteTitle = it.getString("notetitle").toString()
+            Log.d("noteClicked #2","$position")
+            Log.d("noteClicked #2","$noteTitle")
         }
     }
 
@@ -63,6 +68,9 @@ class NoteViewerFragment : Fragment() {
         var noteViewPager = binding.noteViewPager
 
         notes = mutableListOf()
+
+        var noteTitle = binding.txtNoteViewrTitle
+        noteTitle.text = "Note "+position.toString()
 
         //테스트용 더미 데이터 생성 => 여기서 서버로부터 정보 받아와 파싱하는 코드 작성 필요
 
