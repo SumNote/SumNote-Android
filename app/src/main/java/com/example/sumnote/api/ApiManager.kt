@@ -11,6 +11,7 @@ import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.Part
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiManager {
@@ -39,6 +40,11 @@ interface ApiManager {
     // 노트 만들기
     @POST("create-sum-note")
     fun createNote(@Body request: CreateNoteRequest): Call<ResponseBody>
+
+
+    // 노트 조회하기
+    @GET("sum-note-detail/{id}")
+    fun detailNote(@Path("id") id : Int): Call<ResponseBody>
 
 
 }

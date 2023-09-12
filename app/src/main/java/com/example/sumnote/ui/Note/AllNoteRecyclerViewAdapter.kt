@@ -43,7 +43,8 @@ class AllNoteRecyclerViewAdapter(
             itemView.setOnClickListener{
                 val position: Int = absoluteAdapterPosition //아이템 위치 가져오기
                 val titleText = itemList[position].title
-                val getnDate = itemList[position].generatedDate
+//                val getnDate = itemList[position].generatedDate
+                val getnDate = itemList[position].created_at
                 val id = itemList[position].id
                 Log.d("noteList", "$titleText,$getnDate,$id")
                 onItemClickListener.onAllNoteItemClick(position) //클릭 리스너로 현재 위치(아이템 아이디)를 보냄
@@ -71,7 +72,8 @@ class AllNoteRecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHoler, position: Int) {
         //홀더(위에서 생성한 홀더)에 값 할당
         holder.title.text = itemList[position].title
-        holder.generatedDate.text = itemList[position].generatedDate
+//        holder.generatedDate.text = itemList[position].generatedDate
+        holder.generatedDate.text = itemList[position].created_at
 
         //이미지는 position에 해당하는 값으로
         // 이미지의 리소스 ID 얻어오기

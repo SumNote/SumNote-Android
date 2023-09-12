@@ -83,7 +83,6 @@ class LoginActivity : AppCompatActivity() {
                 userInfo.email = user.kakaoAccount?.email.toString()
 //                kakaoViewModel.kakaoUser.value = userInfo
 
-                Log.d("BUTTON CLICKED", "id: " + userInfo.name + ", pw: ")
 
                 Login(userInfo)
             }
