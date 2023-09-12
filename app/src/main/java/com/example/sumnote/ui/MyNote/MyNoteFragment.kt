@@ -69,7 +69,6 @@ class MyNoteFragment : Fragment(){
         //id : note_list_recycler_view
 
         //리사이클러뷰에 사용할 아이템 리스트(테스트용)
-
         //data class NoteItem constructor(var id:Int, var title:String, var generatedDate:String)
 //        for(i in 0 until 10){
 //            noteList.add(NoteItem(i, "Note $i","2023.08.30 pm 16:53"))

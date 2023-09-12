@@ -1,6 +1,7 @@
 package com.example.sumnote.ui
 
 import android.content.ContentValues
+import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
@@ -14,6 +15,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.navigation.fragment.findNavController
@@ -47,8 +50,6 @@ class NewNoteFragment : Fragment() {
     lateinit var textTitle: String // ocr을 통해 얻어온 교과서의 텍스트들
     lateinit var textBook: String // ocr을 통해 얻어온 교과서의 텍스트들
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -73,8 +74,6 @@ class NewNoteFragment : Fragment() {
             var summaryNote = binding.textSummaryNote
             summaryNote.text = textBook
 
-
-
         }
         return view
     }
@@ -84,35 +83,64 @@ class NewNoteFragment : Fragment() {
 
         val note = binding.note // layout2 LinearLayout 가져오기
 
+        //현재 보유중인 노트 리스트
+        var colorArray: Array<String> = arrayOf("데이터베이스", "알고리즘", "운영체제")
+
+
+        //저장하기 버튼 클릭시
         binding.btnSaveNote.apply {
             setOnClickListener{
                 Log.d("newNote","note saved!")
                 val bitmap = viewToBitmap(note) // 프래그먼트의 뷰 전체를 Bitmap으로 변환
                 saveNoteImageToMediaStore(bitmap) // Bitmap을 저장
 
-                arguments?.let {
+                var selectedNoteTitle : String
+                val builder = AlertDialog.Builder(requireContext())
+                builder.setTitle("저장할 노트를 선택해주세요")
+                    .setItems(colorArray,
+                        DialogInterface.OnClickListener { dialog, which ->
+                            // 여기서 인자 'which'는 배열의 position을 의미
+                            selectedNoteTitle = colorArray[which]
+                            //선택된 노트 확인
+                            Log.d("selectedNote",selectedNoteTitle)
 
-                    textTitle = it.getString("title").toString()
-                    var title = binding.textView
-                    title.text = textTitle
+                            findNavController().navigate(R.id.action_newNoteFragment_to_navigation_my_note)
+                        })
+                // 다이얼로그 띄우기
+                builder.show()
 
-                    textBook = it.getString("textBook").toString()
-                    Log.d("newnote", textBook)
-                    var summaryNote = binding.textSummaryNote
-                    summaryNote.text = textBook
 
-//                    val newNote = NoteItem(10, textTitle, "2023-09-12")
 
-                    val summary = Summary()
-                    summary.title = textTitle
-                    summary.content = textBook
-
-                    makeNote(summary)
-
-                }
-                findNavController().navigate(R.id.action_newNoteFragment_to_navigation_my_note)
+//                //서버로 노트 저장하는 요청
+//                arguments?.let {
+//
+//                    textTitle = it.getString("title").toString()
+//                    var title = binding.textView
+//                    title.text = textTitle
+//
+//                    textBook = it.getString("textBook").toString()
+//                    Log.d("newnote", textBook)
+//                    var summaryNote = binding.textSummaryNote
+//                    summaryNote.text = textBook
+//
+//                    val summary = Summary()
+//                    summary.title = textTitle
+//                    summary.content = textBook
+//
+//                    makeNote(summary)
+//
+//                }
             }
         }
+
+
+        //뒤로가기 버튼 클릭시 스택에서 제거 => 카메라 프래그먼트로 이동
+        val btnReturnCamera = binding.btnReturnCamera// 버튼 ID를 적절히 변경하세요
+        btnReturnCamera.setOnClickListener {
+            requireActivity().supportFragmentManager.popBackStack() //현재 프래그먼트 스택에서 제거
+        }
+
+
     }
 
     //뷰 -> 비트맵 전환 : 이미지 저장을 위해
