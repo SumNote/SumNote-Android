@@ -14,6 +14,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
+import androidx.navigation.fragment.findNavController
+import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentNewNoteBinding
 import com.example.sumnote.ui.DTO.CreateNoteRequest
 import com.example.sumnote.ui.Note.NoteItem
@@ -106,7 +110,7 @@ class NewNoteFragment : Fragment() {
                     makeNote(summary)
 
                 }
-
+                findNavController().navigate(R.id.action_newNoteFragment_to_navigation_my_note)
             }
         }
     }
@@ -188,6 +192,8 @@ class NewNoteFragment : Fragment() {
                     if (responseBody != null) {
                         val jsonString = responseBody.string()
                         Log.d("#MAKE_NOTE: ", jsonString)
+
+
 
                     } else {
                         // 응답 본문이 null인 경우 처리
