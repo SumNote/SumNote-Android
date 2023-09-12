@@ -33,14 +33,14 @@ class NoteViewerFragment : Fragment() {
     private lateinit var notes : MutableList<Note>
     private lateinit var noteViewAdapter : NotePagerAdapter
 
-    var position by Delegates.notNull<Int>()
+
     lateinit var noteTitle : String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            position = it.getInt("position")
+
             noteTitle = it.getString("notetitle").toString()
-            Log.d("noteClicked #2","$position")
+
             Log.d("noteClicked #2","$noteTitle")
         }
     }
@@ -56,13 +56,17 @@ class NoteViewerFragment : Fragment() {
             // arguments에서 "noteId" 키로 넘어온 값을 읽어옵니다.
 
             val clickedNoteId = it.getInt("noteId") // -1은 기본값, 값이 없을 경우 기본값을 사용합니다.
+
+            var clickedNoteTitle = it.getString("sum_doc_title") // -1은 기본값, 값이 없을 경우 기본값을 사용합니다.
+            var noteTitle = binding.txtNoteViewrTitle
+            noteTitle.text = clickedNoteTitle
+
             Log.d("#NOTE ID", "note ID : $clickedNoteId")
             // 이제 클릭한 노트 아이디를 사용할 수 있습니다.
             if (clickedNoteId != -1) {
                 // 클릭한 노트 아이디를 사용하는 로직을 여기에 작성합니다.
                 detailNote(clickedNoteId)
             }
-
         }
 
         //노트들을 보여주기 위한 뷰 페이저
@@ -70,8 +74,7 @@ class NoteViewerFragment : Fragment() {
 
         notes = mutableListOf()
 
-        var noteTitle = binding.txtNoteViewrTitle
-        noteTitle.text = "Note "+position.toString()
+
 
         //테스트용 더미 데이터 생성 => 여기서 서버로부터 정보 받아와 파싱하는 코드 작성 필요
 
@@ -157,6 +160,7 @@ class NoteViewerFragment : Fragment() {
                         val jsonString = responseBody.string()
                         val json = JSONObject(jsonString)
 
+                        val docTitle = json.getString("sum_doc_title")
                         val title = json.getString("title")
                         val content = json.getString("content")
 

@@ -35,7 +35,7 @@ interface ApiManager {
 
     // 노트 리스트 가져오기
     @GET("sum-notes")
-    fun getSumNotes(@Query("name") name: String, @Query("email") email: String): Call<ResponseBody>
+    fun getSumNotes(@Query("email") email: String): Call<ResponseBody>
 
     // 노트 만들기
     @POST("create-sum-note")
@@ -43,7 +43,7 @@ interface ApiManager {
 
 
     // 노트 조회하기
-    @GET("sum-note-detail/{id}")
+    @GET("sum-note/{id}")
     fun detailNote(@Path("id") id : Int): Call<ResponseBody>
 
 

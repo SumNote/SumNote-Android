@@ -93,7 +93,7 @@ class AllNoteFragment : Fragment() {
         Log.d("getUser() TEST", user.name + " and " + user.email)
 
 
-        val call = RetrofitBuilder.api.getSumNotes(user.name.toString(), user.email.toString())
+        val call = RetrofitBuilder.api.getSumNotes(user.email.toString())
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
@@ -109,12 +109,12 @@ class AllNoteFragment : Fragment() {
                         val noteList = result.noteList
                         for (note in noteList) {
                             println("ID: ${note.id}")
-                            println("Title: ${note.title}")
+                            println("Title: ${note.sum_doc_title}")
 //                            println("Content: ${note.generatedDate}")
                             println("Created At: ${note.created_at}")
-                            Log.d("GET NOTELIST" , "ID : ${note.id} title : ${note.title} created_at : ${note.created_at}")
+                            Log.d("GET NOTELIST" , "ID : ${note.id} title : ${note.sum_doc_title} created_at : ${note.created_at}")
 
-                            val myNote = NoteItem(note.id, note.title,note.created_at)
+                            val myNote = NoteItem(note.id, note.sum_doc_title,note.created_at)
                             addNoteList(myNote)
                         }
 

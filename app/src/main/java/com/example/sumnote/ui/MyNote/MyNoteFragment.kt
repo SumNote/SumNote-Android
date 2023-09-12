@@ -69,7 +69,6 @@ class MyNoteFragment : Fragment(){
         //id : note_list_recycler_view
 
         //리사이클러뷰에 사용할 아이템 리스트(테스트용)
-        //var noteList = ArrayList<NoteItem>()
         //data class NoteItem constructor(var id:Int, var title:String, var generatedDate:String)
 //        for(i in 0 until 10){
 //            noteList.add(NoteItem(i, "Note $i","2023.08.30 pm 16:53"))
@@ -83,11 +82,13 @@ class MyNoteFragment : Fragment(){
 
                 // 클릭한 노트 아이디 가져오기
                 val clickedNoteId = noteList[position].id
+                val noteTitle = noteList[position].sum_doc_title
 
                 // 번들을 생성하고 클릭한 노트 아이디를 추가
                 val bundle = Bundle()
                 bundle.putInt("noteId", clickedNoteId)
-                bundle.putInt("position", position) //번호 넘기기
+                bundle.putString("sum_doc_title", noteTitle)
+//                bundle.putInt("position", position) //번호 넘기기
                 Log.d("NOTE CLICKED", "test : $clickedNoteId")
 
                 // 노트 아이템 클릭시 동작
@@ -170,7 +171,7 @@ class MyNoteFragment : Fragment(){
         Log.d("getUser() TEST", user.name + " and " + user.email)
 
 
-        val call = RetrofitBuilder.api.getSumNotes(user.name.toString(), user.email.toString())
+        val call = RetrofitBuilder.api.getSumNotes(user.email.toString())
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
@@ -183,15 +184,15 @@ class MyNoteFragment : Fragment(){
                         val result = gson.fromJson(jsonString, Result::class.java)
 
                         // 'noteList'에 포함된 노트 목록에 접근합니다.
-                        val noteList = result.noteList
-                        for (note in noteList) {
+                        val notes = result.noteList
+                        for (note in notes) {
                             println("ID: ${note.id}")
-                            println("Title: ${note.title}")
+                            println("Title: ${note.sum_doc_title}")
 //                            println("Content: ${note.generatedDate}")
                             println("Created At: ${note.created_at}")
-                            Log.d("GET NOTELIST" , "ID : ${note.id} title : ${note.title} created_at : ${note.created_at}")
+                            Log.d("GET NOTELIST" , "ID : ${note.id} title : ${note.sum_doc_title} created_at : ${note.created_at}")
 
-                            val myNote = NoteItem(note.id, note.title,note.created_at)
+                            val myNote = NoteItem(note.id, note.sum_doc_title, note.created_at)
                             addNoteList(myNote)
                         }
 
@@ -237,7 +238,11 @@ class MyNoteFragment : Fragment(){
         val isDuplicate = noteList.any { it.id == note.id }
 
         if (!isDuplicate) {
-            noteList.add(0, note)
+            if (noteList.size < 10) {
+                // 10개 미만일 때만 요소 추가
+                noteList.add(0, note)
+            }
+
 
             // RecyclerView 어댑터를 업데이트
             noteRecyclerViewAdapter.notifyDataSetChanged()
