@@ -10,11 +10,10 @@ import android.view.ViewGroup
 import com.example.sumnote.databinding.FragmentNoteBinding
 
 
-//노트 데이터 클래스
-//id, 노트 제목, 요약 정보량
-data class Note(
+//한 노트에 대한 페이지 클래스
+data class Page(
 //    val noteId : Int,
-    val noteTitle: String,
+    val pageTitle: String,
     val summary: String,
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
@@ -25,7 +24,7 @@ data class Note(
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
 //        parcel.writeInt(noteId)
-        parcel.writeString(noteTitle)
+        parcel.writeString(pageTitle)
         parcel.writeString(summary)
     }
 
@@ -33,12 +32,12 @@ data class Note(
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<Note> {
-        override fun createFromParcel(parcel: Parcel): Note {
-            return Note(parcel)
+    companion object CREATOR : Parcelable.Creator<Page> {
+        override fun createFromParcel(parcel: Parcel): Page {
+            return Page(parcel)
         }
 
-        override fun newArray(size: Int): Array<Note?> {
+        override fun newArray(size: Int): Array<Page?> {
             return arrayOfNulls(size)
         }
     }
@@ -47,7 +46,7 @@ data class Note(
 
 class NoteFragment : Fragment() {
 
-    private lateinit var note: Note //현재 화면에 보여주기 위한 노트 객체
+    private lateinit var page: Page //현재 화면에 보여주기 위한 노트 객체
     private var _binding : FragmentNoteBinding? = null
     private val binding get() = _binding!!
 
@@ -55,7 +54,7 @@ class NoteFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            note = it.getParcelable(NoteFragment.ARG_NOTE)!!
+             page = it.getParcelable(NoteFragment.ARG_PAGE)!!
         }
     }
 
@@ -67,9 +66,9 @@ class NoteFragment : Fragment() {
         _binding = FragmentNoteBinding.inflate(inflater, container, false)
 
         var noteTitle = binding.noteTitle
-        noteTitle.text = note.noteTitle
+        noteTitle.text = page.pageTitle
         var noteSummary = binding.noteSummary
-        noteSummary.text = note.summary
+        noteSummary.text = page.summary
 
 
         return binding.root
@@ -78,11 +77,11 @@ class NoteFragment : Fragment() {
 
 
     companion object {
-        private const val ARG_NOTE = "note"
-        //번들로 객체를 전달하기 위해 Note객체를 Parcelable객체로 변환
-        fun newInstance(note: Note) = NoteFragment().apply {
+        private const val ARG_PAGE = "note"
+        //번들로 객체를 전달하기 위해 Page객체를 Parcelable객체로 변환
+        fun newInstance(page: Page) = NoteFragment().apply {
             arguments = Bundle().apply {
-                putParcelable(ARG_NOTE, note)
+                putParcelable(ARG_PAGE, page)
             }
         }
     }

@@ -7,41 +7,32 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentNoteViewerBinding
-import com.example.sumnote.ui.DTO.User
-import com.example.sumnote.ui.MyNote.MyNoteFragment
-import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
 import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
-import com.google.gson.Gson
-import com.kakao.sdk.user.UserApiClient
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.properties.Delegates
-
 
 class NoteViewerFragment : Fragment() {
 
     private var _binding: FragmentNoteViewerBinding? = null
     private val binding get() = _binding!!
-    private lateinit var notes : MutableList<Note>
+    private lateinit var pages : MutableList<Page>
     private lateinit var noteViewAdapter : NotePagerAdapter
 
 
-    lateinit var noteTitle : String
+    lateinit var pageTitle : String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
 
-            noteTitle = it.getString("notetitle").toString()
+            pageTitle = it.getString("notetitle").toString()
 
-            Log.d("noteClicked #2","$noteTitle")
+            Log.d("noteClicked #2","$pageTitle")
         }
     }
 
@@ -52,28 +43,24 @@ class NoteViewerFragment : Fragment() {
     ): View? {
         _binding = FragmentNoteViewerBinding.inflate(inflater, container, false)
 
+        //번들에서 값 얻어오기 => 클릭한 노트 알아내기
         arguments?.let {
-            // arguments에서 "noteId" 키로 넘어온 값을 읽어옵니다.
 
-            val clickedNoteId = it.getInt("noteId") // -1은 기본값, 값이 없을 경우 기본값을 사용합니다.
-
-            var clickedNoteTitle = it.getString("sum_doc_title") // -1은 기본값, 값이 없을 경우 기본값을 사용합니다.
+            val clickedNoteId = it.getInt("noteId") // 선택한 노트가 없을 경우 -1
+            var clickedNoteTitle = it.getString("sum_doc_title") // 선택한 노트가 없을 경우 -1
             var noteTitle = binding.txtNoteViewrTitle
             noteTitle.text = clickedNoteTitle
 
             Log.d("#NOTE ID", "note ID : $clickedNoteId")
-            // 이제 클릭한 노트 아이디를 사용할 수 있습니다.
             if (clickedNoteId != -1) {
-                // 클릭한 노트 아이디를 사용하는 로직을 여기에 작성합니다.
+                //클릭한 노트에 대한 페이지 정보를 서버에 요청
                 detailNote(clickedNoteId)
             }
         }
 
-        //노트들을 보여주기 위한 뷰 페이저
+        //페이지들을 보여주기 위한 뷰 페이저
         var noteViewPager = binding.noteViewPager
-
-        notes = mutableListOf()
-
+        pages = mutableListOf()
 
 
         //테스트용 더미 데이터 생성 => 여기서 서버로부터 정보 받아와 파싱하는 코드 작성 필요
@@ -123,7 +110,7 @@ class NoteViewerFragment : Fragment() {
 //        )
 
         //뷰 페이저에 붙일 어댑터 생성
-        noteViewAdapter = NotePagerAdapter(this, notes)
+        noteViewAdapter = NotePagerAdapter(this, pages)
         noteViewPager.adapter = noteViewAdapter //어댑터 붙이기
 
 
@@ -134,6 +121,7 @@ class NoteViewerFragment : Fragment() {
         }
 
 
+        //노트 삭제 버튼 => 처리x 추후 문제 생성에 대한 코드로 변경할것
         val deleteBtn = binding.deleteNote
         deleteBtn.setOnClickListener{
 
@@ -148,6 +136,7 @@ class NoteViewerFragment : Fragment() {
         _binding = null
     }
 
+    //서버로부터 클릭한 노트에 대한 페이지 요청
     private fun detailNote(clickedNoteId : Int){
 
         val call = RetrofitBuilder.api.detailNote(clickedNoteId)
@@ -160,7 +149,9 @@ class NoteViewerFragment : Fragment() {
                         val jsonString = responseBody.string()
                         val json = JSONObject(jsonString)
 
-                        val docTitle = json.getString("sum_doc_title")
+                        val docTitle = json.getString("sum_doc_title") //클릭한 노트의 제목
+
+                        //노트에 대한 페이지들의 정보 => 파싱 필요 title : [][] .. content : [][]
                         val title = json.getString("title")
                         val content = json.getString("content")
 
@@ -168,15 +159,43 @@ class NoteViewerFragment : Fragment() {
                         Log.d("#DETAIL title:", title)
                         Log.d("#DETAIL content:", content)
 
+                        // [] 안의 값을 모두 파싱하기 위한 정규식
+                        // 1. 정규식에서 [는 별도의 의미를 가지므로, [를 문자열로 사용하기 위해선 \\를 붙여야함
+                        // 2. '.'는 임의의 문자를 의미
+                        // 3. *는 바로 앞 문자나 그룹이 0번 이상 반복됨을 의미
+                        // 4. ?는 앞의 *의 탐욕을 제한 => 한 그룹의 []안의 문자열이 대응될수 있도록
+                        val pattern = Regex("\\[(.*?)\\]")
 
+                        // title 및 content에서 []로 둘러싸인 값을 파싱
+                        val parsedTitles = pattern.findAll(title).map { it.groupValues[1] }.toList()
+                        val parsedContents = pattern.findAll(content).map { it.groupValues[1] }.toList()
 
-                        var note = Note(
-                            noteTitle = title,
-                            summary = content
-                        )
+                        // 파싱된 값들의 길이가 동일한지 확인하고, 동일하면 Page 객체를 생성하여 pages에 추가
+                        // 제목으로 3개를 가져왔는데, 내용으로 2개만 가져오는 경우에 대한 예외처리
+                        if (parsedTitles.size == parsedContents.size) {
+                            for (i in parsedTitles.indices) {
+                                val page = Page(
+                                    pageTitle = parsedTitles[i],
+                                    summary = parsedContents[i]
+                                )
+                                pages.add(page)
+                            }
+                            noteViewAdapter.notifyDataSetChanged()
+                        } else {
+                            // 타이틀과 컨텐츠의 길이가 다르면 로그를 남깁니다.
+                            Log.e("ParsingError", "Title and content size mismatch!")
+                        }
 
-                        notes.add(note)
-                        noteViewAdapter.notifyDataSetChanged()
+                        //기존 코드
+//                        //노트에 대한 페이지들 파싱
+//                        var page = Page(
+//                            pageTitle = title,
+//                            summary = content
+//                        )
+//
+//                        //
+//                        pages.add(page)
+//                        noteViewAdapter.notifyDataSetChanged()
 
                     } else {
                         // 응답 본문이 null인 경우 처리
@@ -198,7 +217,7 @@ class NoteViewerFragment : Fragment() {
 // NotePagerAdapter 클래스
 class NotePagerAdapter(
     fragmentActivity: NoteViewerFragment,
-    private val notes: List<Note>
+    private val notes: List<Page>
 ) : FragmentStateAdapter(fragmentActivity) {
 
     override fun getItemCount(): Int {

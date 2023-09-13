@@ -91,11 +91,16 @@ class MyNoteFragment : Fragment(){
 //                bundle.putInt("position", position) //번호 넘기기
                 Log.d("NOTE CLICKED", "test : $clickedNoteId")
 
-                // 노트 아이템 클릭시 동작
+                // 노트 아이템 클릭시 동작 => 번들을 통해 현재 클릭한 노트가 어떤 노트인지 전달
                 findNavController().navigate(R.id.action_navigation_my_note_to_noteViewerFragment, bundle)
 
             }
         })
+
+
+
+
+
         val noteRecyclerView = binding.noteListRecyclerView //리사이클러뷰를 붙여줄 레이아웃 위치 가져오기
         noteRecyclerView.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false) //좌우로 보여주기
         noteRecyclerView.adapter = noteRecyclerViewAdapter
@@ -134,6 +139,9 @@ class MyNoteFragment : Fragment(){
         quizRecyclerView.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)//위아래로 보여주기
         quizRecyclerView.adapter = quizRecyclerViewAdapter
 
+
+
+        //사용자 정보 보기
         UserApiClient.instance.me { user, error ->
             if (error != null) {
                 Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
@@ -166,6 +174,8 @@ class MyNoteFragment : Fragment(){
     data class Result(
         @SerializedName("noteList") val noteList: List<NoteItem>
     )
+
+    //서버로부터 노트 목록 받아오기
     private fun initNoteList(user : User){
 
         Log.d("getUser() TEST", user.name + " and " + user.email)
