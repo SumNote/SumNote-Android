@@ -33,7 +33,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="5dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/img_kakao_user"
+            android:src="@drawable/img_default_user"
             app:civ_border_overlay="true" />
 
         <TextView

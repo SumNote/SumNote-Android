@@ -22,7 +22,7 @@
             android:layout_gravity="center"
             android:layout_marginStart="24dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/img_kakao_user"
+            android:src="@drawable/img_default_user"
             app:civ_border_overlay="true" />
 
     </LinearLayout>
