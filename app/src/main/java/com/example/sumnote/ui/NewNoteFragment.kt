@@ -135,9 +135,9 @@ class NewNoteFragment : Fragment() {
 
 
         //뒤로가기 버튼 클릭시 스택에서 제거 => 카메라 프래그먼트로 이동
-        val btnReturnCamera = binding.btnReturnCamera// 버튼 ID를 적절히 변경하세요
+        val btnReturnCamera = binding.btnReturnCamera
         btnReturnCamera.setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStack() //현재 프래그먼트 스택에서 제거
+            findNavController().popBackStack() //현재 프래그먼트 스택에서 제거
         }
 
 
