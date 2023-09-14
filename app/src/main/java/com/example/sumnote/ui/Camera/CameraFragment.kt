@@ -52,6 +52,7 @@ import retrofit2.Call
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.OutputStream
 import java.lang.reflect.Type
@@ -237,7 +238,15 @@ class CameraFragment : Fragment() {
         Log.d("sendImage","sendImageToServer Call")
         Log.d("test : ", "##8")
 
-        // timeout setting 해주기
+        // 이미지를 Bitmap으로 변환
+        val originalBitmap = byteArrayToBitmap(imageBytes)
+
+        // Bitmap을 90도 회전
+        val rotatedBitmap = rotateBitmap(originalBitmap, 270)
+
+        // 회전된 Bitmap을 ByteArray로 다시 변환
+        val rotatedImageBytes = bitmapToByteArray(rotatedBitmap)
+
         val okHttpClient = OkHttpClient().newBuilder()
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
@@ -252,75 +261,50 @@ class CameraFragment : Fragment() {
 
         apiManager = retrofit.create(ApiManager::class.java)
 
-        val requestBody = RequestBody.create("image/*".toMediaTypeOrNull(), imageBytes)
+        val requestBody = RequestBody.create("image/*".toMediaTypeOrNull(), rotatedImageBytes)
         val imagePart = MultipartBody.Part.createFormData("image", "image.jpg", requestBody)
 
-        val call = apiManager.uploadImageTest(imagePart) // 모바일 카메라 화질 이슈로 인한 테스트용 api
-        //val call = apiManager.uploadImage(imagePart)
+        val call = apiManager.uploadImageTest(imagePart)
 
-        // 다이얼로그 표시
         loadingDialog.show(requireActivity().supportFragmentManager, loadingDialog.tag)
 
         call.enqueue(object : retrofit2.Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
                 if (response.isSuccessful) {
-                    // 서버로 이미지 전송 성공시
                     Log.d("DjangoServer","send success")
                     Toast.makeText(this@CameraFragment.activity, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
-                    // 서버 응답에 대한 추가 처리 코드 작성
 
                     val responseBody = response.body()?.string()
-
                     try {
-                        // JSON 응답 파싱
                         val jsonObject = JSONObject(responseBody)
-                        //String 값 받아오기  => 책의 모든 문자열(추후 ocr코드 개발되면 개선)
                         val textBook = jsonObject.getString("text")
-
                         Log.d("DjangoServer", "Text Book's Text : $textBook")
-
-                        // GPT 요약된 노트 가져오기
                         val textGpt = jsonObject.getString("sum_result")
                         Log.d("DjangoServer", "Text GPT's Text : $textGpt")
-
                         val noteTitle = jsonObject.getString("title")
                         val summary = jsonObject.getString("summary")
 
-
-
-                        //noteMaker Fragment로 이동
                         val bundle = Bundle()
-                        bundle.putString("title", noteTitle) //노트 데이터 번들에 넣기
-                        bundle.putString("textBook", summary) //노트 데이터 번들에 넣기
-                        
-                        findNavController().navigate(R.id.action_cameraFragement_to_newNoteFragment,bundle)
+                        bundle.putString("title", noteTitle)
+                        bundle.putString("textBook", summary)
 
+                        findNavController().navigate(R.id.action_cameraFragement_to_newNoteFragment,bundle)
                     } catch (e: JSONException) {
                         Log.e("DjangoServer", "Error parsing JSON: ${e.message}")
                     }
-
-
                 } else {
-                    // 서버로 이미지 전송 실패시
                     Toast.makeText(this@CameraFragment.activity, "Image upload failed", Toast.LENGTH_SHORT).show()
                 }
-
-                // 응답 처리 후 다이얼로그 닫기
                 loadingDialog.dismiss()
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                // 통신 실패 처리
                 Log.e("ImageUpload", "Image upload error: ${t.message}")
-
-                // 응답 처리 후 다이얼로그 닫기
                 loadingDialog.dismiss()
             }
         })
         Log.d("sendImage","sendImageToServer Exit")
     }
-
-
 
     // 정지된 화면을 ImageView에 표시
     private fun showCapturedImagePreview() {
@@ -375,6 +359,18 @@ class CameraFragment : Fragment() {
 
 
     }
+
+    private fun byteArrayToBitmap(byteArray: ByteArray): Bitmap {
+        return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+    }
+
+
+    private fun bitmapToByteArray(bitmap: Bitmap): ByteArray {
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        return stream.toByteArray()
+    }
+
 
     //비트맵을 90도 회전하여 사진이 90도 뒤집혀 저장되는 사태를 방지(이미지 크기가 너무 큰것이 원인으로 보임)
     private fun rotateBitmap(source: Bitmap, angle: Int): Bitmap {

@@ -164,20 +164,25 @@ class NoteViewerFragment : Fragment() {
                         // 2. '.'는 임의의 문자를 의미
                         // 3. *는 바로 앞 문자나 그룹이 0번 이상 반복됨을 의미
                         // 4. ?는 앞의 *의 탐욕을 제한 => 한 그룹의 []안의 문자열이 대응될수 있도록
-                        val pattern = Regex("\\[(.*?)\\]")
+//                        val pattern = Regex("\\[(.*?)\\]")
+
+                        val pattern = Regex("\\[([\\s\\S]*?)\\]")
 
                         // title 및 content에서 []로 둘러싸인 값을 파싱
                         val parsedTitles = pattern.findAll(title).map { it.groupValues[1] }.toList()
                         val parsedContents = pattern.findAll(content).map { it.groupValues[1] }.toList()
-
+                        Log.d("#createdPage : ","$parsedTitles, $parsedContents")
                         // 파싱된 값들의 길이가 동일한지 확인하고, 동일하면 Page 객체를 생성하여 pages에 추가
                         // 제목으로 3개를 가져왔는데, 내용으로 2개만 가져오는 경우에 대한 예외처리
                         if (parsedTitles.size == parsedContents.size) {
                             for (i in parsedTitles.indices) {
+                                var pTitle = parsedTitles[i]
+                                var pSummary = parsedContents[i]
                                 val page = Page(
                                     pageTitle = parsedTitles[i],
                                     summary = parsedContents[i]
                                 )
+                                Log.d("#createdPage : ","페이지 제목 : $pTitle 요약정보 $pSummary ")
                                 pages.add(page)
                             }
                             noteViewAdapter.notifyDataSetChanged()
