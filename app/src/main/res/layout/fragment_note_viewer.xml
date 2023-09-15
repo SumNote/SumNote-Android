@@ -37,15 +37,16 @@
             app:layout_constraintStart_toEndOf="@+id/img_btn_back"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
-            android:id="@+id/deleteNote"
+
+        <ImageView
+            android:id="@+id/menu_vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text="노트 삭제"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/menu_vertical" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

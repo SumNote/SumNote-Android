@@ -14,6 +14,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.navigation.NavOptions
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.sumnote.databinding.FragmentNewNoteBinding
 import com.example.sumnote.ui.DTO.CreateNoteRequest
@@ -43,8 +48,8 @@ class NewNoteFragment : Fragment(),SelectNoteToSaveDialogInterface {
     private var _binding: FragmentNewNoteBinding? = null
     private val binding get() = _binding!!
 
-    lateinit var textTitle: String // ocr을 통해 얻어온 교과서의 텍스트들
-    lateinit var textBook: String // ocr을 통해 얻어온 교과서의 텍스트들
+    private lateinit var textTitle: String // ocr을 통해 얻어온 교과서의 텍스트들
+    private lateinit var textBook: String // ocr을 통해 얻어온 교과서의 텍스트들
 
     lateinit var noteList: List<NoteItem>
 
@@ -249,26 +254,22 @@ class NewNoteFragment : Fragment(),SelectNoteToSaveDialogInterface {
     }
 
 
-    private fun makeNote(summary: Summary){
+    private fun makeNote() {
         // 사용자 정보 요청 (기본)
         UserApiClient.instance.me { user, error ->
             if (error != null) {
                 Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
             } else if (user != null) {
-                var userInfo = User()
-                userInfo.name = user.kakaoAccount?.profile?.nickname.toString()
-                userInfo.email = user.kakaoAccount?.email.toString()
-
-                Log.d("NOTELIST TEST : ", "name : " + userInfo.name + ", email" + userInfo.email)
-                serverNote(userInfo, summary)
+                var email = user.kakaoAccount?.email.toString()
+                serverNote(email)
             }
         }
 
     }
-    }
-    private fun serverNote(user : User, summary: Summary) {
 
-        val request = CreateNoteRequest(user, summary)
+    private fun serverNote(email: String) {
+
+        val request = CreateNoteRequest(email, "Note #0", "[${textTitle}]", "[${textBook}]")
         val call = RetrofitBuilder.api.createNote(request)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -277,7 +278,6 @@ class NewNoteFragment : Fragment(),SelectNoteToSaveDialogInterface {
                     if (responseBody != null) {
                         val jsonString = responseBody.string()
                         Log.d("#MAKE_NOTE: ", jsonString)
-
 
 
                     } else {
@@ -297,4 +297,4 @@ class NewNoteFragment : Fragment(),SelectNoteToSaveDialogInterface {
         })
     }
 
-
+}

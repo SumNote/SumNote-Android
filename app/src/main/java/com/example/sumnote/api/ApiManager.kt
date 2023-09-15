@@ -7,9 +7,11 @@ import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -38,7 +40,7 @@ interface ApiManager {
     fun getSumNotes(@Query("email") email: String): Call<ResponseBody>
 
     // 노트 만들기
-    @POST("create-sum-note")
+    @POST("sum-note")
     fun createNote(@Body request: CreateNoteRequest): Call<ResponseBody>
 
 
@@ -46,5 +48,11 @@ interface ApiManager {
     @GET("sum-note/{id}")
     fun detailNote(@Path("id") id : Int): Call<ResponseBody>
 
+    // 노트 추가하기
+    @PUT("sum-note/content/{id}")
+    fun updateNote(@Path("id") id : Int, @Body request: CreateNoteRequest): Call<ResponseBody>
 
+    // 노트 삭제하기
+    @DELETE("sum-note/{id}")
+    fun deleteNote(@Path("id") id : Int): Call<ResponseBody>
 }
