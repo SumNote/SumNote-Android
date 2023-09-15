@@ -31,8 +31,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 class MyPageFragment : Fragment() {
-    lateinit var apiManager: ApiManager
-    private val baseUrl = "http://10.0.2.2:8000/"
+
 
     private var _binding: FragmentMyPageBinding? = null
     private lateinit var kakaoViewModel: KakaoViewModel
@@ -51,7 +50,6 @@ class MyPageFragment : Fragment() {
         binding.test.setOnClickListener {
 //            showLoading()
             // 서버 테스트
-            serverToGetPro()
         }
 
         // 프로필 세팅
@@ -116,73 +114,7 @@ class MyPageFragment : Fragment() {
         }
     }
 
-    private fun serverToGetPro(){
 
-        // timeout setting 해주기
-        val okHttpClient = OkHttpClient().newBuilder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
-            .build()
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        apiManager = retrofit.create(ApiManager::class.java)
-
-        // 요약된 노트 내용을 바탕으로 문제 생성
-        val call = apiManager.generateProblem("")
-        //val call = apiManager.uploadImage(imagePart)
-
-        // 다이얼로그 표시
-        loadingDialog.show(requireActivity().supportFragmentManager, loadingDialog.tag)
-
-        call.enqueue(object : retrofit2.Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
-                if (response.isSuccessful) {
-                    // 서버로 이미지 전송 성공시
-                    Log.d("DjangoServer","send success")
-
-                    // 서버 응답에 대한 추가 처리 코드 작성
-                    val responseBody = response.body()?.string()
-
-                    try {
-                        // JSON 응답 파싱
-                        val jsonObject = JSONObject(responseBody)
-                        //String 값 받아오기  => 책의 모든 문자열(추후 ocr코드 개발되면 개선)
-                        val question = jsonObject.getString("query")
-                        val answerList = jsonObject.getJSONArray("answerList")
-                        val answerNum = jsonObject.getString("answerNum")
-
-                        Log.d("DjangoServer", "question's Text : $question")
-                        Log.d("DjangoServer", "answer_list's Text : $answerList")
-                        Log.d("DjangoServer", "answer_num's Text : $answerNum")
-
-
-
-                    } catch (e: JSONException) {
-                        Log.e("DjangoServer", "Error parsing JSON: ${e.message}")
-                    }
-
-
-                } else {
-                    Log.e("DjangoServer", "Error response")
-                }
-
-                loadingDialog.dismiss()
-
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                // 통신 실패 처리
-                Log.e("ImageUpload", "Image upload error: ${t.message}")
-                loadingDialog.dismiss()
-            }
-        })
-    }
 
     // 테스트 용
     private fun showLoading() {

@@ -57,6 +57,7 @@ class MyNoteFragment : Fragment(){
         _binding = null
     }
 
+
     //뷰 생성 시점
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -209,6 +210,7 @@ class MyNoteFragment : Fragment(){
 
                     } else {
                         // 응답 본문이 null인 경우 처리
+                        Log.d("#SPRING Success:", "NO RESPONSE")
                     }
                 } else {
                     // 통신 성공 but 응답 실패

@@ -5,17 +5,31 @@ import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.example.sumnote.R
+import com.example.sumnote.api.ApiManager
 import com.example.sumnote.databinding.FragmentNoteViewerBinding
+import com.example.sumnote.ui.Dialog.CircleProgressDialog
+import com.example.sumnote.ui.kakaoLogin.KakaoOauthViewModelFactory
+import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
 import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
+import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
+import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.util.concurrent.TimeUnit
 
 class NoteViewerFragment : Fragment() {
 
@@ -23,7 +37,12 @@ class NoteViewerFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var pages : MutableList<Page>
     private lateinit var noteViewAdapter : NotePagerAdapter
+    private var clickedNoteId : Int = -1
 
+    lateinit var apiManager: ApiManager
+    private val baseUrl = "http://10.0.2.2:8000/"
+    private lateinit var kakaoViewModel: KakaoViewModel
+    private val loadingDialog = CircleProgressDialog()
 
     lateinit var pageTitle : String
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,17 +55,20 @@ class NoteViewerFragment : Fragment() {
         }
     }
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentNoteViewerBinding.inflate(inflater, container, false)
+        kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(requireActivity().application))[KakaoViewModel::class.java]
 
         //번들에서 값 얻어오기 => 클릭한 노트 알아내기
         arguments?.let {
 
-            val clickedNoteId = it.getInt("noteId") // 선택한 노트가 없을 경우 -1
+            clickedNoteId = it.getInt("noteId") // 선택한 노트가 없을 경우 -1
             var clickedNoteTitle = it.getString("sum_doc_title") // 선택한 노트가 없을 경우 -1
             var noteTitle = binding.txtNoteViewrTitle
             noteTitle.text = clickedNoteTitle
@@ -121,11 +143,39 @@ class NoteViewerFragment : Fragment() {
         }
 
 
-        //노트 삭제 버튼 => 처리x 추후 문제 생성에 대한 코드로 변경할것
-        val deleteBtn = binding.deleteNote
-        deleteBtn.setOnClickListener{
+        val menuButton = binding.menuVertical
+        menuButton.setOnClickListener {
+            // 팝업 메뉴를 생성하고 표시합니다.
+            val popupMenu = PopupMenu(requireContext(), menuButton)
+            val inflater = popupMenu.menuInflater
+            inflater.inflate(R.menu.note_viewer_menu, popupMenu.menu)
 
+            // 팝업 메뉴 아이템에 클릭 리스너를 추가할 수 있습니다.
+            popupMenu.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.menu_item1 -> {
+                        // 메뉴 아이템 1을 클릭했을 때 수행할 동작을 정의하세요.
+                        serverToGetPro()
+                        true
+                    }
+                    R.id.menu_item2 -> {
+                        // 메뉴 아이템 2를 클릭했을 때 수행할 동작을 정의하세요.
+
+                        deleteNote()
+                        Log.d("#MENU", "DELETE ${clickedNoteId}")
+                        findNavController().popBackStack()
+
+
+                        true
+                    }
+                    else -> false
+                }
+            }
+
+            // 팝업 메뉴를 표시합니다.
+            popupMenu.show()
         }
+
 
 
         return binding.root
@@ -134,6 +184,25 @@ class NoteViewerFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun deleteNote(){
+        val call = RetrofitBuilder.api.deleteNote(clickedNoteId)
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    Log.d("#SPRING SERVER:", "DELETE SUCCESS")
+
+                } else {
+                    // 통신 성공 but 응답 실패
+
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Log.d("#SPRING SERVER:", "CONNECTION FAILURE")
+            }
+        })
     }
 
     //서버로부터 클릭한 노트에 대한 페이지 요청
@@ -164,6 +233,7 @@ class NoteViewerFragment : Fragment() {
                         // 2. '.'는 임의의 문자를 의미
                         // 3. *는 바로 앞 문자나 그룹이 0번 이상 반복됨을 의미
                         // 4. ?는 앞의 *의 탐욕을 제한 => 한 그룹의 []안의 문자열이 대응될수 있도록
+
 //                        val pattern = Regex("\\[(.*?)\\]")
 
                         //수정된 정규식 패턴
@@ -171,8 +241,11 @@ class NoteViewerFragment : Fragment() {
 
                         // title 및 content에서 []로 둘러싸인 값을 파싱
                         val parsedTitles = pattern.findAll(title).map { it.groupValues[1] }.toList()
+                        Log.d("#DETAIL TITLE", "test : " + parsedTitles)
                         val parsedContents = pattern.findAll(content).map { it.groupValues[1] }.toList()
+
                         Log.d("#createdPage : ","$parsedTitles, $parsedContents")
+
                         // 파싱된 값들의 길이가 동일한지 확인하고, 동일하면 Page 객체를 생성하여 pages에 추가
                         // 제목으로 3개를 가져왔는데, 내용으로 2개만 가져오는 경우에 대한 예외처리
                         if (parsedTitles.size == parsedContents.size) {
@@ -215,6 +288,74 @@ class NoteViewerFragment : Fragment() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 // 통신에 실패한 경우
                 Log.d("CONNECTION FAILURE #SPRING SERVER: ", t.localizedMessage)
+            }
+        })
+    }
+
+    private fun serverToGetPro(){
+
+        // timeout setting 해주기
+        val okHttpClient = OkHttpClient().newBuilder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .build()
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        apiManager = retrofit.create(ApiManager::class.java)
+
+        // 요약된 노트 내용을 바탕으로 문제 생성
+        val call = apiManager.generateProblem("")
+        //val call = apiManager.uploadImage(imagePart)
+
+        // 다이얼로그 표시
+        loadingDialog.show(requireActivity().supportFragmentManager, loadingDialog.tag)
+
+        call.enqueue(object : retrofit2.Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    // 서버로 이미지 전송 성공시
+                    Log.d("DjangoServer","send success")
+
+                    // 서버 응답에 대한 추가 처리 코드 작성
+                    val responseBody = response.body()?.string()
+
+                    try {
+                        // JSON 응답 파싱
+                        val jsonObject = JSONObject(responseBody)
+                        //String 값 받아오기  => 책의 모든 문자열(추후 ocr코드 개발되면 개선)
+                        val question = jsonObject.getString("query")
+                        val answerList = jsonObject.getJSONArray("answerList")
+                        val answerNum = jsonObject.getString("answerNum")
+
+                        Log.d("DjangoServer", "question's Text : $question")
+                        Log.d("DjangoServer", "answer_list's Text : $answerList")
+                        Log.d("DjangoServer", "answer_num's Text : $answerNum")
+
+
+
+                    } catch (e: JSONException) {
+                        Log.e("DjangoServer", "Error parsing JSON: ${e.message}")
+                    }
+
+
+                } else {
+                    Log.e("DjangoServer", "Error response")
+                }
+
+                loadingDialog.dismiss()
+
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                // 통신 실패 처리
+                Log.e("ImageUpload", "Image upload error: ${t.message}")
+                loadingDialog.dismiss()
             }
         })
     }
