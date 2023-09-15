@@ -45,15 +45,8 @@ class AllNoteFragment : Fragment() {
         _binding = FragmentAllNoteBinding.inflate(inflater, container, false)
         kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(requireActivity().application))[KakaoViewModel::class.java]
 
+        //사용자 정보 얻어오기
         getUser()
-
-        //테스트용 더미 데이터 생성
-//        noteList = ArrayList<NoteItem>()
-        //data class NoteItem constructor(var id:Int, var title:String, var generatedDate:String)
-//        for(i in 0 until 10){
-//            noteList.add(NoteItem(i, "Note $i","2023.08.30 pm 16:53"))
-//        }
-
 
         //모든 노트 보기 리사이클러뷰 적용
         allNoteRecyclerViewAdapter = AllNoteRecyclerViewAdapter(noteList, LayoutInflater.from(this.context),
@@ -136,7 +129,6 @@ class AllNoteFragment : Fragment() {
     }
 
     private fun getUser() {
-
 
         // 사용자 정보 요청 (기본)
         UserApiClient.instance.me { user, error ->
