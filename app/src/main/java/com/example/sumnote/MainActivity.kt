@@ -7,6 +7,7 @@ import android.view.WindowManager
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.sumnote.databinding.ActivityMainBinding
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
@@ -55,10 +56,10 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
 
-        //만약 navController의 현재 프래그먼트 아이디가.. ~ 라면
+//       // 만약 navController의 현재 프래그먼트 아이디가.. ~ 라면
         when(navController.currentDestination?.id){
-            // 노트 메이커 프래그먼트에서 뒤로가기 누를경우 스택에서 제거(테스트용)
-            R.id.navigation_note_maker -> navController.popBackStack()
+//            // 노트 메이커 프래그먼트에서 뒤로가기 누를경우 스택에서 제거(테스트용)
+//            R.id.navigation_note_maker -> navController.popBackStack()
             // 카메라 프래그먼트에서 사용자가 사진 촬영없이 뒤로가기 하는 상황 고려 : 카메라 프래그먼트를 스택에서 제거
             R.id.cameraFragement -> navController.navigate(R.id.action_cameraFragement_to_navigation_my_note)
             else -> navController.popBackStack() //다른 모든 경우 뒤로가기 누를경우, 이전 프래그먼트로 이동
@@ -94,14 +95,4 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
-//    fun onHiddenChanged(hidden: Boolean) {
-//        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
-//
-//        if (hidden) {
-//            bottomNavigationView?.visibility = View.GONE
-//        } else {
-//            bottomNavigationView?.visibility = View.VISIBLE
-//        }
-//    }
 }

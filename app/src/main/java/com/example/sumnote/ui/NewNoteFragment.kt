@@ -1,7 +1,6 @@
 package com.example.sumnote.ui
 
 import android.content.ContentValues
-import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
@@ -21,14 +20,17 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.navigation.fragment.findNavController
-import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentNewNoteBinding
 import com.example.sumnote.ui.DTO.CreateNoteRequest
-import com.example.sumnote.ui.Note.NoteItem
 import com.example.sumnote.ui.DTO.Summary
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
 import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
 import com.example.sumnote.ui.DTO.User
+import com.example.sumnote.ui.Dialog.SelectNoteToSaveDialog
+import com.example.sumnote.ui.Dialog.SelectNoteToSaveDialogInterface
+import com.example.sumnote.ui.MyNote.MyNoteFragment
+import com.example.sumnote.ui.Note.NoteItem
+import com.google.gson.Gson
 import com.kakao.sdk.user.UserApiClient
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -41,15 +43,19 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-
-
-class NewNoteFragment : Fragment() {
+class NewNoteFragment : Fragment(),SelectNoteToSaveDialogInterface {
 
     private var _binding: FragmentNewNoteBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var textTitle: String // ocr을 통해 얻어온 교과서의 텍스트들
     private lateinit var textBook: String // ocr을 통해 얻어온 교과서의 텍스트들
+
+    lateinit var noteList: List<NoteItem>
+
+
+    var noteTitles = mutableListOf<String>() // 여기서 제목만 담기 위한 리스트를 생성합니다.
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,78 +82,127 @@ class NewNoteFragment : Fragment() {
             summaryNote.text = textBook
 
         }
+
+        getUser() // 카카오 사용자 정보 얻어오기 => 저장하기 클릭시 현재 노트 목록 보여주기 위함
         return view
+    }
+
+    //카카오 사용자 정보 얻어오기
+    private fun getUser() {
+
+        // 사용자 정보 요청 (기본)
+        UserApiClient.instance.me { user, error ->
+            if (error != null) {
+                Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
+            } else if (user != null) {
+                var userInfo = User()
+                userInfo.name = user.kakaoAccount?.profile?.nickname.toString()
+                userInfo.email = user.kakaoAccount?.email.toString()
+
+                Log.d("NOTELIST TEST : ", "name : " + userInfo.name + ", email" + userInfo.email)
+                initNoteList(userInfo)
+            }
+        }
+
+    }
+
+
+    //사용자 계정에 저장된 노트 목록 얻어오기
+    private fun initNoteList(user : User){
+
+        Log.d("#NewNoteFragment initNoteList : ", user.name + " and " + user.email)
+
+        val call = RetrofitBuilder.api.getSumNotes(user.email.toString())
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        val jsonString = responseBody.string()
+                        Log.d("#NewNoteFragment SPRING Success:", jsonString)
+
+                        val gson = Gson()
+                        val result = gson.fromJson(jsonString, MyNoteFragment.Result::class.java)
+
+                        noteList = result.noteList // 사용자 계정에 저장된 노트 리스트 얻어오기
+                        //로그 테스트용
+                        for (note in noteList) {
+                            Log.d("#NewNoteFragment Note Created : ","${note.sum_doc_title}")
+                            noteTitles.add(note.sum_doc_title)
+                        }
+                    } else {
+                        // 응답 본문이 null인 경우 처리
+                    }
+                } else {
+                    // 통신 성공 but 응답 실패
+                    Log.d("#NewNoteFragment SPRING SERVER:", "FAILURE")
+                }
+            }
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                // 통신에 실패한 경우
+                Log.d("#NewNoteFragment CONNECTION FAILURE #SPRING SERVER: ", t.localizedMessage)
+            }
+        })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val note = binding.note // layout2 LinearLayout 가져오기
+       // val note = binding.note // layout2 LinearLayout 가져오기
 
-        //현재 보유중인 노트 리스트
-        var colorArray: Array<String> = arrayOf("데이터베이스", "알고리즘", "운영체제")
-
-
+        clickSaveButtonEvents() //저장하기 버튼 클릭시 => 커스텀 다이얼로그 띄우기
         //저장하기 버튼 클릭시
-        binding.btnSaveNote.apply {
-            setOnClickListener {
-                Log.d("newNote", "note saved!")
-                val bitmap = viewToBitmap(note) // 프래그먼트의 뷰 전체를 Bitmap으로 변환
-                saveNoteImageToMediaStore(bitmap) // Bitmap을 저장
-
-                makeNote()
-
-                var selectedNoteTitle: String
-                val builder = AlertDialog.Builder(requireContext())
-                builder.setTitle("저장할 노트를 선택해주세요")
-                    .setItems(colorArray,
-                        DialogInterface.OnClickListener { dialog, which ->
-                            // 여기서 인자 'which'는 배열의 position을 의미
-                            selectedNoteTitle = colorArray[which]
-                            //선택된 노트 확인
-                            Log.d("selectedNote", selectedNoteTitle)
-
-
-                        })
-                // 다이얼로그 띄우기
-                builder.show()
-
-                val navOptions = NavOptions.Builder()
-                    .setPopUpTo(R.id.navigation_my_note, false)
-                    .build()
-
-                findNavController().navigate(R.id.action_newNoteFragment_to_navigation_my_note, null, navOptions)
-
-//                //서버로 노트 저장하는 요청
-//                arguments?.let {
+//        binding.btnSaveNote.apply {
+//            setOnClickListener{
+//                Log.d("newNote","note saved!")
+//                val bitmap = viewToBitmap(note) // 프래그먼트의 뷰 전체를 Bitmap으로 변환
+//                saveNoteImageToMediaStore(bitmap) // Bitmap을 저장
 //
-//                    textTitle = it.getString("title").toString()
-//                    var title = binding.textView
-//                    title.text = textTitle
+//                var selectedNoteTitle : String
+//                val builder = AlertDialog.Builder(requireContext())
+//                builder.setTitle("저장할 노트를 선택해주세요")
+//                    .setItems(noteTitles.toTypedArray(),
+//                        DialogInterface.OnClickListener { dialog, which ->
+//                            // 여기서 인자 'which'는 배열의 position을 의미
+//                            selectedNoteTitle = noteTitles[which]
+//                            //선택된 노트 확인
+//                            Log.d("selectedNote",selectedNoteTitle)
 //
-//                    textBook = it.getString("textBook").toString()
-//                    Log.d("newnote", textBook)
-//                    var summaryNote = binding.textSummaryNote
-//                    summaryNote.text = textBook
+//                            findNavController().navigate(R.id.action_newNoteFragment_to_navigation_my_note)
+//                        })
+//                // 다이얼로그 띄우기
+//                builder.show()
 //
-//                    val summary = Summary()
-//                    summary.title = textTitle
-//                    summary.content = textBook
 //
-//                    makeNote(summary)
-//
-//                }
-            }
-        }
+//            }
+//        }
 
 
-        //뒤로가기 버튼 클릭시 스택에서 제거 => 카메라 프래그먼트로 이동
+        //다시찍기 버튼 클릭시 스택에서 제거 => 카메라 프래그먼트로 이동
         val btnReturnCamera = binding.btnReturnCamera
         btnReturnCamera.setOnClickListener {
             findNavController().popBackStack() //현재 프래그먼트 스택에서 제거
         }
 
 
+    }
+
+
+    // 저장하기 버튼 클릭에 대한 동작 정의 => 리스트 보여주기
+    private fun clickSaveButtonEvents() {
+        // 커스텀 다이얼로그 띄우기
+        binding.btnSaveNote.setOnClickListener {
+            val dialog = SelectNoteToSaveDialog(noteList,this)
+
+            // 알림창이 띄워져있는 동안 배경 클릭 막기
+            dialog.isCancelable = false
+            this.activity?.supportFragmentManager?.let { it1 -> dialog.show(it1, "ConfirmDialog") } //다이얼로그 띄우기
+        }
+    }
+
+
+    //리스트 클릭에 대한 동작 정의
+    override fun onYesButtonClick(id: Int) {
     }
 
     //뷰 -> 비트맵 전환 : 이미지 저장을 위해
