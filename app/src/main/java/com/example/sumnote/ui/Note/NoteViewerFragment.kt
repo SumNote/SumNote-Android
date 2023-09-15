@@ -166,6 +166,7 @@ class NoteViewerFragment : Fragment() {
                         // 4. ?는 앞의 *의 탐욕을 제한 => 한 그룹의 []안의 문자열이 대응될수 있도록
 //                        val pattern = Regex("\\[(.*?)\\]")
 
+                        //수정된 정규식 패턴
                         val pattern = Regex("\\[([\\s\\S]*?)\\]")
 
                         // title 및 content에서 []로 둘러싸인 값을 파싱
