@@ -16,6 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
@@ -47,8 +48,8 @@ class NewNoteFragment : Fragment() {
     private var _binding: FragmentNewNoteBinding? = null
     private val binding get() = _binding!!
 
-    lateinit var textTitle: String // ocr을 통해 얻어온 교과서의 텍스트들
-    lateinit var textBook: String // ocr을 통해 얻어온 교과서의 텍스트들
+    private lateinit var textTitle: String // ocr을 통해 얻어온 교과서의 텍스트들
+    private lateinit var textBook: String // ocr을 통해 얻어온 교과서의 텍스트들
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,12 +90,14 @@ class NewNoteFragment : Fragment() {
 
         //저장하기 버튼 클릭시
         binding.btnSaveNote.apply {
-            setOnClickListener{
-                Log.d("newNote","note saved!")
+            setOnClickListener {
+                Log.d("newNote", "note saved!")
                 val bitmap = viewToBitmap(note) // 프래그먼트의 뷰 전체를 Bitmap으로 변환
                 saveNoteImageToMediaStore(bitmap) // Bitmap을 저장
 
-                var selectedNoteTitle : String
+                makeNote()
+
+                var selectedNoteTitle: String
                 val builder = AlertDialog.Builder(requireContext())
                 builder.setTitle("저장할 노트를 선택해주세요")
                     .setItems(colorArray,
@@ -102,14 +105,18 @@ class NewNoteFragment : Fragment() {
                             // 여기서 인자 'which'는 배열의 position을 의미
                             selectedNoteTitle = colorArray[which]
                             //선택된 노트 확인
-                            Log.d("selectedNote",selectedNoteTitle)
+                            Log.d("selectedNote", selectedNoteTitle)
 
-                            findNavController().navigate(R.id.action_newNoteFragment_to_navigation_my_note)
+
                         })
                 // 다이얼로그 띄우기
                 builder.show()
 
+                val navOptions = NavOptions.Builder()
+                    .setPopUpTo(R.id.navigation_my_note, false)
+                    .build()
 
+                findNavController().navigate(R.id.action_newNoteFragment_to_navigation_my_note, null, navOptions)
 
 //                //서버로 노트 저장하는 요청
 //                arguments?.let {
@@ -192,26 +199,22 @@ class NewNoteFragment : Fragment() {
     }
 
 
-    private fun makeNote(summary: Summary){
+    private fun makeNote() {
         // 사용자 정보 요청 (기본)
         UserApiClient.instance.me { user, error ->
             if (error != null) {
                 Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
             } else if (user != null) {
-                var userInfo = User()
-                userInfo.name = user.kakaoAccount?.profile?.nickname.toString()
-                userInfo.email = user.kakaoAccount?.email.toString()
-
-                Log.d("NOTELIST TEST : ", "name : " + userInfo.name + ", email" + userInfo.email)
-                serverNote(userInfo, summary)
+                var email = user.kakaoAccount?.email.toString()
+                serverNote(email)
             }
         }
 
     }
-    }
-    private fun serverNote(user : User, summary: Summary) {
 
-        val request = CreateNoteRequest(user, summary)
+    private fun serverNote(email: String) {
+
+        val request = CreateNoteRequest(email, "Note #0", "[${textTitle}]", "[${textBook}]")
         val call = RetrofitBuilder.api.createNote(request)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -220,7 +223,6 @@ class NewNoteFragment : Fragment() {
                     if (responseBody != null) {
                         val jsonString = responseBody.string()
                         Log.d("#MAKE_NOTE: ", jsonString)
-
 
 
                     } else {
@@ -240,4 +242,4 @@ class NewNoteFragment : Fragment() {
         })
     }
 
-
+}
