@@ -1,10 +1,13 @@
 package com.example.sumnote.ui.Dialog
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.provider.ContactsContract.CommonDataKinds.Note
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
@@ -13,14 +16,32 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.sumnote.R
 import com.example.sumnote.databinding.SelectNoteToSaveDialogBinding
 import com.example.sumnote.ui.Note.NoteItem
+import com.example.sumnote.ui.Note.Page
+import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
+import okhttp3.ResponseBody
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
+import androidx.navigation.fragment.findNavController
+import com.example.sumnote.ui.DTO.CreateNoteRequest
+import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
+import com.kakao.sdk.user.UserApiClient
 
-class SelectNoteToSaveDialog(noteList: List<NoteItem>, selectNoteToSaveDialogInterface: SelectNoteToSaveDialogInterface) : DialogFragment() {
+
+data class UpdateNoteRequest(val addTitle : String, val addContent : String)
+class SelectNoteToSaveDialog(
+    noteList: List<NoteItem>,
+    selectNoteToSaveDialogInterface: SelectNoteToSaveDialogInterface
+) : DialogFragment(), SelectableNoteRecyclerViewAdapter.OnItemClickListener {
     private var _binding: SelectNoteToSaveDialogBinding? = null
     private val binding get() = _binding!!
 
     private var selectNoteToSaveDialogInterface: SelectNoteToSaveDialogInterface? = null
 
     private var noteList :List<NoteItem> = emptyList()
+    private lateinit var note : UpdateNoteRequest
 
     //생성자를 통해 유저의 노트아이템 리스트 얻어옴
     init {
@@ -37,13 +58,21 @@ class SelectNoteToSaveDialog(noteList: List<NoteItem>, selectNoteToSaveDialogInt
         val view = binding.root
 
         //레이아웃에 대한 동작 정의 => 리사이클러뷰 활성화, 등등
+        val saveBtn = view.findViewById<Button>(R.id.btn_save_note_to_new_title)
+        saveBtn.setOnClickListener {
+            val inputDialog = InputNoteNameDialog(note)
+
+            dialog?.dismiss()
+
+            inputDialog.show(requireActivity().supportFragmentManager, inputDialog.tag)
+        }
 
         //제대로 노트리스트 가져왔는지 확인
         for(note in noteList){
             Log.d("#noteDialog Check","${note.sum_doc_title}")
         }
 
-        val selectableNoteListAdapter = SelectableNoteRecyclerViewAdapter(noteList, LayoutInflater.from(requireContext()))
+        val selectableNoteListAdapter = SelectableNoteRecyclerViewAdapter(noteList, LayoutInflater.from(requireContext()), this)
 
         val selectableNoteRecyclerView = binding.customDialogRecyclerView
         selectableNoteRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
@@ -52,9 +81,49 @@ class SelectNoteToSaveDialog(noteList: List<NoteItem>, selectNoteToSaveDialogInt
         return view
     }
 
+    override fun onNoteItemClick(position: Int) {
+        // RecyclerView 아이템이 클릭되었을 때 실행할 코드를 여기에 작성합니다.
+        // position은 클릭된 아이템의 인덱스입니다.
+        // 예를 들어, 선택한 아이템의 정보를 얻거나 특정 동작을 수행하는 등의 작업을 수행할 수 있습니다.
+        val clickedNoteId = noteList[position].id
+
+        updateNote(clickedNoteId)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    // 생성자를 통해 데이터를 설정하는 메서드
+    fun setNoteList(note: UpdateNoteRequest) {
+        this.note = note
+    }
+
+    //서버로부터 클릭한 노트에 대한 페이지 요청
+    private fun updateNote(clickedNoteId : Int){
+
+        Log.d("#SPRING UPDATE DATA:", "${clickedNoteId}, ${note.addTitle}, ${note.addContent}")
+
+        val call = RetrofitBuilder.api.updateNote(clickedNoteId, note)
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    Log.d("#SPRING UPDATE:", "SUCCESS")
+
+                    dialog?.dismiss()
+                    findNavController().navigate(R.id.action_newNoteFragment_to_navigation_my_note)
+                } else {
+                    // 통신 성공 but 응답 실패
+                    Log.d("#SPRING UPDATE:", "FAILURE")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                // 통신에 실패한 경우
+                Log.d("CONNECTION FAILURE #SPRING SERVER: ", t.localizedMessage)
+            }
+        })
     }
 
 }
@@ -71,10 +140,11 @@ interface SelectNoteToSaveDialogInterface {
 class SelectableNoteRecyclerViewAdapter(
     val itemList : List<NoteItem>, //리사이클러뷰로 그려줄 노트들
     val inflater : LayoutInflater, //화면에 붙이기 위한 inflater
+    private val itemClickListener: OnItemClickListener? = null
 ): RecyclerView.Adapter<SelectableNoteRecyclerViewAdapter.ViewHoler>(){ //리사이클러뷰 어댑터 상속받기 템플릿은 자기 자신
 
     interface OnItemClickListener {
-        fun onAllNoteItemClick(position: Int)
+        fun onNoteItemClick(position: Int)
     }
 
     //생성자를 통해 받은 뷰를 부모 클래스로 넘겨주기
@@ -90,6 +160,9 @@ class SelectableNoteRecyclerViewAdapter(
         //어댑터가 만들어지면 각 뷰의 값 초기화
         //3. init블럭 호출 => title과 generatedDate 텍스트 뷰가 세팅됨
         init {
+            itemView.setOnClickListener {
+                itemClickListener?.onNoteItemClick(adapterPosition)
+            }
             noteImage = itemView.findViewById(R.id.imgView_full_note)
             //생성한 노트 값들
             title = itemView.findViewById(R.id.txt_full_note_title)

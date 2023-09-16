@@ -3,6 +3,7 @@ package com.example.sumnote.api
 import com.example.sumnote.ui.DTO.CreateNoteRequest
 import com.example.sumnote.ui.DTO.Summary
 import com.example.sumnote.ui.DTO.User
+import com.example.sumnote.ui.Dialog.UpdateNoteRequest
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -53,9 +54,9 @@ interface ApiManager {
     @GET("sum-note/{id}")
     fun detailNote(@Path("id") id : Int): Call<ResponseBody>
 
-    // 노트 추가하기
+    // 노트 내용 추가하기
     @PUT("sum-note/content/{id}")
-    fun updateNote(@Path("id") id : Int, @Body request: CreateNoteRequest): Call<ResponseBody>
+    fun updateNote(@Path("id") id : Int, @Body request: UpdateNoteRequest): Call<ResponseBody>
 
     // 노트 삭제하기
     @DELETE("sum-note/{id}")
