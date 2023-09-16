@@ -265,6 +265,7 @@ class MyNoteFragment : Fragment(){
 
     private fun getUser() {
         noteList = ArrayList()
+        quizList = ArrayList()
         // 사용자 정보 요청 (기본)
         UserApiClient.instance.me { user, error ->
             if (error != null) {

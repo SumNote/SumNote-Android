@@ -86,7 +86,8 @@ class CameraFragment : Fragment() {
     // 로딩 dialog
     private val loadingDialog = CircleProgressDialog()
 
-    private val baseUrl = "http://10.0.2.2:8000/" //장고 서버 url
+//    private val baseUrl = "http://10.0.2.2:8000/" //장고 서버 url
+    private val baseUrl = "http://13.125.210.68:80/"
 
     // 전달받은 json값이 null인 경우에 대한 예외처리 => 아직 적용 안했음
     private val nullOnEmptyConverterFactory = object : Converter.Factory() {
