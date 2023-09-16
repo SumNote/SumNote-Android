@@ -100,12 +100,21 @@ class MyNoteFragment : Fragment(){
         goAllNote.setOnClickListener{
             findNavController().navigate(R.id.action_navigation_my_note_to_allNoteFragment)
         }
-
-
+        
         quizRecyclerViewAdapter = QuizRecyclerViewAdapter(quizList, LayoutInflater.from(this.context), object: QuizRecyclerViewAdapter.OnItemClickListener {
             override fun onQuizItemClick(position: Int) {
                 // 퀴즈 아이템 클릭시 동작
-                findNavController().navigate(R.id.action_navigation_my_note_to_quizViewerFragment)
+                // 클릭한 문제집 아이디 가져오기
+                val clickedQuizId = quizList[position].id
+                val quizTitle = quizList[position].quiz_doc_title
+
+                // 번들을 생성하고 클릭한 퀴즈 정보 입력
+                val bundle = Bundle()
+                bundle.putInt("quizId", clickedQuizId)
+                bundle.putString("quiz_doc_title", quizTitle)
+                Log.d("QuizDoc CLICKED", "test : $clickedQuizId")
+                //번들과 함께 뷰 이동
+                findNavController().navigate(R.id.action_navigation_my_note_to_quizViewerFragment,bundle)
             }
         })
         val quizRecyclerView = binding.quizListRecyclerView //리사이클러뷰를 붙여줄 레이아웃 위치 가져오기

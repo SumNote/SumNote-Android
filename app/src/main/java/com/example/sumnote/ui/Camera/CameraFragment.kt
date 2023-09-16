@@ -200,6 +200,12 @@ class CameraFragment : Fragment() {
             }
         }
 
+//        //뒤로가기 버튼
+//        val btmBack = binding.imgBtnBack
+//        btmBack.setOnClickListener{
+//            findNavController().navigateUp()
+//        }
+
     }
 
 
@@ -424,6 +430,8 @@ class CameraFragment : Fragment() {
         handlerThread.quit()
 
     }
+
+
 
 
     //카메라 화면에서는 바텀네비게이션 뷰 숨기기 => 실제 카메라 처럼 보이도록

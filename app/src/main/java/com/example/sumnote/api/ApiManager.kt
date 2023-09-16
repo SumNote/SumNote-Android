@@ -54,7 +54,11 @@ interface ApiManager {
     @DELETE("sum-note/{id}")
     fun deleteNote(@Path("id") id : Int): Call<ResponseBody>
 
-    //퀴즈 리스트 가져오기
+    //문제집 리스트 가져오기
     @GET("quizzes")
     fun getQuizList(@Query("email") email: String) : Call<ResponseBody>
+
+    //선택한 문제집에 대한 퀴즈 가져오기
+    @GET("quiz/{id}")
+    fun detailQuiz(@Path("id") id : Int): Call<ResponseBody>
 }

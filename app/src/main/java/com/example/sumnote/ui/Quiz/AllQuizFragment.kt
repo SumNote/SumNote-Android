@@ -46,9 +46,17 @@ class AllQuizFragment : Fragment() {
         allQuizRecyclerViewAdapter = AllQuizRecyclerViewAdapter(quizList,LayoutInflater.from(this.context),
             object : AllQuizRecyclerViewAdapter.OnItemClickListener{
                 override fun onAllQuizItemClick(position: Int) {
-                    //position 넘겨줘야함
-                    Log.d("debug!","#4")
-                    findNavController().navigate(R.id.action_allQuizFragment_to_quizViewerFragment)
+                    // 퀴즈 아이템 클릭시 동작
+                    // 클릭한 문제집 아이디 가져오기
+                    val clickedQuizId = quizList[position].id
+                    val quizTitle = quizList[position].quiz_doc_title
+
+                    // 번들을 생성하고 클릭한 퀴즈 정보 입력
+                    val bundle = Bundle()
+                    bundle.putInt("quizId", clickedQuizId)
+                    bundle.putString("quiz_doc_title", quizTitle)
+                    Log.d("QuizDoc CLICKED", "test : $clickedQuizId")
+                    findNavController().navigate(R.id.action_allQuizFragment_to_quizViewerFragment,bundle)
                 }
             })
 
