@@ -32,7 +32,7 @@ class AllQuizFragment : Fragment() {
         var quizList = ArrayList<QuizListItem>()
         //data class NoteItem constructor(var id:Int, var title:String, var generatedDate:String)
         for(i in 0 until 10){
-            quizList.add(QuizListItem(i, i,"Aguest"))
+            quizList.add(QuizListItem(i, "Note$i"+"의 퀴즈","2023.08.30 pm 16:53"))
         }
 
         Log.d("debug!","#3")

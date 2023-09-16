@@ -28,15 +28,15 @@ class AllQuizRecyclerViewAdapter(
         //노트 이미지
         val noteImage : ImageView
         //노트 값들
-        val month : TextView
-        val date : TextView
+        val allQuizTitle : TextView
+        val allQuizGenDate : TextView
         //어댑터가 만들어지면 각 뷰의 값 초기화
         //3. init블럭 호출 => title과 generatedDate 텍스트 뷰가 세팅됨
         init {
             noteImage = itemView.findViewById(R.id.imgView_quiz)
             //생성한 노트 값들
-            month = itemView.findViewById(R.id.txt_all_quiz_gen_month)
-            date = itemView.findViewById(R.id.txt_all_quiz_gen_date)
+            allQuizTitle = itemView.findViewById(R.id.txt_all_quiz_title)
+            allQuizGenDate = itemView.findViewById(R.id.txt_all_quiz_gen_date)
 
             //각 아이템 클릭에 대한 이벤트 달기
             //intent 활용하여 페이지 변환하는 부분 작성할 것
@@ -66,8 +66,8 @@ class AllQuizRecyclerViewAdapter(
     // 4. 세팅해둔 텍스트뷰에 값 채워줌
     override fun onBindViewHolder(holder: ViewHoler, position: Int) {
         //홀더(위에서 생성한 홀더)에 값 할당
-        holder.month.text = itemList[position].month
-        holder.date.text = itemList[position].date.toString()
+        holder.allQuizTitle.text = itemList[position].quizTitle
+        holder.allQuizGenDate.text = itemList[position].genDate
 
         //이미지는 position에 해당하는 값으로
         // 이미지의 리소스 ID 얻어오기

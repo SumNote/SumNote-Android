@@ -126,7 +126,7 @@ class MyNoteFragment : Fragment(){
         quizList = ArrayList<QuizListItem>()
         //data class QuizItem constructor(var id:Int, var date:Int, var month:Int)
         for(i in 0 until 10){
-            quizList.add(QuizListItem(i, 14+i,"Aguest"))
+            quizList.add(QuizListItem(i, "노트$i"+"의 퀴즈","2023.08.30 pm 16:53"))
         }
 
         quizRecyclerViewAdapter = QuizRecyclerViewAdapter(quizList, LayoutInflater.from(this.context), object: QuizRecyclerViewAdapter.OnItemClickListener {
