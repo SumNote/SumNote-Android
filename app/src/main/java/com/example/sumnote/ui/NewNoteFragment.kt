@@ -1,5 +1,6 @@
 package com.example.sumnote.ui
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -20,6 +21,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.navigation.fragment.findNavController
+import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentNewNoteBinding
 import com.example.sumnote.ui.DTO.CreateNoteRequest
 import com.example.sumnote.ui.DTO.Summary
@@ -28,6 +30,7 @@ import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
 import com.example.sumnote.ui.DTO.User
 import com.example.sumnote.ui.Dialog.SelectNoteToSaveDialog
 import com.example.sumnote.ui.Dialog.SelectNoteToSaveDialogInterface
+import com.example.sumnote.ui.Dialog.UpdateNoteRequest
 import com.example.sumnote.ui.MyNote.MyNoteFragment
 import com.example.sumnote.ui.Note.NoteItem
 import com.google.gson.Gson
@@ -189,14 +192,20 @@ class NewNoteFragment : Fragment(),SelectNoteToSaveDialogInterface {
 
 
     // 저장하기 버튼 클릭에 대한 동작 정의 => 리스트 보여주기
+    @SuppressLint("CommitTransaction")
     private fun clickSaveButtonEvents() {
         // 커스텀 다이얼로그 띄우기
         binding.btnSaveNote.setOnClickListener {
             val dialog = SelectNoteToSaveDialog(noteList,this)
 
+            val note = UpdateNoteRequest("[${textTitle}]", "[${textBook}]")
+            // 다이얼로그에 데이터 설정
+            dialog.setNoteList(note)
+
             // 알림창이 띄워져있는 동안 배경 클릭 막기
             dialog.isCancelable = false
             this.activity?.supportFragmentManager?.let { it1 -> dialog.show(it1, "ConfirmDialog") } //다이얼로그 띄우기
+
         }
     }
 
@@ -251,50 +260,6 @@ class NewNoteFragment : Fragment(),SelectNoteToSaveDialogInterface {
         } catch (e: IOException) {
             e.printStackTrace()
         }
-    }
-
-
-    private fun makeNote() {
-        // 사용자 정보 요청 (기본)
-        UserApiClient.instance.me { user, error ->
-            if (error != null) {
-                Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
-            } else if (user != null) {
-                var email = user.kakaoAccount?.email.toString()
-                serverNote(email)
-            }
-        }
-
-    }
-
-    private fun serverNote(email: String) {
-
-        val request = CreateNoteRequest(email, "Note #0", "[${textTitle}]", "[${textBook}]")
-        val call = RetrofitBuilder.api.createNote(request)
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    if (responseBody != null) {
-                        val jsonString = responseBody.string()
-                        Log.d("#MAKE_NOTE: ", jsonString)
-
-
-                    } else {
-                        // 응답 본문이 null인 경우 처리
-                    }
-                } else {
-                    // 통신 성공 but 응답 실패
-                    Log.d("#MAKE_NOTE:", "FAILURE")
-                }
-
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                // 통신에 실패한 경우
-                Log.d("#MAKE_NOTE FAIL: ", t.localizedMessage)
-            }
-        })
     }
 
 }

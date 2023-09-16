@@ -13,6 +13,7 @@ import com.example.sumnote.databinding.FragmentMyPageBinding
 import com.example.sumnote.LoginActivity
 import com.example.sumnote.api.ApiManager
 import com.example.sumnote.ui.Dialog.CircleProgressDialog
+import com.example.sumnote.ui.Dialog.InputNoteNameDialog
 import com.example.sumnote.ui.kakaoLogin.KakaoOauthViewModelFactory
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
 import com.kakao.sdk.user.UserApiClient
@@ -48,7 +49,8 @@ class MyPageFragment : Fragment() {
         kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(requireActivity().application))[KakaoViewModel::class.java]
 
         binding.test.setOnClickListener {
-//            showLoading()
+//            val dialog = InputNoteNameDialog()
+//            dialog.show(requireActivity().supportFragmentManager, dialog.tag)
             // 서버 테스트
         }
 
