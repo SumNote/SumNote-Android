@@ -44,13 +44,13 @@ class InputNoteNameDialog(note : UpdateNoteRequest) : DialogFragment() {
             docTitle = binding.editText.text.toString()
             if (docTitle == "")
                 docTitle = "New Note"
-            makeNote(docTitle)
+            makeNote()
         }
 
         return binding.root
     }
 
-    private fun makeNote(docTitle : String) {
+    private fun makeNote() {
         // 사용자 정보 요청 (기본)
         UserApiClient.instance.me { user, error ->
             if (error != null) {
@@ -66,6 +66,7 @@ class InputNoteNameDialog(note : UpdateNoteRequest) : DialogFragment() {
     private fun serverNote(email: String) {
 
         val request = CreateNoteRequest(email, docTitle, note.addTitle, note.addContent)
+        Log.d("#MAKE_NOTE DATA:", "${email}, ${docTitle}, ${note.addTitle}, ${note.addContent},")
         val call = RetrofitBuilder.api.createNote(request)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {

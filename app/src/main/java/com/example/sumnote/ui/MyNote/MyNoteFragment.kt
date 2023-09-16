@@ -45,6 +45,13 @@ class MyNoteFragment : Fragment(){
     private lateinit var noteRecyclerViewAdapter: NoteRecyclerViewAdapter
     private lateinit var quizRecyclerViewAdapter: QuizRecyclerViewAdapter
 
+//    override fun onResume() {
+//        super.onResume()
+//        Log.d("onResume", "TEST")
+//        kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(requireActivity().application))[KakaoViewModel::class.java]
+//        getUser()
+//    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -65,6 +72,7 @@ class MyNoteFragment : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        Log.d("onViewCreated", "TEST")
         onHiddenChanged(false) //카메라 프래그먼트에서 가렸던 바텀 뷰 다시 보이게 하기
 
         kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(requireActivity().application))[KakaoViewModel::class.java]
@@ -256,7 +264,7 @@ class MyNoteFragment : Fragment(){
 
 
     private fun getUser() {
-
+        noteList = ArrayList()
         // 사용자 정보 요청 (기본)
         UserApiClient.instance.me { user, error ->
             if (error != null) {

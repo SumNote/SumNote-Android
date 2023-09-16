@@ -96,17 +96,11 @@ class LoginActivity : AppCompatActivity() {
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    if (responseBody != null) {
-                        val jsonString = responseBody.string()
-                        Log.d("#SPRING Success:", jsonString)
+                    Log.d("#LOGIN Success:", "SUCCESS")
 
-                    } else {
-                        // 응답 본문이 null인 경우 처리
-                    }
                 } else {
                     // 통신 성공 but 응답 실패
-                    Log.d("#SPRING SERVER:", "FAILURE")
+                    Log.d("#LOGIN SERVER:", "FAILURE")
                 }
             }
 
