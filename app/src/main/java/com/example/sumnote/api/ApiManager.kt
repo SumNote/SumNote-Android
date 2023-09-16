@@ -44,6 +44,11 @@ interface ApiManager {
     fun createNote(@Body request: CreateNoteRequest): Call<ResponseBody>
 
 
+    //퀴즈 리스트 가져오기
+    @GET("quizzes")
+    fun getQuizList(@Query("email") email: String) : Call<ResponseBody>
+
+
     // 노트 조회하기
     @GET("sum-note/{id}")
     fun detailNote(@Path("id") id : Int): Call<ResponseBody>
