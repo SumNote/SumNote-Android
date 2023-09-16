@@ -1,20 +1,41 @@
 package com.example.sumnote.ui.Quiz
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.sumnote.databinding.FragmentQuizViewerBinding
+import com.example.sumnote.ui.Note.NotePagerAdapter
 import com.example.sumnote.ui.Note.NoteViewerFragment
+import com.example.sumnote.ui.Note.Page
+import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
+import okhttp3.ResponseBody
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class QuizViewerFragment : Fragment() {
     private var _binding: FragmentQuizViewerBinding? = null
     private val binding get() = _binding!!
 
+    private var clickedQuizId: Int = -1
+    private lateinit var quizViewAdapter: QuizPagerAdapter
+    private lateinit var quizzes: MutableList<Quiz>
+
+    //프로그래스 바
+    lateinit var progressBar : ProgressBar
+    //txt_current_question_num
+    lateinit var currQuizNum : TextView
+    lateinit var totalQuizNum : TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,66 +46,128 @@ class QuizViewerFragment : Fragment() {
         //퀴즈들을 보여주기 위한 뷰 페이저 가져오기
         var quizViewPager = binding.quizViewPager
 
-        //테스트용 더미 데이터 생성 => 여기서 서버로부터 정보 받아와 파싱하는 코드 작성 필요
-        val quizzes = listOf(
-            Quiz(
-                query = "데이터의 구조와 설계를 나타내는 것은?",
-                answerList = arrayListOf("① 레코드", "② 필드", "③ 스키마", "④ 데이터베이스"),
-                answerNum = 3,
-                explanation = "스키마는 데이터베이스의 구조와 설계를 나타냅니다."
-            )
-            ,
-            Quiz(
-                query = "데이터를 조회하는 SQL 명령은?",
-                answerList = arrayListOf("① INSERT", "② DELETE", "③ UPDATE", "④ SELECT"),
-                answerNum = 4,
-                explanation = "SELECT는 데이터를 조회하는 SQL 명령입니다."
-            ),
-            Quiz(
-                query = "데이터 중복을 최소화하는 설계 방법은?",
-                answerList = arrayListOf("① 인덱스", "② 정규화", "③ 뷰", "④ 무결성"),
-                answerNum = 2,
-                explanation = "정규화는 데이터 중복을 최소화하는 설계 방법입니다."
-            ),
-            Quiz(
-                query = "여러 연산의 묶음으로, 모두 성공하거나 모두 실패하는 것은?",
-                answerList = arrayListOf("① 인증", "② 인가", "③ 트랜잭션", "④ 암호화"),
-                answerNum = 3,
-                explanation = "트랜잭션은 여러 연산의 묶음으로, 모두 성공하거나 모두 실패합니다."
-            )
+        /* 선택한 문제집의 데이터 얻어오기
+        * bundle.putInt("quizId", clickedQuizId)
+        bundle.putString("quiz_doc_title", quizTitle)
+        Log.d("QuizDoc CLICKED", "test : $clickedQuizId")
+        * */
 
-        )
-
+        quizzes = mutableListOf()
         //뷰 페이저에 붙일 어댑터 생성
-        val adapter = QuizPagerAdapter(this, quizzes)
-        quizViewPager.adapter = adapter //어댑터 붙이기
+        quizViewAdapter = QuizPagerAdapter(this, quizzes)
+        quizViewPager.adapter = quizViewAdapter //어댑터 붙이기
 
-        val progressBar = binding.progressBar
-        progressBar.max = quizzes.size
-        //txt_current_question_num
-        var currQuizNum = binding.txtCurrentQuestionNum
-        currQuizNum.text = "1"
-        //현재 뷰 페이지만큼 프로그래스바에 반영하기
-        quizViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                progressBar.progress = position + 1
-                currQuizNum.text = (position + 1).toString()
+        progressBar = binding.progressBar
+        currQuizNum = binding.txtCurrentQuestionNum
+        totalQuizNum = binding.txtQuestionNum
+
+        arguments?.let {
+            clickedQuizId = it.getInt("quizId")
+            var quizTitle = it.getString("quiz_doc_title")
+            Log.d("QuizViewr", "test : $clickedQuizId")
+            Log.d("QuizViewr", "test : $quizTitle")
+
+
+            //얻어온 정보를 바탕으로 서버에 퀴즈 데이터 요청 + 퀴즈 클래스 생성
+            if (clickedQuizId != -1) {
+                //클릭한 문제집에 대한 퀴즈 정보를 서버에 요청
+                Log.d("QuizViewr", "#1")
+                detailQuiz(clickedQuizId)
+
+
+                currQuizNum.text = "1"
+                //현재 뷰 페이지만큼 프로그래스바에 반영하기
+                quizViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+                    override fun onPageSelected(position: Int) {
+                        progressBar.progress = position + 1
+                        currQuizNum.text = (position + 1).toString()
+                    }
+                })
             }
-        })
-
-
-        //뒤로가기 버튼
-        val btmBack = binding.imgBtnBack
-        btmBack.setOnClickListener{
-            findNavController().navigateUp()
         }
+
+
+
+
 
         return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    //서버로부터 클릭한 노트에 대한 페이지 요청
+    private fun detailQuiz(clickedQuizId: Int) {
+        val call = RetrofitBuilder.api.detailQuiz(clickedQuizId)
+        call.enqueue(object : Callback<ResponseBody> {
+            @SuppressLint("NotifyDataSetChanged")
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        val jsonString = responseBody.string()
+                        val json = JSONObject(jsonString)
+
+                        // 로그 출력 형식 통일
+                        Log.d("#DETAIL Success:", jsonString)
+
+                        val regexPattern = Regex("\\[([\\s\\S]*?)\\]")  // 수정된 정규식 패턴
+
+                        val questions = regexPattern.findAll(json.getString("question")).map { it.groupValues[1] }.toList()
+                        Log.d("#DETAIL questions:", questions.toString())
+
+                        val selections = regexPattern.findAll(json.getString("selections")).map { it.groupValues[1] }.toList()
+                        Log.d("#DETAIL selections:", selections.toString())
+
+                        val answers = regexPattern.findAll(json.getString("answer")).map { it.groupValues[1].toInt() }.toList()
+                        Log.d("#DETAIL answers:", answers.toString())
+
+                        val commentary = regexPattern.findAll(json.getString("commentary")).map { it.groupValues[1] }.toList()
+                        Log.d("#DETAIL commentary:", commentary.toString())
+
+                        if (questions.size == answers.size && answers.size == commentary.size) {
+                            quizzes.clear()
+                            for (index in questions.indices) {
+                                val start = index * 4
+                                val end = (index + 1) * 4
+                                val answerList = ArrayList(selections.subList(start, end))
+
+                                val quiz = Quiz(
+                                    query = questions[index],
+                                    answerList = answerList,
+                                    answerNum = answers[index],
+                                    explanation = commentary[index]
+                                )
+                                Log.d("#DETAIL RESULT",quiz.query)
+                                Log.d("#DETAIL RESULT",quiz.answerList.toString())
+                                Log.d("#DETAIL RESULT",quiz.answerNum.toString())
+                                Log.d("#DETAIL RESULT",quiz.explanation)
+                                quizzes.add(quiz)
+                            }
+
+                            Log.d("#DETAIL RESULT SIZE",quizzes.size.toString())
+                            progressBar.max = quizzes.size
+                            totalQuizNum.text = "/" + quizzes.size.toString() //총 문제 수 지정
+                            Log.d("ProgressBarSize", quizzes.size.toString())
+                            quizViewAdapter.notifyDataSetChanged()
+                        }
+                        else {
+                            // 데이터 길이 불일치 로그 처리
+                            Log.e("ParsingError", "Questions, answers, and commentary size mismatch!")
+                        }
+
+                    } else {
+                        // 응답 본문이 null인 경우 처리
+                        Log.e("#Error:", "Response body is null.")
+                    }
+                } else {
+                    // 통신 성공 but 응답 실패
+                    Log.d("#SPRING SERVER:", "FAILURE")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                // 통신에 실패한 경우
+                Log.d("CONNECTION FAILURE #SPRING SERVER: ", t.localizedMessage)
+            }
+        })
     }
 
 }
@@ -92,7 +175,7 @@ class QuizViewerFragment : Fragment() {
 // QuestionPagerAdapter 클래스
 class QuizPagerAdapter(
     fragmentActivity: QuizViewerFragment,
-    private val quizzes: List<Quiz>
+    private val quizzes: MutableList<Quiz>
 ) : FragmentStateAdapter(fragmentActivity) {
 
     override fun getItemCount(): Int {

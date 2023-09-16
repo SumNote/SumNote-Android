@@ -60,7 +60,6 @@ class MyNoteFragment : Fragment(){
         _binding = null
     }
 
-
     //뷰 생성 시점
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,15 +68,6 @@ class MyNoteFragment : Fragment(){
         onHiddenChanged(false) //카메라 프래그먼트에서 가렸던 바텀 뷰 다시 보이게 하기
 
         kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(requireActivity().application))[KakaoViewModel::class.java]
-        //리사이클러뷰 관련 코드 작성(노트)
-        //id : note_list_recycler_view
-
-        //리사이클러뷰에 사용할 아이템 리스트(테스트용)
-        //data class NoteItem constructor(var id:Int, var title:String, var generatedDate:String)
-//        for(i in 0 until 10){
-//            noteList.add(NoteItem(i, "Note $i","2023.08.30 pm 16:53"))
-//
-//        }
 
         getUser() //로그인 한 유저에 대한 노트 및 퀴즈 리스트 받아오기
 
@@ -110,6 +100,26 @@ class MyNoteFragment : Fragment(){
         goAllNote.setOnClickListener{
             findNavController().navigate(R.id.action_navigation_my_note_to_allNoteFragment)
         }
+        
+        quizRecyclerViewAdapter = QuizRecyclerViewAdapter(quizList, LayoutInflater.from(this.context), object: QuizRecyclerViewAdapter.OnItemClickListener {
+            override fun onQuizItemClick(position: Int) {
+                // 퀴즈 아이템 클릭시 동작
+                // 클릭한 문제집 아이디 가져오기
+                val clickedQuizId = quizList[position].id
+                val quizTitle = quizList[position].quiz_doc_title
+
+                // 번들을 생성하고 클릭한 퀴즈 정보 입력
+                val bundle = Bundle()
+                bundle.putInt("quizId", clickedQuizId)
+                bundle.putString("quiz_doc_title", quizTitle)
+                Log.d("QuizDoc CLICKED", "test : $clickedQuizId")
+                //번들과 함께 뷰 이동
+                findNavController().navigate(R.id.action_navigation_my_note_to_quizViewerFragment,bundle)
+            }
+        })
+        val quizRecyclerView = binding.quizListRecyclerView //리사이클러뷰를 붙여줄 레이아웃 위치 가져오기
+        quizRecyclerView.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)//위아래로 보여주기
+        quizRecyclerView.adapter = quizRecyclerViewAdapter
 
         //퀴즈 전체 보기
         val goAllQuiz = binding.txtGoAllQuiz
@@ -117,28 +127,6 @@ class MyNoteFragment : Fragment(){
             Log.d("debug!","#1")
             findNavController().navigate(R.id.action_navigation_my_note_to_allQuizFragment)
         }
-
-
-        //리사이클러뷰 관련 코드 작성(퀴즈)
-        //id : quiz_list_recycler_view
-
-        //리사이클러뷰에 사용할 아이템 리스트(테스트용)
-        quizList = ArrayList<QuizListItem>()
-        //data class QuizItem constructor(var id:Int, var date:Int, var month:Int)
-        for(i in 0 until 10){
-            quizList.add(QuizListItem(i, "노트$i"+"의 퀴즈","2023.08.30 pm 16:53"))
-        }
-
-        quizRecyclerViewAdapter = QuizRecyclerViewAdapter(quizList, LayoutInflater.from(this.context), object: QuizRecyclerViewAdapter.OnItemClickListener {
-            override fun onQuizItemClick(position: Int) {
-                // 퀴즈 아이템 클릭시 동작
-                findNavController().navigate(R.id.action_navigation_my_note_to_quizViewerFragment)
-            }
-        })
-        val quizRecyclerView = binding.quizListRecyclerView //리사이클러뷰를 붙여줄 레이아웃 위치 가져오기
-        quizRecyclerView.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)//위아래로 보여주기
-        quizRecyclerView.adapter = quizRecyclerViewAdapter
-
 
 
         //사용자 정보 보기
@@ -226,7 +214,7 @@ class MyNoteFragment : Fragment(){
 
 
     data class QuizItemResult(
-        @SerializedName("quizItemList") val quizItemList: List<QuizListItem>
+        @SerializedName("quizList") val quizList: List<QuizListItem>
     )
     //사용자 퀴즈 목록 얻어오기
     private fun initQuizList(user : User){
@@ -240,15 +228,14 @@ class MyNoteFragment : Fragment(){
                     val responseBody = response.body()
                     if (responseBody != null) {
                         val jsonString = responseBody.string()
-                        Log.d("#SPRING Success:", jsonString)
+                        Log.d("#Spring-Quiz Success:", jsonString)
 
                         val gson = Gson()
                         val result = gson.fromJson(jsonString, QuizItemResult::class.java)
 
-                        val quizList = result.quizItemList
+                        val quizList = result.quizList
                         for(quiz in quizList){
-//                            val myNote = NoteItem(note.id, note.sum_doc_title, note.created_at)
-//                            addNoteList(myNote)
+                            Log.d("#Spring-Quiz",quiz.quiz_doc_title)
                             addQuizList(quiz)
                         }
                     } else {
@@ -281,7 +268,7 @@ class MyNoteFragment : Fragment(){
 
                 Log.d("NOTELIST TEST : ", "name : " + userInfo.name + ", email" + userInfo.email)
                 initNoteList(userInfo) //노트 얻어오기
-                //initQuizList(userInfo) //퀴즈 얻어오기
+                initQuizList(userInfo) //퀴즈 얻어오기
             }
         }
 

@@ -66,8 +66,8 @@ class AllQuizRecyclerViewAdapter(
     // 4. 세팅해둔 텍스트뷰에 값 채워줌
     override fun onBindViewHolder(holder: ViewHoler, position: Int) {
         //홀더(위에서 생성한 홀더)에 값 할당
-        holder.allQuizTitle.text = itemList[position].quizTitle
-        holder.allQuizGenDate.text = itemList[position].genDate
+        holder.allQuizTitle.text = itemList[position].quiz_doc_title
+        holder.allQuizGenDate.text = itemList[position].created_at
 
         //이미지는 position에 해당하는 값으로
         // 이미지의 리소스 ID 얻어오기

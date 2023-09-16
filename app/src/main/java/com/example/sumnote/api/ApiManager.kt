@@ -25,7 +25,6 @@ interface ApiManager {
     @POST("gen-problem")
     fun generateProblem(@Body summary : String): Call<ResponseBody>
 
-
     //안드로이드 스튜디오 캠 카메라 화질 이슈로 ocr이 제대로 되지 않기 때문에, 테스트 용으로 작성함
     @Multipart
     @POST("image-to-text-test")
@@ -43,12 +42,6 @@ interface ApiManager {
     @POST("sum-note")
     fun createNote(@Body request: CreateNoteRequest): Call<ResponseBody>
 
-
-    //퀴즈 리스트 가져오기
-    @GET("quizzes")
-    fun getQuizList(@Query("email") email: String) : Call<ResponseBody>
-
-
     // 노트 조회하기
     @GET("sum-note/{id}")
     fun detailNote(@Path("id") id : Int): Call<ResponseBody>
@@ -60,4 +53,12 @@ interface ApiManager {
     // 노트 삭제하기
     @DELETE("sum-note/{id}")
     fun deleteNote(@Path("id") id : Int): Call<ResponseBody>
+
+    //문제집 리스트 가져오기
+    @GET("quizzes")
+    fun getQuizList(@Query("email") email: String) : Call<ResponseBody>
+
+    //선택한 문제집에 대한 퀴즈 가져오기
+    @GET("quiz/{id}")
+    fun detailQuiz(@Path("id") id : Int): Call<ResponseBody>
 }
