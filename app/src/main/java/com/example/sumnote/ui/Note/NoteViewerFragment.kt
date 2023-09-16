@@ -329,13 +329,15 @@ class NoteViewerFragment : Fragment() {
                         // JSON 응답 파싱
                         val jsonObject = JSONObject(responseBody)
                         //String 값 받아오기  => 책의 모든 문자열(추후 ocr코드 개발되면 개선)
-                        val question = jsonObject.getString("query")
-                        val answerList = jsonObject.getJSONArray("answerList")
-                        val answerNum = jsonObject.getString("answerNum")
+                        val question = jsonObject.getString("question")
+                        val selections = jsonObject.getJSONArray("selections")
+                        val answer = jsonObject.getString("answer")
+                        val commentary = jsonObject.getString("commentary")
 
                         Log.d("DjangoServer", "question's Text : $question")
-                        Log.d("DjangoServer", "answer_list's Text : $answerList")
-                        Log.d("DjangoServer", "answer_num's Text : $answerNum")
+                        Log.d("DjangoServer", "answer_list's Text : $selections")
+                        Log.d("DjangoServer", "answer_num's Text : $answer")
+                        Log.d("DjangoServer", "commentary's Text : $commentary")
 
 
 

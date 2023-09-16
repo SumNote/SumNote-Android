@@ -55,10 +55,12 @@ class AllNoteFragment : Fragment() {
                     //position을 같이 넣어야 함을 잊지말것
                     // 클릭한 노트 아이디 가져오기
                     val clickedNoteId = noteList[position].id
+                    val noteTitle = noteList[position].sum_doc_title
 
                     // 번들을 생성하고 클릭한 노트 아이디를 추가
                     val bundle = Bundle()
                     bundle.putInt("noteId", clickedNoteId)
+                    bundle.putString("sum_doc_title", noteTitle)
                     Log.d("NOTE CLICKED", "test : $clickedNoteId")
 
                     // 노트 아이템 클릭시 동작
