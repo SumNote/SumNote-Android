@@ -74,8 +74,8 @@ class InputNoteNameDialog(note : UpdateNoteRequest) : DialogFragment() {
                     Log.d("#MAKE_NOTE: ", "SUCCESS")
                     dialog?.dismiss()
 
-                    findNavController().navigate(R.id.action_newNoteFragment_to_navigation_my_note)
-
+//                    findNavController().navigate(R.id.action_newNoteFragment_to_navigation_my_note)
+                    findNavController().popBackStack()
                 } else {
                     // 통신 성공 but 응답 실패
                     Log.d("#MAKE_NOTE:", "FAILURE")

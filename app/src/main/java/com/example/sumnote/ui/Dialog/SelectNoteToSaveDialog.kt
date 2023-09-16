@@ -112,7 +112,8 @@ class SelectNoteToSaveDialog(
                     Log.d("#SPRING UPDATE:", "SUCCESS")
 
                     dialog?.dismiss()
-                    findNavController().navigate(R.id.action_newNoteFragment_to_navigation_my_note)
+//                    findNavController().navigate(R.id.action_newNoteFragment_to_navigation_my_note)
+                    findNavController().popBackStack()
                 } else {
                     // 통신 성공 but 응답 실패
                     Log.d("#SPRING UPDATE:", "FAILURE")
