@@ -41,7 +41,10 @@ class MyNoteFragment : Fragment(){
     private val binding get() = _binding!!
 
     private var noteList = ArrayList<NoteItem>()
+    private var quizList = ArrayList<QuizListItem>()
     private lateinit var noteRecyclerViewAdapter: NoteRecyclerViewAdapter
+    private lateinit var quizRecyclerViewAdapter: QuizRecyclerViewAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -76,7 +79,7 @@ class MyNoteFragment : Fragment(){
 //
 //        }
 
-        getUser()
+        getUser() //로그인 한 유저에 대한 노트 및 퀴즈 리스트 받아오기
 
         noteRecyclerViewAdapter = NoteRecyclerViewAdapter(noteList, object: NoteRecyclerViewAdapter.OnItemClickListener {
             override fun onNoteItemClick(position: Int) {
@@ -97,10 +100,6 @@ class MyNoteFragment : Fragment(){
 
             }
         })
-
-
-
-
 
         val noteRecyclerView = binding.noteListRecyclerView //리사이클러뷰를 붙여줄 레이아웃 위치 가져오기
         noteRecyclerView.layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.HORIZONTAL, false) //좌우로 보여주기
@@ -124,13 +123,13 @@ class MyNoteFragment : Fragment(){
         //id : quiz_list_recycler_view
 
         //리사이클러뷰에 사용할 아이템 리스트(테스트용)
-        var quizList = ArrayList<QuizListItem>()
+        quizList = ArrayList<QuizListItem>()
         //data class QuizItem constructor(var id:Int, var date:Int, var month:Int)
         for(i in 0 until 10){
             quizList.add(QuizListItem(i, 14+i,"Aguest"))
         }
 
-        val quizRecyclerViewAdapter = QuizRecyclerViewAdapter(quizList, LayoutInflater.from(this.context), object: QuizRecyclerViewAdapter.OnItemClickListener {
+        quizRecyclerViewAdapter = QuizRecyclerViewAdapter(quizList, LayoutInflater.from(this.context), object: QuizRecyclerViewAdapter.OnItemClickListener {
             override fun onQuizItemClick(position: Int) {
                 // 퀴즈 아이템 클릭시 동작
                 findNavController().navigate(R.id.action_navigation_my_note_to_quizViewerFragment)
@@ -181,7 +180,6 @@ class MyNoteFragment : Fragment(){
 
         Log.d("getUser() TEST", user.name + " and " + user.email)
 
-
         val call = RetrofitBuilder.api.getSumNotes(user.email.toString())
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -225,8 +223,52 @@ class MyNoteFragment : Fragment(){
         })
     }
 
-    private fun getUser() {
 
+
+    data class QuizItemResult(
+        @SerializedName("quizItemList") val quizItemList: List<QuizListItem>
+    )
+    //사용자 퀴즈 목록 얻어오기
+    private fun initQuizList(user : User){
+
+        Log.d("getUser() TEST", user.name + " and " + user.email)
+
+        val call = RetrofitBuilder.api.getQuizList(user.email.toString())
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        val jsonString = responseBody.string()
+                        Log.d("#SPRING Success:", jsonString)
+
+                        val gson = Gson()
+                        val result = gson.fromJson(jsonString, QuizItemResult::class.java)
+
+                        val quizList = result.quizItemList
+                        for(quiz in quizList){
+//                            val myNote = NoteItem(note.id, note.sum_doc_title, note.created_at)
+//                            addNoteList(myNote)
+                            addQuizList(quiz)
+                        }
+                    } else {
+                        // 응답 본문이 null인 경우 처리
+                    }
+                } else {
+                    // 통신 성공 but 응답 실패
+                    Log.d("#SPRING SERVER:", "FAILURE")
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                // 통신에 실패한 경우
+                Log.d("CONNECTION FAILURE #SPRING SERVER: ", t.localizedMessage)
+            }
+        })
+    }
+
+
+    private fun getUser() {
 
         // 사용자 정보 요청 (기본)
         UserApiClient.instance.me { user, error ->
@@ -238,7 +280,8 @@ class MyNoteFragment : Fragment(){
                 userInfo.email = user.kakaoAccount?.email.toString()
 
                 Log.d("NOTELIST TEST : ", "name : " + userInfo.name + ", email" + userInfo.email)
-                initNoteList(userInfo)
+                initNoteList(userInfo) //노트 얻어오기
+                //initQuizList(userInfo) //퀴즈 얻어오기
             }
         }
 
@@ -255,9 +298,24 @@ class MyNoteFragment : Fragment(){
                 noteList.add(0, note)
             }
 
-
             // RecyclerView 어댑터를 업데이트
             noteRecyclerViewAdapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun addQuizList(quizListItem: QuizListItem){
+
+        // 중복 체크: 이미 리스트에 같은 ID의 노트가 있는지 확인
+        val isDuplicate = quizList.any { it.id == quizListItem.id }
+
+        if (!isDuplicate) {
+            if (quizList.size < 10) {
+                // 10개 미만일 때만 요소 추가
+                quizList.add(0, quizListItem)
+            }
+
+            // 리사이클러뷰 업데이트
+            quizRecyclerViewAdapter.notifyDataSetChanged()
         }
     }
 
