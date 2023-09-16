@@ -6,10 +6,12 @@
 <!--        <domain includeSubdomains="true">127.0.0.1</domain>-->
         <!--        Django-->
         <domain includeSubdomains="true">15.165.186.162</domain>
+        <domain includeSubdomains="true">13.125.210.68</domain>
         <!--        localhost-->
         <domain includeSubdomains="true">127.0.0.1</domain>
 
 <!--        login test-->
         <domain includeSubdomains="true">223.130.132.249</domain>
+
     </domain-config>
 </network-security-config>

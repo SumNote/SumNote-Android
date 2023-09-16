@@ -1,6 +1,7 @@
 package com.example.sumnote.api
 
 import com.example.sumnote.ui.DTO.CreateNoteRequest
+import com.example.sumnote.ui.DTO.CreateQuizRequest
 import com.example.sumnote.ui.DTO.Summary
 import com.example.sumnote.ui.DTO.User
 import com.example.sumnote.ui.Dialog.UpdateNoteRequest
@@ -54,6 +55,10 @@ interface ApiManager {
     // 노트 삭제하기
     @DELETE("sum-note/{id}")
     fun deleteNote(@Path("id") id : Int): Call<ResponseBody>
+
+    // 퀴즈 만들기
+    @POST("quiz")
+    fun createQuiz(@Body request: CreateQuizRequest): Call<ResponseBody>
 
     //문제집 리스트 가져오기
     @GET("quizzes")

@@ -16,10 +16,13 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.sumnote.R
 import com.example.sumnote.api.ApiManager
 import com.example.sumnote.databinding.FragmentNoteViewerBinding
+import com.example.sumnote.ui.DTO.CreateNoteRequest
+import com.example.sumnote.ui.DTO.CreateQuizRequest
 import com.example.sumnote.ui.Dialog.CircleProgressDialog
 import com.example.sumnote.ui.kakaoLogin.KakaoOauthViewModelFactory
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
 import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
+import com.kakao.sdk.user.UserApiClient
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import org.json.JSONException
@@ -40,9 +43,13 @@ class NoteViewerFragment : Fragment() {
     private var clickedNoteId : Int = -1
 
     lateinit var apiManager: ApiManager
-    private val baseUrl = "http://10.0.2.2:8000/"
+//    private val baseUrl = "http://10.0.2.2:8000/"
+    private val baseUrl = "http://13.125.210.68:80/"
+
     private lateinit var kakaoViewModel: KakaoViewModel
     private val loadingDialog = CircleProgressDialog()
+
+    private lateinit var toQuiz : String
 
     lateinit var pageTitle : String
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -244,6 +251,8 @@ class NoteViewerFragment : Fragment() {
                         Log.d("#DETAIL TITLE", "test : " + parsedTitles)
                         val parsedContents = pattern.findAll(content).map { it.groupValues[1] }.toList()
 
+                        toQuiz = "[${parsedTitles[0]}]\n${parsedContents}"
+
                         Log.d("#createdPage : ","$parsedTitles, $parsedContents")
 
                         // 파싱된 값들의 길이가 동일한지 확인하고, 동일하면 Page 객체를 생성하여 pages에 추가
@@ -310,39 +319,66 @@ class NoteViewerFragment : Fragment() {
         apiManager = retrofit.create(ApiManager::class.java)
 
         // 요약된 노트 내용을 바탕으로 문제 생성
-        val call = apiManager.generateProblem("")
+        val call = apiManager.generateProblem(toQuiz)
         //val call = apiManager.uploadImage(imagePart)
 
         // 다이얼로그 표시
         loadingDialog.show(requireActivity().supportFragmentManager, loadingDialog.tag)
 
-        call.enqueue(object : retrofit2.Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
                     // 서버로 이미지 전송 성공시
                     Log.d("DjangoServer","send success")
 
                     // 서버 응답에 대한 추가 처리 코드 작성
-                    val responseBody = response.body()?.string()
+                    val responseBody = response.body()
 
-                    try {
+                    if (responseBody != null) {
                         // JSON 응답 파싱
-                        val jsonObject = JSONObject(responseBody)
-                        //String 값 받아오기  => 책의 모든 문자열(추후 ocr코드 개발되면 개선)
-                        val question = jsonObject.getString("question")
-                        val selections = jsonObject.getJSONArray("selections")
-                        val answer = jsonObject.getString("answer")
-                        val commentary = jsonObject.getString("commentary")
+                        val jsonString = responseBody.string()
+                        val json = JSONObject(jsonString)
 
-                        Log.d("DjangoServer", "question's Text : $question")
+                        //String 값 받아오기  => 책의 모든 문자열(추후 ocr코드 개발되면 개선)
+                        val questions = json.getString("question")
+                        val selections = json.getString("selections")
+                        val answers = json.getString("answer")
+                        val commentary = json.getString("commentary")
+
+//                        val regexPattern = Regex("\\[([\\s\\S]*?)\\]")  // 수정된 정규식 패턴
+//
+//                        val questions = regexPattern.findAll(json.getString("question")).map { it.groupValues[1] }.toList()
+////                        Log.d("#DETAIL questions:", questions.toString())
+//
+//                        val selections = regexPattern.findAll(json.getString("selections")).map { it.groupValues[1] }.toList()
+////                        Log.d("#DETAIL selections:", selections.toString())
+//
+//                        val answers = regexPattern.findAll(json.getString("answer")).map { it.groupValues[1].toInt() }.toList()
+////                        Log.d("#DETAIL answers:", answers.toString())
+//
+//                        val commentary = regexPattern.findAll(json.getString("commentary")).map { it.groupValues[1] }.toList()
+////                        Log.d("#DETAIL commentary:", commentary.toString())
+
+                        Log.d("DjangoServer", "question's Text : $questions")
                         Log.d("DjangoServer", "answer_list's Text : $selections")
-                        Log.d("DjangoServer", "answer_num's Text : $answer")
+                        Log.d("DjangoServer", "answer_num's Text : $answers")
                         Log.d("DjangoServer", "commentary's Text : $commentary")
 
+                        // 사용자 정보 요청 (기본)
+                        UserApiClient.instance.me { user, error ->
+                            if (error != null) {
+                                Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
+                            } else if (user != null) {
+                                var email = user.kakaoAccount?.email.toString()
+                                val quiz = CreateQuizRequest(email, clickedNoteId, "$questions", "$selections", "$answers", "$commentary")
+                                makeQuiz(quiz)
+                            }
+                        }
 
 
-                    } catch (e: JSONException) {
-                        Log.e("DjangoServer", "Error parsing JSON: ${e.message}")
+
+                    } else {
+                        Log.e("DjangoServer", "Error parsing JSON")
                     }
 
 
@@ -358,6 +394,31 @@ class NoteViewerFragment : Fragment() {
                 // 통신 실패 처리
                 Log.e("ImageUpload", "Image upload error: ${t.message}")
                 loadingDialog.dismiss()
+            }
+        })
+    }
+
+    private fun makeQuiz(request : CreateQuizRequest){
+
+        val call = RetrofitBuilder.api.createQuiz(request)
+        call.enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if (response.isSuccessful) {
+                    Log.d("#MAKE_QUIZ: ", "SUCCESS")
+
+
+//                    findNavController().navigate(R.id.action_newNoteFragment_to_navigation_my_note)
+                    findNavController().popBackStack()
+                } else {
+                    // 통신 성공 but 응답 실패
+                    Log.d("#MAKE_QUIZ:", "FAILURE")
+                }
+
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                // 통신에 실패한 경우
+                Log.d("#MAKE_QUIZ FAIL: ", t.localizedMessage)
             }
         })
     }
