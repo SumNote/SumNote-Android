@@ -13,5 +13,8 @@
 <!--        login test-->
         <domain includeSubdomains="true">223.130.132.249</domain>
 
+        <!--        local test-->
+        <domain includeSubdomains="true">172.20.10.2</domain>
+
     </domain-config>
 </network-security-config>

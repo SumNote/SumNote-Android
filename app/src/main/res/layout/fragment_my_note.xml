@@ -12,7 +12,7 @@
 <!--    상단탭 부분-->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:background="@color/white_200">
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -24,6 +24,30 @@
             android:background="@android:color/transparent"
             android:src="@drawable/img_default_user"
             app:civ_border_overlay="true" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/search_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/search" />
+
+        <View
+            android:layout_width="14dp"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/etc_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="24dp"
+            android:src="@drawable/menu_vertical" />
 
     </LinearLayout>
 
@@ -43,31 +67,29 @@
             android:id="@+id/txt_recent_note"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="1dp"
+            android:layout_marginStart="24dp"
+            android:fontFamily="@font/pretendard_extra_bold"
             android:text="최근 노트 보기"
-            android:textColor="@color/black"
+            android:textColor="@color/bk"
             android:textSize="18dp"
             android:textStyle="bold"
+
             app:layout_constraintBottom_toTopOf="@+id/guideline4"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline1"
-            app:layout_constraintVertical_bias="0.705" />
+            app:layout_constraintTop_toTopOf="@+id/guideline1" />
 
         <TextView
             android:id="@+id/txt_go_all_note"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="24dp"
+            android:fontFamily="@font/pretendard_light"
             android:text="전체 보기"
-            android:textColor="@color/gray"
+            android:textColor="@color/mid_grey"
             android:textSize="12dp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/guideline4"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline1"
-            app:layout_constraintVertical_bias="0.571" />
+            app:layout_constraintBottom_toBottomOf="@+id/txt_recent_note"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline4"
@@ -98,14 +120,16 @@
 
 
         <TextView
+            android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginStart="24dp"
+            android:fontFamily="@font/pretendard_extra_bold"
             android:text="최근 푼 문제 보기"
-            android:textColor="@color/black"
+            android:textColor="@color/bk"
             android:textSize="18dp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/guideline7"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guideline5" />
 
@@ -115,11 +139,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginEnd="24dp"
+            android:fontFamily="@font/pretendard_light"
             android:text="전체 보기"
-            android:textColor="@color/gray"
+            android:textColor="@color/mid_grey"
             android:textSize="12dp"
             android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/textView3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/guideline5" />
 

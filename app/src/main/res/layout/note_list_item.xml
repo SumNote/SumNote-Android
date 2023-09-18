@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="match_parent">>
+    android:layout_height="match_parent">
 
 <!--    이미지의 둥근 모서리 디자인을 적용시키기 위해 CardView사용-->
     <androidx.cardview.widget.CardView
@@ -31,8 +31,10 @@
             android:textColor="@color/white"
             android:textStyle="bold"
             android:textSize="30dp"
+            android:fontFamily="@font/pretendard_medium"
+            android:letterSpacing="0"
             android:layout_marginStart="15dp"
-            android:layout_marginBottom="25dp"
+            android:layout_marginBottom="30dp"
             android:text="Note 1" />
 
 
@@ -42,11 +44,12 @@
             android:layout_height="wrap_content"
             android:text="2023.6.15"
             android:textSize="15dp"
-            android:textStyle="bold"
             android:textColor="@color/white"
+            android:fontFamily="@font/pretendard_extra_light"
+            android:letterSpacing="0"
             android:layout_gravity="bottom"
             android:layout_marginLeft="10dp"
-            android:layout_marginBottom="6dp"
+            android:layout_marginBottom="10dp"
             android:layout_marginStart="15dp"/>
 
     </androidx.cardview.widget.CardView>
