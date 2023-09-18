@@ -7,15 +7,16 @@
     android:layout_height="match_parent"
     tools:context=".LoginActivity">
 
+
     <TextView
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="8dp"
         android:text="Sum"
         android:textColor="@color/green"
-        android:textSize="50dp"
+        android:textSize="90dp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline1" />
@@ -23,14 +24,13 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
+        android:layout_marginStart="40dp"
         android:text="Note"
         android:textColor="@color/green"
-        android:textSize="50dp"
+        android:textSize="90dp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
-
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_login"

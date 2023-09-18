@@ -1,30 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     tools:context=".ui.NoteMaker.NoteMakerFragment">
 
-<!--    <TextureView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:id="@+id/textureView"/>-->
 
-    <TextView
+    <Button
+        android:id="@+id/cameraButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="note_fragemnt"
-        android:textSize="30dp"/>
+        android:text="촬영하기"
+        android:textStyle="bold"/>
 
-<!--    <ImageView-->
-<!--        android:id="@+id/capture"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        android:layout_marginBottom="-45dp"-->
-<!--        app:srcCompat="@drawable/camera_bottom" />-->
 
-</RelativeLayout>
+</LinearLayout>

@@ -87,7 +87,8 @@ class CameraFragment : Fragment() {
     private val loadingDialog = CircleProgressDialog()
 
 //    private val baseUrl = "http://10.0.2.2:8000/" //장고 서버 url
-    private val baseUrl = "http://13.125.210.68:80/"
+    private val baseUrl = "http://43.201.71.53:80/"
+//    private val baseUrl = "http://13.125.210.68:80/"
 
     // 전달받은 json값이 null인 경우에 대한 예외처리 => 아직 적용 안했음
     private val nullOnEmptyConverterFactory = object : Converter.Factory() {
@@ -271,7 +272,7 @@ class CameraFragment : Fragment() {
         val requestBody = RequestBody.create("image/*".toMediaTypeOrNull(), rotatedImageBytes)
         val imagePart = MultipartBody.Part.createFormData("image", "image.jpg", requestBody)
 
-        val call = apiManager.uploadImageTest(imagePart)
+        val call = apiManager.uploadImage(imagePart)
 
         loadingDialog.show(requireActivity().supportFragmentManager, loadingDialog.tag)
 
