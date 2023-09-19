@@ -86,8 +86,8 @@ class CameraFragment : Fragment() {
     // 로딩 dialog
     private val loadingDialog = CircleProgressDialog()
 
-//    private val baseUrl = "http://10.0.2.2:8000/" //장고 서버 url
-    private val baseUrl = "http://13.125.210.68:80/"
+    private val baseUrl = "http://10.0.2.2:8000/" //장고 서버 url
+//    private val baseUrl = "http://43.201.71.53:80/"
 
     // 전달받은 json값이 null인 경우에 대한 예외처리 => 아직 적용 안했음
     private val nullOnEmptyConverterFactory = object : Converter.Factory() {
@@ -255,9 +255,9 @@ class CameraFragment : Fragment() {
         val rotatedImageBytes = bitmapToByteArray(rotatedBitmap)
 
         val okHttpClient = OkHttpClient().newBuilder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(50, TimeUnit.SECONDS)
+            .readTimeout(50, TimeUnit.SECONDS)
+            .writeTimeout(50, TimeUnit.SECONDS)
             .build()
 
         val retrofit = Retrofit.Builder()
@@ -269,7 +269,7 @@ class CameraFragment : Fragment() {
         apiManager = retrofit.create(ApiManager::class.java)
 
         val requestBody = RequestBody.create("image/*".toMediaTypeOrNull(), rotatedImageBytes)
-        val imagePart = MultipartBody.Part.createFormData("image", "image.jpg", requestBody)
+        val imagePart = MultipartBody.Part.createFormData("image", "book.jpg", requestBody)
 
         val call = apiManager.uploadImageTest(imagePart)
 
