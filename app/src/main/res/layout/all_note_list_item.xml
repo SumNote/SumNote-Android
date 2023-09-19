@@ -80,7 +80,11 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/img_right_arrow" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/break_line"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </LinearLayout>
