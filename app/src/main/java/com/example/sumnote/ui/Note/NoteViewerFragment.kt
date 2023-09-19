@@ -13,11 +13,13 @@ import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.example.sumnote.R
 import com.example.sumnote.api.ApiManager
 import com.example.sumnote.databinding.FragmentNoteViewerBinding
 import com.example.sumnote.ui.DTO.CreateNoteRequest
 import com.example.sumnote.ui.DTO.CreateQuizRequest
+import com.example.sumnote.ui.DTO.UpdateQuizRequest
 import com.example.sumnote.ui.Dialog.CircleProgressDialog
 import com.example.sumnote.ui.kakaoLogin.KakaoOauthViewModelFactory
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
@@ -32,7 +34,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.IOException
 import java.util.concurrent.TimeUnit
+import kotlin.properties.Delegates
+
 
 class NoteViewerFragment : Fragment() {
 
@@ -43,15 +48,20 @@ class NoteViewerFragment : Fragment() {
     private var clickedNoteId : Int = -1
 
     lateinit var apiManager: ApiManager
-//    private val baseUrl = "http://10.0.2.2:8000/"
-    private val baseUrl = "http://13.125.210.68:80/"
+    private val baseUrl = "http://10.0.2.2:8000/"
+//    private val baseUrl = "http://43.201.71.53:80/"
 
     private lateinit var kakaoViewModel: KakaoViewModel
     private val loadingDialog = CircleProgressDialog()
 
     private lateinit var toQuiz : String
+    private var quizExist by Delegates.notNull<Boolean>()
 
     lateinit var pageTitle : String
+
+    // NoteViewerFragment 클래스 내에 멤버 변수 추가
+    private var currentPageIndex: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -86,6 +96,15 @@ class NoteViewerFragment : Fragment() {
                 detailNote(clickedNoteId)
             }
         }
+
+        // ViewPager2에 페이지 변경 리스너를 추가합니다.
+        binding.noteViewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                // 페이지가 변경될 때 현재 페이지의 인덱스를 업데이트합니다.
+                currentPageIndex = position
+            }
+        })
 
         //페이지들을 보여주기 위한 뷰 페이저
         var noteViewPager = binding.noteViewPager
@@ -162,6 +181,16 @@ class NoteViewerFragment : Fragment() {
                 when (item.itemId) {
                     R.id.menu_item1 -> {
                         // 메뉴 아이템 1을 클릭했을 때 수행할 동작을 정의하세요.
+                        if (currentPageIndex < pages.size) {
+                            val currentPage = pages[currentPageIndex]
+                            // currentPage에는 현재 페이지의 정보가 포함되어 있습니다.
+                            // 이 정보를 사용하여 페이지 내용을 가져올 수 있습니다.
+                            val pageTitle = currentPage.pageTitle
+                            val pageSummary = currentPage.summary
+                            Log.d("GET CURR PAGE", "title : ${pageTitle} sum : ${pageSummary}")
+                            toQuiz =  "[${pageTitle}]\n${pageSummary}"
+                            // 이제 pageTitle 및 pageSummary를 사용하여 원하는 작업을 수행할 수 있습니다.
+                        }
                         serverToGetPro()
                         true
                     }
@@ -231,6 +260,8 @@ class NoteViewerFragment : Fragment() {
                         val title = json.getString("title")
                         val content = json.getString("content")
 
+                        quizExist = json.getBoolean("is_quiz_exist")
+
                         Log.d("#DETAIL Success:", jsonString)
                         Log.d("#DETAIL title:", title)
                         Log.d("#DETAIL content:", content)
@@ -250,8 +281,7 @@ class NoteViewerFragment : Fragment() {
                         val parsedTitles = pattern.findAll(title).map { it.groupValues[1] }.toList()
                         Log.d("#DETAIL TITLE", "test : " + parsedTitles)
                         val parsedContents = pattern.findAll(content).map { it.groupValues[1] }.toList()
-
-                        toQuiz = "[${parsedTitles[0]}]\n${parsedContents}"
+                        
 
                         Log.d("#createdPage : ","$parsedTitles, $parsedContents")
 
@@ -273,6 +303,8 @@ class NoteViewerFragment : Fragment() {
                             // 타이틀과 컨텐츠의 길이가 다르면 로그를 남깁니다.
                             Log.e("ParsingError", "Title and content size mismatch!")
                         }
+
+                        toQuiz = "[${parsedTitles[0]}]\n${parsedContents}"
 
                         //기존 코드
 //                        //노트에 대한 페이지들 파싱
@@ -319,11 +351,15 @@ class NoteViewerFragment : Fragment() {
         apiManager = retrofit.create(ApiManager::class.java)
 
         // 요약된 노트 내용을 바탕으로 문제 생성
-        val call = apiManager.generateProblem(toQuiz)
-        //val call = apiManager.uploadImage(imagePart)
+
 
         // 다이얼로그 표시
+
         loadingDialog.show(requireActivity().supportFragmentManager, loadingDialog.tag)
+
+
+        Log.d("TO QUIZ TEST", "${toQuiz}")
+        val call = apiManager.generateProblem(toQuiz)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -371,23 +407,20 @@ class NoteViewerFragment : Fragment() {
                             } else if (user != null) {
                                 var email = user.kakaoAccount?.email.toString()
                                 val quiz = CreateQuizRequest(email, clickedNoteId, "$questions", "$selections", "$answers", "$commentary")
-                                makeQuiz(quiz)
+
+                                val appendQuiz = UpdateQuizRequest( "$questions", "$selections", "$answers", "$commentary")
+                                makeQuiz(quiz, appendQuiz)
                             }
                         }
-
-
 
                     } else {
                         Log.e("DjangoServer", "Error parsing JSON")
                     }
-
-
                 } else {
                     Log.e("DjangoServer", "Error response")
                 }
 
                 loadingDialog.dismiss()
-
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -396,31 +429,63 @@ class NoteViewerFragment : Fragment() {
                 loadingDialog.dismiss()
             }
         })
+        //val call = apiManager.uploadImage(imagePart)
     }
 
-    private fun makeQuiz(request : CreateQuizRequest){
+    private fun makeQuiz(request : CreateQuizRequest, request2: UpdateQuizRequest){
 
-        val call = RetrofitBuilder.api.createQuiz(request)
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                if (response.isSuccessful) {
-                    Log.d("#MAKE_QUIZ: ", "SUCCESS")
+
+        if(!quizExist) {
+            val call = RetrofitBuilder.api.createQuiz(request)
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if (response.isSuccessful) {
+                        Log.d("#MAKE_QUIZ: ", "SUCCESS")
 
 
 //                    findNavController().navigate(R.id.action_newNoteFragment_to_navigation_my_note)
-                    findNavController().popBackStack()
-                } else {
-                    // 통신 성공 but 응답 실패
-                    Log.d("#MAKE_QUIZ:", "FAILURE")
+                        findNavController().popBackStack()
+                    } else {
+                        // 통신 성공 but 응답 실패
+                        Log.d("#MAKE_QUIZ:", "FAILURE")
+                    }
+
                 }
 
-            }
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    // 통신에 실패한 경우
+                    Log.d("#MAKE_QUIZ FAIL: ", t.localizedMessage)
+                }
+            })
+        } else {
+            val call = RetrofitBuilder.api.updateQuiz(clickedNoteId, request2)
+            call.enqueue(object : Callback<ResponseBody> {
+                override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                    if (response.isSuccessful) {
+                        Log.d("#UPDATE_QUIZ: ", "SUCCESS")
 
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                // 통신에 실패한 경우
-                Log.d("#MAKE_QUIZ FAIL: ", t.localizedMessage)
-            }
-        })
+
+//                    findNavController().navigate(R.id.action_newNoteFragment_to_navigation_my_note)
+                        findNavController().popBackStack()
+                    } else {
+                        // 통신 성공 but 응답 실패
+                        Log.d("#UPDATE_QUIZ:", "FAILURE")
+                    }
+
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    // 통신에 실패한 경우
+                    Log.d("#UPDATE_QUIZ FAIL: ", t.localizedMessage)
+                }
+            })
+        }
+
+
+
     }
 }
 

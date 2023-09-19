@@ -3,6 +3,7 @@ package com.example.sumnote.api
 import com.example.sumnote.ui.DTO.CreateNoteRequest
 import com.example.sumnote.ui.DTO.CreateQuizRequest
 import com.example.sumnote.ui.DTO.Summary
+import com.example.sumnote.ui.DTO.UpdateQuizRequest
 import com.example.sumnote.ui.DTO.User
 import com.example.sumnote.ui.Dialog.UpdateNoteRequest
 import okhttp3.MultipartBody
@@ -56,6 +57,7 @@ interface ApiManager {
     @DELETE("sum-note/{id}")
     fun deleteNote(@Path("id") id : Int): Call<ResponseBody>
 
+
     // 퀴즈 만들기
     @POST("quiz")
     fun createQuiz(@Body request: CreateQuizRequest): Call<ResponseBody>
@@ -67,4 +69,8 @@ interface ApiManager {
     //선택한 문제집에 대한 퀴즈 가져오기
     @GET("quiz/{id}")
     fun detailQuiz(@Path("id") id : Int): Call<ResponseBody>
+
+    // 퀴즈 내용 추가하기
+    @PUT("quiz/content/{id}")
+    fun updateQuiz(@Path("id") id : Int, @Body request2: UpdateQuizRequest): Call<ResponseBody>
 }
