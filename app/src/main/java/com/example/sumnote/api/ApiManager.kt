@@ -1,5 +1,6 @@
 package com.example.sumnote.api
 
+import com.example.sumnote.ui.DTO.ChangeNoteTitleRequest
 import com.example.sumnote.ui.DTO.CreateNoteRequest
 import com.example.sumnote.ui.DTO.CreateQuizRequest
 import com.example.sumnote.ui.DTO.Summary
@@ -52,6 +53,10 @@ interface ApiManager {
     // 노트 내용 추가하기
     @PUT("sum-note/content/{id}")
     fun updateNote(@Path("id") id : Int, @Body request: UpdateNoteRequest): Call<ResponseBody>
+
+    // 노트 제목 수정하기
+    @PUT("sum-note/title/{id}")
+    fun updateNoteTitle(@Path("id") id : Int, @Body request: ChangeNoteTitleRequest): Call<ResponseBody>
 
     // 노트 삭제하기
     @DELETE("sum-note/{id}")

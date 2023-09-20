@@ -28,6 +28,11 @@ import androidx.navigation.fragment.findNavController
 import com.example.sumnote.ui.DTO.CreateNoteRequest
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
 import com.kakao.sdk.user.UserApiClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 data class UpdateNoteRequest(val addTitle : String, val addContent : String)
@@ -42,6 +47,8 @@ class SelectNoteToSaveDialog(
 
     private var noteList :List<NoteItem> = emptyList()
     private lateinit var note : UpdateNoteRequest
+
+    private val successDialog = SuccessDialog()
 
     //생성자를 통해 유저의 노트아이템 리스트 얻어옴
     init {
@@ -111,9 +118,42 @@ class SelectNoteToSaveDialog(
                 if (response.isSuccessful) {
                     Log.d("#SPRING UPDATE:", "SUCCESS")
 
-                    dialog?.dismiss()
-//                    findNavController().navigate(R.id.action_newNoteFragment_to_navigation_my_note)
+
+
+                    // 성공 후 dialog 띄우기
+//                    CoroutineScope(Dispatchers.Main).launch {
+//                        dialog?.dismiss()
+//
+//                        val dialogBundle = Bundle()
+//                        dialogBundle.putString("dialogText", "노트가 저장되었습니다!")
+//                        successDialog.arguments = dialogBundle
+//                        successDialog.show(requireActivity().supportFragmentManager, successDialog.tag)
+//                        withContext(Dispatchers.Default) { delay(1500) }
+//                        successDialog.dismiss()
+//
+//                        findNavController().popBackStack()
+//                    }
+
+                    CoroutineScope(Dispatchers.Main).launch {
+                        dialog?.dismiss()
+
+                        val dialogBundle = Bundle()
+                        dialogBundle.putString("dialogText", "노트가 저장되었습니다!")
+                        successDialog.arguments = dialogBundle
+                        successDialog.show(requireActivity().supportFragmentManager, successDialog.tag)
+
+                        // 지정된 딜레이 이후에 UI 조작 수행
+                        delay(1500)
+
+                        // UI 조작은 메인 스레드에서 실행되어야 합니다.
+                        withContext(Dispatchers.Main) {
+                            successDialog.dismiss()
+
+                        }
+                    }
                     findNavController().popBackStack()
+//                    findNavController().navigate(R.id.action_newNoteFragment_to_navigation_my_note)
+
                 } else {
                     // 통신 성공 but 응답 실패
                     Log.d("#SPRING UPDATE:", "FAILURE")

@@ -40,7 +40,13 @@ import com.example.sumnote.R
 import com.example.sumnote.api.ApiManager
 import com.example.sumnote.databinding.FragmentCameraBinding
 import com.example.sumnote.ui.Dialog.CircleProgressDialog
+import com.example.sumnote.ui.Dialog.SuccessDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -85,6 +91,7 @@ class CameraFragment : Fragment() {
 
     // 로딩 dialog
     private val loadingDialog = CircleProgressDialog()
+    private val successDialog = SuccessDialog()
 
     private val baseUrl = "http://10.0.2.2:8000/" //장고 서버 url
 //    private val baseUrl = "http://43.201.71.53:80/"
@@ -273,6 +280,9 @@ class CameraFragment : Fragment() {
 
         val call = apiManager.uploadImageTest(imagePart)
 
+        val bundle = Bundle()
+        bundle.putString("dialogText", "노트를 생성하는 중입니다...")
+        loadingDialog.arguments = bundle
         loadingDialog.show(requireActivity().supportFragmentManager, loadingDialog.tag)
 
         call.enqueue(object : retrofit2.Callback<ResponseBody> {
@@ -295,14 +305,28 @@ class CameraFragment : Fragment() {
                         bundle.putString("title", noteTitle)
                         bundle.putString("textBook", summary)
 
-                        findNavController().navigate(R.id.action_cameraFragement_to_newNoteFragment,bundle)
+
+                        // 성공 후 dialog 띄우기
+                        CoroutineScope(Dispatchers.Main).launch {
+                            loadingDialog.dismiss()
+                            val dialogBundle = Bundle()
+                            dialogBundle.putString("dialogText", "노트가 성공적으로 생성되었습니다!")
+                            successDialog.arguments = dialogBundle
+                            successDialog.show(requireActivity().supportFragmentManager, successDialog.tag)
+                            withContext(Dispatchers.Default) { delay(1500) }
+                            successDialog.dismiss()
+                            findNavController().navigate(R.id.action_cameraFragement_to_newNoteFragment,bundle)
+                        }
+
                     } catch (e: JSONException) {
                         Log.e("DjangoServer", "Error parsing JSON: ${e.message}")
+                        loadingDialog.dismiss()
                     }
                 } else {
                     Toast.makeText(this@CameraFragment.activity, "Image upload failed", Toast.LENGTH_SHORT).show()
+                    loadingDialog.dismiss()
                 }
-                loadingDialog.dismiss()
+
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
