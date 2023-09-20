@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="80dp"
-        android:background="@color/white_200">
+        android:background="@color/background_color">
 
         <!--    이미지의 둥근 모서리 디자인을 적용시키기 위해 CardView사용-->
 
@@ -46,7 +46,7 @@
             android:layout_marginTop="13dp"
             android:fontFamily="@font/pretendard_medium"
             android:text="note 1"
-            android:textColor="@color/black"
+            android:textColor="@color/list_title"
             android:textSize="18dp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/cardView2"
@@ -61,7 +61,7 @@
             android:layout_marginBottom="13dp"
             android:fontFamily="@font/pretendard_extra_light"
             android:text="2023.8.31 am 11:30"
-            android:textColor="@color/mid_grey"
+            android:textColor="@color/list_time"
             android:textSize="13dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/cardView2"

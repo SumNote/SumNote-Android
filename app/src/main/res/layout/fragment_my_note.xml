@@ -7,13 +7,13 @@
     tools:context=".ui.MyNote.MyNoteFragment"
     android:id="@+id/fragment_my_note"
     android:orientation="vertical"
-    android:background="@color/white_200">
+    android:background="@color/background_color">
 
 <!--    상단탭 부분-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/white_200">
+        android:background="@color/background_color">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/usr_profile"
@@ -70,7 +70,7 @@
             android:layout_marginStart="24dp"
             android:fontFamily="@font/pretendard_extra_bold"
             android:text="최근 노트 보기"
-            android:textColor="@color/bk"
+            android:textColor="@color/main_recent"
             android:textSize="18dp"
             android:textStyle="bold"
 
@@ -85,7 +85,7 @@
             android:layout_marginEnd="24dp"
             android:fontFamily="@font/pretendard_light"
             android:text="전체 보기"
-            android:textColor="@color/mid_grey"
+            android:textColor="@color/main_show_all"
             android:textSize="12dp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/txt_recent_note"
@@ -126,7 +126,7 @@
             android:layout_marginStart="24dp"
             android:fontFamily="@font/pretendard_extra_bold"
             android:text="최근 푼 문제 보기"
-            android:textColor="@color/bk"
+            android:textColor="@color/main_recent"
             android:textSize="18dp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/guideline7"
@@ -142,7 +142,7 @@
             android:layout_marginEnd="24dp"
             android:fontFamily="@font/pretendard_light"
             android:text="전체 보기"
-            android:textColor="@color/mid_grey"
+            android:textColor="@color/main_show_all"
             android:textSize="12dp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="@+id/textView3"

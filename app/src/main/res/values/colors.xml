@@ -1,12 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- 배경색 -->
+    <color name="background_color">#F9F9F9</color>
+
+    <!-- my note 탭 -->
+    <color name="main_recent">#333333</color>
+    <color name="main_show_all">#AEA9A9</color>
+    <color name="detail_note_title">#333333</color>
+    <color name="detail_note_content">#333333</color>
+
+    <!-- my note 탭 - 전체보기 -->
+    <color name="list_title">#000000</color>
+    <color name="list_time">#AEA9A9</color>
+    <color name="break_line">#D9D9D9</color>
+
+    <!-- 노트 문서 보기 -->
+    <color name="detail_note_main_title">#333333</color>
+    <color name="detail_note_page_title">#333333</color>
+    <color name="detail_note_page_content">#333333</color>
+
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="white">#FFFFFF</color>
     <color name="green">#07C97C</color>
     <color name="white_200">#EDEEF0</color>
     <color name="gray">#43615F5F</color>
@@ -15,6 +35,5 @@
     <color name="yellow">#FFFF00</color>
     <color name="sign_green">#07C97C</color>
     <color name="mid_grey">#AEA9A9</color>
-    <color name="break_line">#D9D9D9</color>
     <color name="bk">#333333</color>
 </resources>
