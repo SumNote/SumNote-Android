@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- 배경색 -->
+    <color name="background_color">#333333</color>
+
+    <!-- my note 탭 -->
+    <color name="main_recent">#EDEEF0</color>
+    <color name="main_show_all">#AEA9A9</color>
+    <color name="detail_note_title">#FFFFFF</color>
+    <color name="detail_note_content">#FFFFFF</color>
+
+    <!-- my note 탭 - 전체보기 -->
+    <color name="break_line">#3D3D3D</color>
+    <color name="list_title">#FFFFFF</color>
+    <color name="list_time">#AEA9A9</color>
+
+    <!-- 노트 문서 보기 -->
+    <color name="detail_note_main_title">#AEA9A9</color>
+    <color name="detail_note_page_title">#FFFFFF</color>
+    <color name="detail_note_page_content">#FFFFFF</color>
+
+    <color name="white">#FFFFFF</color>
+</resources>
