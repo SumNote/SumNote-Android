@@ -16,6 +16,7 @@
     <color name="break_line">#D9D9D9</color>
 
     <!-- 노트 문서 보기 -->
+    <color name="note_background">#F9F9F9</color>
     <color name="detail_note_main_title">#333333</color>
     <color name="detail_note_page_title">#333333</color>
     <color name="detail_note_page_content">#333333</color>
