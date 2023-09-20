@@ -30,6 +30,7 @@ import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
 import com.example.sumnote.ui.DTO.User
 import com.example.sumnote.ui.Dialog.SelectNoteToSaveDialog
 import com.example.sumnote.ui.Dialog.SelectNoteToSaveDialogInterface
+import com.example.sumnote.ui.Dialog.SuccessDialog
 import com.example.sumnote.ui.Dialog.UpdateNoteRequest
 import com.example.sumnote.ui.MyNote.MyNoteFragment
 import com.example.sumnote.ui.Note.NoteItem

@@ -10,15 +10,16 @@ import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.example.sumnote.R
 import com.example.sumnote.databinding.ProgressDialogBinding
+import com.example.sumnote.databinding.SuccessDialogBinding
 
-class CircleProgressDialog: DialogFragment() {
+class SuccessDialog: DialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = ProgressDialogBinding.inflate(inflater, container, false)
+        val binding = SuccessDialogBinding.inflate(inflater, container, false)
         dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)) // 투명 배경
         dialog?.setCanceledOnTouchOutside(false) // 주변 터치 방지
 
@@ -28,7 +29,7 @@ class CircleProgressDialog: DialogFragment() {
         // 다른 프래그먼트로부터 전달받은 텍스트 설정
         val arguments = arguments
         if (arguments != null) {
-            val newText = arguments.getString("dialogText", "생성하는 중입니다...")
+            val newText = arguments.getString("dialogText", "성공적으로 완료되었습니다!")
             dialogTextView.text = newText
         }
 

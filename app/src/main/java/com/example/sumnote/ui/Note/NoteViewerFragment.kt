@@ -1,12 +1,12 @@
 package com.example.sumnote.ui.Note
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.PopupMenu
@@ -17,24 +17,28 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.sumnote.R
 import com.example.sumnote.api.ApiManager
 import com.example.sumnote.databinding.FragmentNoteViewerBinding
-import com.example.sumnote.ui.DTO.CreateNoteRequest
 import com.example.sumnote.ui.DTO.CreateQuizRequest
 import com.example.sumnote.ui.DTO.UpdateQuizRequest
+import com.example.sumnote.ui.Dialog.ChangeNoteTitleDialog
 import com.example.sumnote.ui.Dialog.CircleProgressDialog
+import com.example.sumnote.ui.Dialog.SuccessDialog
 import com.example.sumnote.ui.kakaoLogin.KakaoOauthViewModelFactory
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
 import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
 import com.kakao.sdk.user.UserApiClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
-import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.IOException
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
@@ -52,15 +56,20 @@ class NoteViewerFragment : Fragment() {
 //    private val baseUrl = "http://43.201.71.53:80/"
 
     private lateinit var kakaoViewModel: KakaoViewModel
-    private val loadingDialog = CircleProgressDialog()
 
+    private val loadingDialog = CircleProgressDialog()
+    private val successDialog = SuccessDialog()
+
+    // 장고에 보내줄 텍스트
     private lateinit var toQuiz : String
+    // 해당 노트에 대해서 퀴즈가 존재하는지
     private var quizExist by Delegates.notNull<Boolean>()
 
     lateinit var pageTitle : String
 
     // NoteViewerFragment 클래스 내에 멤버 변수 추가
     private var currentPageIndex: Int = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -171,34 +180,83 @@ class NoteViewerFragment : Fragment() {
 
         val menuButton = binding.menuVertical
         menuButton.setOnClickListener {
-            // 팝업 메뉴를 생성하고 표시합니다.
+            // 팝업 메뉴를 생성하고 표시
             val popupMenu = PopupMenu(requireContext(), menuButton)
             val inflater = popupMenu.menuInflater
             inflater.inflate(R.menu.note_viewer_menu, popupMenu.menu)
 
-            // 팝업 메뉴 아이템에 클릭 리스너를 추가할 수 있습니다.
+            // 팝업 메뉴 아이템에 클릭 리스너를 추가
             popupMenu.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
-                    R.id.menu_item1 -> {
-                        // 메뉴 아이템 1을 클릭했을 때 수행할 동작을 정의하세요.
+                    // 퀴즈 생성
+                    R.id.create_quiz -> {
+                        // 메뉴 아이템 1을 클릭했을 때 수행할 동작을 정의
                         if (currentPageIndex < pages.size) {
                             val currentPage = pages[currentPageIndex]
-                            // currentPage에는 현재 페이지의 정보가 포함되어 있습니다.
-                            // 이 정보를 사용하여 페이지 내용을 가져올 수 있습니다.
+                            // currentPage에는 현재 페이지의 정보가 포함
+                            // 이 정보를 사용하여 페이지 내용 가져오기
                             val pageTitle = currentPage.pageTitle
                             val pageSummary = currentPage.summary
                             Log.d("GET CURR PAGE", "title : ${pageTitle} sum : ${pageSummary}")
                             toQuiz =  "[${pageTitle}]\n${pageSummary}"
-                            // 이제 pageTitle 및 pageSummary를 사용하여 원하는 작업을 수행할 수 있습니다.
                         }
                         serverToGetPro()
                         true
                     }
-                    R.id.menu_item2 -> {
-                        // 메뉴 아이템 2를 클릭했을 때 수행할 동작을 정의하세요.
 
+                    // 제목 수정
+                    R.id.update_title -> {
+                        val changeNoteTitleDialog = ChangeNoteTitleDialog(clickedNoteId)
+
+                        // 다이얼로그가 생성될 때 리스너 설정
+                        changeNoteTitleDialog.setOnDialogResultListener(object :
+                            ChangeNoteTitleDialog.OnDialogResultListener {
+                            override fun onDialogResult(result: Any) {
+                                // 다이얼로그에서 작업 완료 후 이 메서드가 호출됩니다.
+                                // 여기서 프래그먼트의 내용을 갱신할 수 있습니다.
+                                Log.d("dialog result", "result : $result")
+                                binding.txtNoteViewrTitle.text = result.toString()
+
+
+                                val bundle = Bundle()
+                                bundle.putString("dialogText", "성공적으로 변경되었습니다!")
+                                successDialog.arguments = bundle
+
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    successDialog.show(requireActivity().supportFragmentManager, successDialog.tag)
+                                    withContext(Dispatchers.Default) { delay(1500) }
+                                    successDialog.dismiss()
+                                }
+
+                            }
+                        })
+
+                        changeNoteTitleDialog.show(requireActivity().supportFragmentManager, changeNoteTitleDialog.tag)
+                        Log.d("#MENU", "update title : ${clickedNoteId}")
+
+                        true
+                    }
+
+                    // 노트 삭제
+                    R.id.delete_note -> {
                         deleteNote()
                         Log.d("#MENU", "DELETE ${clickedNoteId}")
+                        // 성공 dialog 띄우기
+                        CoroutineScope(Dispatchers.Main).launch {
+                            val dialogBundle = Bundle()
+                            dialogBundle.putString("dialogText", "노트가 삭제되었습니다!")
+                            successDialog.arguments = dialogBundle
+                            successDialog.show(requireActivity().supportFragmentManager, successDialog.tag)
+
+                            // 지정된 딜레이 이후에 UI 조작 수행
+                            delay(1500)
+
+                            // UI 조작은 메인 스레드에서 실행
+                            withContext(Dispatchers.Main) {
+                                successDialog.dismiss()
+
+                            }
+                        }
                         findNavController().popBackStack()
 
 
@@ -355,6 +413,9 @@ class NoteViewerFragment : Fragment() {
 
         // 다이얼로그 표시
 
+        val bundle = Bundle()
+        bundle.putString("dialogText", "문제를 생성하는 중입니다...")
+        loadingDialog.arguments = bundle
         loadingDialog.show(requireActivity().supportFragmentManager, loadingDialog.tag)
 
 
@@ -409,9 +470,24 @@ class NoteViewerFragment : Fragment() {
                                 val quiz = CreateQuizRequest(email, clickedNoteId, "$questions", "$selections", "$answers", "$commentary")
 
                                 val appendQuiz = UpdateQuizRequest( "$questions", "$selections", "$answers", "$commentary")
-                                makeQuiz(quiz, appendQuiz)
+
+                                // 성공 dialog 띄우기
+                                CoroutineScope(Dispatchers.Main).launch {
+                                    loadingDialog.dismiss()
+                                    val bundle = Bundle()
+                                    bundle.putString("dialogText", "문제가 성공적으로 생성되었습니다!")
+                                    successDialog.arguments = bundle
+                                    successDialog.show(requireActivity().supportFragmentManager, successDialog.tag)
+                                    withContext(Dispatchers.Default) { delay(1500) }
+                                    successDialog.dismiss()
+                                    makeQuiz(quiz, appendQuiz)
+                                }
+
                             }
                         }
+
+
+
 
                     } else {
                         Log.e("DjangoServer", "Error parsing JSON")
@@ -420,7 +496,7 @@ class NoteViewerFragment : Fragment() {
                     Log.e("DjangoServer", "Error response")
                 }
 
-                loadingDialog.dismiss()
+
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -444,7 +520,6 @@ class NoteViewerFragment : Fragment() {
                 ) {
                     if (response.isSuccessful) {
                         Log.d("#MAKE_QUIZ: ", "SUCCESS")
-
 
 //                    findNavController().navigate(R.id.action_newNoteFragment_to_navigation_my_note)
                         findNavController().popBackStack()
@@ -483,9 +558,6 @@ class NoteViewerFragment : Fragment() {
                 }
             })
         }
-
-
-
     }
 }
 
