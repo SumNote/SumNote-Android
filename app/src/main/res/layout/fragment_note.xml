@@ -3,33 +3,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.Note.NoteFragment"
-    android:background="@drawable/img_note_background"
-    android:orientation="vertical">
+    android:background="@color/note_background"
+    android:orientation="vertical"
+    tools:context=".ui.Note.NoteFragment">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="660dp"
+        android:background="@drawable/img_note_background"
+        android:orientation="vertical"
+        android:id="@+id/note">
 
     <TextView
-        android:fontFamily="@font/yeongdeoksea"
         android:id="@+id/note_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="40dp"
+        android:fontFamily="@font/yeongdeoksea"
         android:text="데이터 베이스의 이해"
         android:textColor="@color/detail_note_page_title"
-        android:textStyle="bold"
         android:textSize="40dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="40dp"/>
+        android:textStyle="bold" />
 
     <TextView
-        android:fontFamily="@font/yeongdeoksea"
         android:id="@+id/note_summary"
         android:layout_width="370dp"
         android:layout_height="600dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
+        android:fontFamily="@font/yeongdeoksea"
         android:text="질의어 : 데이터베이스 정보 요구를 위해 사용하는 언어"
-        android:textSize="23dp"
-        android:textColor="@color/detail_note_page_content"/>
+        android:textColor="@color/detail_note_page_content"
+        android:textSize="23dp" />
 
+    </LinearLayout>
 
 </LinearLayout>
