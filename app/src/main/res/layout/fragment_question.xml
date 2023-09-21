@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/note_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -43,7 +44,7 @@
             android:layout_marginEnd="332dp"
             android:layout_marginBottom="4dp"
             android:text="문제"
-            android:textColor="@color/black"
+            android:textColor="@color/question"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@+id/progressBar"
             app:layout_constraintEnd_toEndOf="parent"
@@ -110,7 +111,8 @@
         android:text="질의 언어는 데이터 베이스에서 무엇을 요구하기 위해 사용되는 언어인가요?"
         android:textSize="15dp"
         android:gravity="center"
-        android:textColor="@color/black"
+        android:textColor="@color/quiz"
+        android:fontFamily="@font/pretendard_medium"
         android:textStyle="bold" />
 
     <LinearLayout
@@ -129,7 +131,9 @@
             android:layout_marginLeft="10dp"
             android:text="① 프로그래밍 언어"
             android:textSize="20dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/content"
+            android:fontFamily="@font/pretendard_regular"/>
 
         <TextView
             android:id="@+id/answer2"
@@ -139,7 +143,9 @@
             android:layout_marginLeft="10dp"
             android:text="② 자연 언어"
             android:textSize="20dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/content"
+            android:fontFamily="@font/pretendard_regular"/>/>
 
         <TextView
             android:id="@+id/answer3"
@@ -149,7 +155,9 @@
             android:layout_marginLeft="10dp"
             android:text="③ 관계 대수"
             android:textSize="20dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/content"
+            android:fontFamily="@font/pretendard_regular"/>
 
         <TextView
             android:id="@+id/answer4"
@@ -159,7 +167,9 @@
             android:layout_marginLeft="10dp"
             android:text="④ 기계어"
             android:textSize="20dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:textColor="@color/content"
+            android:fontFamily="@font/pretendard_regular"/>
 
     </LinearLayout>
 
