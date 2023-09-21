@@ -18,9 +18,17 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.example.sumnote.R
 import com.example.sumnote.api.ApiManager
 import com.example.sumnote.databinding.FragmentNoteMakerBinding
+import com.example.sumnote.ui.Dialog.CircleProgressDialog
+import com.example.sumnote.ui.Dialog.SuccessDialog
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -48,6 +56,13 @@ class NoteMakerFragment : Fragment() {
     lateinit var contentResolver: ContentResolver
 
     lateinit var apiManager: ApiManager
+
+
+    // 로딩 dialog
+    private val loadingDialog = CircleProgressDialog()
+    private val successDialog = SuccessDialog()
+
+
 //    private val baseUrl = "http://192.168.0.21:8000/"
     private val baseUrl = "http://10.0.2.2:8000/" //장고 서버 url
 
@@ -70,20 +85,19 @@ class NoteMakerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //카메라 실행하여 사진 촬영해오기
-        //findNavController().navigate(R.id.action_navigation_note_maker_to_cameraFragement)
 
+        //카메라 촬영 버튼
         binding.cameraButton.setOnClickListener{
             // 카메라 권환 확인 및 카메라 열기
+            Log.d("#NOTEMAKER DEBUG: ","camera 1")
             requestMultiplePermission.launch(permissionList)
-//            if(checkCameraPermission()){ // 권한 있는 경우
-//                // 카메라로 이동
-//                startActivity(Intent(MediaStore.ACTION_IMAGE_CAPTURE))
-//            }
-//            else{ // 권한 없는 경우
-//                // 권한 요청
-//                ActivityCompat.requestPermissions(this.requireActivity(), arrayOf(android.Manifest.permission.CAMERA), 99)
-//            }
+        }
+
+        //갤러리 버튼
+        binding.galleryButton.setOnClickListener{
+            Log.d("#NOTEMAKER DEBUG: ","gallery 1")
+
+            getContentImage.launch("image/*")
         }
     }
 
@@ -95,7 +109,10 @@ class NoteMakerFragment : Fragment() {
                 }
             }
             contentResolver = requireContext().contentResolver
-            openDialog(requireContext())
+            //openDialog(requireContext())
+            // Note: 사진 찍는 것은 비동기로 처리됨 -> 여기다 서버 전송 코드 적으면 이미지 가져오기 전에 먼저 처리됨
+            pictureUri = createImageFile()
+            getTakePicture.launch(pictureUri)
         }
 
     private fun openDialog(context: Context) {
@@ -136,8 +153,10 @@ class NoteMakerFragment : Fragment() {
     // 파일 불러오기
     private val getContentImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri.let {
-//            binding.mainImg.setImageURI(uri)
-            System.out.println(uri)
+            Log.d("#NOTEMAKER DEBUG: ","call getContentImage")
+            if (it != null) {
+                sendImageToServer(it)
+            }
         }
     }
 
@@ -148,12 +167,15 @@ class NoteMakerFragment : Fragment() {
             pictureUri?.let { uri ->
                 // binding.mainImg.setImageURI(uri)
                 // Note: 카메라로 사진 촬영 직후 서버에 이미지 전송하기
+                Log.d("#NOTEMAKER DEBUG: ","6")
                 sendImageToServer(uri)
             }
         }
     }
 
     private fun sendImageToServer(uri: Uri) {
+        Log.d("#NOTEMAKER DEBUG: ","call sendImageToServer")
+        contentResolver = requireContext().contentResolver
         val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
         } else {
@@ -180,63 +202,81 @@ class NoteMakerFragment : Fragment() {
             body = body
         )
 
-        // Create Retrofit instance
+
+        val okHttpClient = OkHttpClient().newBuilder()
+            .connectTimeout(50, TimeUnit.SECONDS)
+            .readTimeout(50, TimeUnit.SECONDS)
+            .writeTimeout(50, TimeUnit.SECONDS)
+            .build()
+
         val retrofit = Retrofit.Builder()
-            .baseUrl(baseUrl) // replace this with your base URL
+            .baseUrl(baseUrl)
+            .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
-            .client(
-                // Note: 타임 아웃 시간은 10분으로 설정 나중에 임의로 변경, Http 통신 로그 확인용 로깅 인터셉터 추가
-                OkHttpClient.Builder()
-                    .connectTimeout(10, TimeUnit.MINUTES)
-                    .readTimeout(10, TimeUnit.MINUTES)
-                    .writeTimeout(10, TimeUnit.MINUTES)
-                    .addInterceptor(
-                        HttpLoggingInterceptor(HttpLoggingInterceptor.Logger.DEFAULT)
-                            .setLevel(HttpLoggingInterceptor.Level.BODY)
-                    ).build()
-            )
             .build()
 
 
-        // Get ApiService instance from Retrofit
         apiManager = retrofit.create(ApiManager::class.java)
-        val call = apiManager.uploadImage(data)
-        call.enqueue(object : Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
+        val call = apiManager.uploadImageTest(data)
+
+        val bundle = Bundle()
+        bundle.putString("dialogText", "노트를 생성하는 중입니다...")
+        loadingDialog.arguments = bundle
+        loadingDialog.show(requireActivity().supportFragmentManager, loadingDialog.tag)
+
+        call.enqueue(object : retrofit2.Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
                 if (response.isSuccessful) {
+                    Log.d("DjangoServer","send success")
+                    Toast.makeText(this@NoteMakerFragment.activity, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
+
                     val responseBody = response.body()?.string()
-
                     try {
-                        // Parse JSON response
                         val jsonObject = JSONObject(responseBody)
-//                        val predictedClass = jsonObject.getString("predicted_class")
-//                        val predictedProb = jsonObject.getDouble("predicted_prob")
-
-                        // Show a toast message
-                        Toast.makeText(requireContext(), "Image upload successful", Toast.LENGTH_SHORT).show()
+                        val textBook = jsonObject.getString("text")
+                        Log.d("DjangoServer", "Text Book's Text : $textBook")
+                        val textGpt = jsonObject.getString("sum_result")
+                        Log.d("DjangoServer", "Text GPT's Text : $textGpt")
+                        val noteTitle = jsonObject.getString("title")
+                        val summary = jsonObject.getString("summary")
 
                         val bundle = Bundle()
-                        //bundle.putString("pillName", predictedClass) //일약 이름 번들에 넣기
-                        //findNavController().navigate(R.id.action_menuFragment_to_pillInfoFragment, bundle)
+                        bundle.putString("title", noteTitle)
+                        bundle.putString("textBook", summary)
 
+
+                        // 성공 후 dialog 띄우기
+                        CoroutineScope(Dispatchers.Main).launch {
+                            loadingDialog.dismiss()
+                            val dialogBundle = Bundle()
+                            dialogBundle.putString("dialogText", "노트가 성공적으로 생성되었습니다!")
+                            successDialog.arguments = dialogBundle
+                            successDialog.show(requireActivity().supportFragmentManager, successDialog.tag)
+                            withContext(Dispatchers.Default) { delay(1500) }
+                            successDialog.dismiss()
+
+                            //생성된 노트 화면으로 이동
+                            findNavController().navigate(R.id.action_navigation_note_maker_to_newNoteFragment,bundle)
+                        }
 
                     } catch (e: JSONException) {
-                        Log.e("#DjangoError", "Error parsing JSON: ${e.message}")
+                        Log.e("DjangoServer", "Error parsing JSON: ${e.message}")
+                        loadingDialog.dismiss()
                     }
-
-
                 } else {
-                    Toast.makeText(requireContext(), "Image upload failed", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@NoteMakerFragment.activity, "Image upload failed", Toast.LENGTH_SHORT).show()
+                    loadingDialog.dismiss()
                 }
 
-                Log.d("#Django", "success")
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Toast.makeText(requireContext(), "Error: ${t.message}", Toast.LENGTH_SHORT).show()
-                Log.d("#Django", "fail: ${t.localizedMessage}, ${t.stackTrace.joinToString("\n")}")
+                Log.e("ImageUpload", "Image upload error: ${t.message}")
+                loadingDialog.dismiss()
             }
         })
+        Log.d("sendImage","sendImageToServer Exit")
     }
 
 
