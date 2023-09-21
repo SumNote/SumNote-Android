@@ -393,11 +393,12 @@ class NoteViewerFragment : Fragment() {
 
     private fun serverToGetPro(){
 
+        Log.d("GetPro","#1")
         // timeout setting 해주기
         val okHttpClient = OkHttpClient().newBuilder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
             .build()
 
         val retrofit = Retrofit.Builder()
@@ -415,15 +416,17 @@ class NoteViewerFragment : Fragment() {
 
         val bundle = Bundle()
         bundle.putString("dialogText", "문제를 생성하는 중입니다...")
+        Log.d("GetPro","#2")
         loadingDialog.arguments = bundle
         loadingDialog.show(requireActivity().supportFragmentManager, loadingDialog.tag)
 
-
+        Log.d("GetPro","#1")
         Log.d("TO QUIZ TEST", "${toQuiz}")
         val call = apiManager.generateProblem(toQuiz)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                Log.d("DjangoServer","before response")
                 if (response.isSuccessful) {
                     // 서버로 이미지 전송 성공시
                     Log.d("DjangoServer","send success")
@@ -441,20 +444,6 @@ class NoteViewerFragment : Fragment() {
                         val selections = json.getString("selections")
                         val answers = json.getString("answer")
                         val commentary = json.getString("commentary")
-
-//                        val regexPattern = Regex("\\[([\\s\\S]*?)\\]")  // 수정된 정규식 패턴
-//
-//                        val questions = regexPattern.findAll(json.getString("question")).map { it.groupValues[1] }.toList()
-////                        Log.d("#DETAIL questions:", questions.toString())
-//
-//                        val selections = regexPattern.findAll(json.getString("selections")).map { it.groupValues[1] }.toList()
-////                        Log.d("#DETAIL selections:", selections.toString())
-//
-//                        val answers = regexPattern.findAll(json.getString("answer")).map { it.groupValues[1].toInt() }.toList()
-////                        Log.d("#DETAIL answers:", answers.toString())
-//
-//                        val commentary = regexPattern.findAll(json.getString("commentary")).map { it.groupValues[1] }.toList()
-////                        Log.d("#DETAIL commentary:", commentary.toString())
 
                         Log.d("DjangoServer", "question's Text : $questions")
                         Log.d("DjangoServer", "answer_list's Text : $selections")
