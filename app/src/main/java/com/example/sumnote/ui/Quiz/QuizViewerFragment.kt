@@ -104,21 +104,21 @@ class QuizViewerFragment : Fragment() {
                         val json = JSONObject(jsonString)
 
                         // 로그 출력 형식 통일
-                        Log.d("#DETAIL Success:", jsonString)
+                        Log.d("#QUIZVIWER DETAIL Success:", jsonString)
 
                         val regexPattern = Regex("\\[([\\s\\S]*?)\\]")  // 수정된 정규식 패턴
 
                         val questions = regexPattern.findAll(json.getString("question")).map { it.groupValues[1] }.toList()
-                        Log.d("#DETAIL questions:", questions.toString())
+                        Log.d("#QUIZVIWER DETAIL questions:", questions.toString())
 
                         val selections = regexPattern.findAll(json.getString("selections")).map { it.groupValues[1] }.toList()
-                        Log.d("#DETAIL selections:", selections.toString())
+                        Log.d("#QUIZVIWER selections:", selections.toString())
 
                         val answers = regexPattern.findAll(json.getString("answer")).map { it.groupValues[1].toInt() }.toList()
-                        Log.d("#DETAIL answers:", answers.toString())
+                        Log.d("#QUIZVIWER answers:", answers.toString())
 
                         val commentary = regexPattern.findAll(json.getString("commentary")).map { it.groupValues[1] }.toList()
-                        Log.d("#DETAIL commentary:", commentary.toString())
+                        Log.d("#QUIZVIWER commentary:", commentary.toString())
 
                         if (questions.size == answers.size && answers.size == commentary.size) {
                             quizzes.clear()
@@ -133,10 +133,10 @@ class QuizViewerFragment : Fragment() {
                                     answerNum = answers[index],
                                     explanation = commentary[index]
                                 )
-                                Log.d("#DETAIL RESULT",quiz.query)
-                                Log.d("#DETAIL RESULT",quiz.answerList.toString())
-                                Log.d("#DETAIL RESULT",quiz.answerNum.toString())
-                                Log.d("#DETAIL RESULT",quiz.explanation)
+                                Log.d("#QUIZVIWER query",quiz.query)
+                                Log.d("#QUIZVIWER answerList",quiz.answerList.toString())
+                                Log.d("#QUIZVIWER answerNum",quiz.answerNum.toString())
+                                Log.d("#QUIZVIWER explanation",quiz.explanation)
                                 quizzes.add(quiz)
                             }
 

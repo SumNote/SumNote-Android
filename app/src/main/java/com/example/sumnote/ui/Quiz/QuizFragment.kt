@@ -78,6 +78,8 @@ class QuizFragment : Fragment() {
     ): View? {
         _binding = FragmentQuizBinding.inflate(inflater, container, false)
 
+        Log.d("#QUIZFRAGMENT get data : ","$quiz")
+
         //받아온 퀴즈 정보 화면에 보여주기
         var query = binding.txtQuery
         query.text = quiz.query
