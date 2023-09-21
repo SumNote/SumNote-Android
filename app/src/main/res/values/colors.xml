@@ -21,6 +21,12 @@
     <color name="detail_note_page_title">#333333</color>
     <color name="detail_note_page_content">#333333</color>
 
+    <!-- 퀴즈 문서 보기 -->
+    <color name="quiz_background">#F9F9F9</color>
+    <color name="question">#333333</color>
+    <color name="quiz">#000000</color>
+    <color name="content">#333333</color>
+
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
