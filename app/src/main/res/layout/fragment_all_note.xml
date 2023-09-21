@@ -7,6 +7,55 @@
     android:background="@color/white_200">
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/background_color">
+
+        <ImageView
+            android:id="@+id/img_btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="10dp"
+            android:src ="@drawable/img_left_cross"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="13dp"
+            android:text="나의 퀴즈"
+            android:textColor="@color/detail_note_main_title"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/search_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/search" />
+
+        <View
+            android:layout_width="14dp"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/etc_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="24dp"
+            android:src="@drawable/menu_vertical" />
+    </LinearLayout>
+
+
 <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/all_note_list_recycler_view"
     android:layout_width="match_parent"
