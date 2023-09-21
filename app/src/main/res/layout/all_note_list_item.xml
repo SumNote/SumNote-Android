@@ -45,6 +45,8 @@
             android:layout_marginStart="18dp"
             android:layout_marginTop="13dp"
             android:fontFamily="@font/pretendard_medium"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="note 1"
             android:textColor="@color/list_title"
             android:textSize="18dp"

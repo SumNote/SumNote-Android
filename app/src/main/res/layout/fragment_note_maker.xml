@@ -1,30 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
+    android:background="@color/background_color"
     tools:context=".ui.NoteMaker.NoteMakerFragment">
 
-<!--    <TextureView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:id="@+id/textureView"/>-->
 
-    <TextView
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/pretendard_black"
+            android:gravity="center"
+            android:text="이렇게 찍어주세요!"
+            android:textColor="@color/black"
+            android:textSize="25dp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/view"
+            app:layout_constraintEnd_toEndOf="@+id/view"
+            app:layout_constraintStart_toStartOf="@+id/view"
+            app:layout_constraintTop_toTopOf="@+id/view" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="338dp"
+            android:layout_height="55dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="22dp"
+            android:layout_marginEnd="37dp"
+            android:layout_marginBottom="7dp"
+            android:background="@drawable/empty_square"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:layout_width="340dp"
+        android:layout_height="460dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/img_reference_image"/>
+
+<!--    글자가 수평으로 잘 보이게 찍어주세요-->
+<!--    지면으로부터 수직으로 찍어주세요-->
+<!--    중요한 단어는 빨간 펜으로 밑줄을 그어주세요.-->
+
+
+    <ImageView
+        android:layout_width="340dp"
+        android:layout_height="130dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="1dp"
+        android:src="@drawable/img_guide"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="note_fragemnt"
-        android:textSize="30dp"/>
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:background="@color/background_color">
 
-<!--    <ImageView-->
-<!--        android:id="@+id/capture"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        android:layout_marginBottom="-45dp"-->
-<!--        app:srcCompat="@drawable/camera_bottom" />-->
+        <Button
+            android:id="@+id/cameraButton"
+            android:layout_width="165dp"
+            android:layout_height="50dp"
+            android:layout_marginEnd="5dp"
+            android:textStyle="bold"
+            android:text="카메라"/>
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/galleryButton"
+            android:layout_width="165dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="5dp"
+            android:textStyle="bold"
+            android:text="갤러리"/>
+
+    </LinearLayout>
+
+
+
+
+
+</LinearLayout>

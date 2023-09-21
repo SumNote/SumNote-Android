@@ -30,12 +30,14 @@
             android:layout_gravity="bottom"
             android:textColor="@color/white"
             android:textStyle="bold"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textSize="30dp"
             android:fontFamily="@font/pretendard_medium"
             android:letterSpacing="0"
             android:layout_marginStart="15dp"
             android:layout_marginBottom="30dp"
-            android:text="Note 1" />
+            android:text="Note 1 Note 1 Note 1" />
 
 
         <TextView
