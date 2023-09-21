@@ -75,6 +75,12 @@ class AllNoteFragment : Fragment() {
         allNoteRecyclerView.adapter = allNoteRecyclerViewAdapter
 
 
+        //뒤로가기 버튼
+        val btmBack = binding.imgBtnBack
+        btmBack.setOnClickListener{
+            findNavController().navigateUp()
+        }
+
         return binding.root
     }
 

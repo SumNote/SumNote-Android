@@ -93,7 +93,7 @@ class CameraFragment : Fragment() {
     private val loadingDialog = CircleProgressDialog()
     private val successDialog = SuccessDialog()
 
-    private val baseUrl = "http://10.0.2.2:8000/" //장고 서버 url
+    private val baseUrl = "http://223.194.135.114:8000/" //장고 서버 url
 //    private val baseUrl = "http://43.201.71.53:80/"
 
     // 전달받은 json값이 null인 경우에 대한 예외처리 => 아직 적용 안했음
@@ -207,13 +207,6 @@ class CameraFragment : Fragment() {
                 }
             }
         }
-
-//        //뒤로가기 버튼
-//        val btmBack = binding.imgBtnBack
-//        btmBack.setOnClickListener{
-//            findNavController().navigateUp()
-//        }
-
     }
 
 

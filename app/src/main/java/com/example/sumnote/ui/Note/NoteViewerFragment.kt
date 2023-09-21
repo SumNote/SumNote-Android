@@ -270,8 +270,6 @@ class NoteViewerFragment : Fragment() {
             popupMenu.show()
         }
 
-
-
         return binding.root
     }
 
@@ -323,14 +321,6 @@ class NoteViewerFragment : Fragment() {
                         Log.d("#DETAIL Success:", jsonString)
                         Log.d("#DETAIL title:", title)
                         Log.d("#DETAIL content:", content)
-
-                        // [] 안의 값을 모두 파싱하기 위한 정규식
-                        // 1. 정규식에서 [는 별도의 의미를 가지므로, [를 문자열로 사용하기 위해선 \\를 붙여야함
-                        // 2. '.'는 임의의 문자를 의미
-                        // 3. *는 바로 앞 문자나 그룹이 0번 이상 반복됨을 의미
-                        // 4. ?는 앞의 *의 탐욕을 제한 => 한 그룹의 []안의 문자열이 대응될수 있도록
-
-//                        val pattern = Regex("\\[(.*?)\\]")
 
                         //수정된 정규식 패턴
                         val pattern = Regex("\\[([\\s\\S]*?)\\]")
@@ -393,11 +383,12 @@ class NoteViewerFragment : Fragment() {
 
     private fun serverToGetPro(){
 
+        Log.d("GetPro","#1")
         // timeout setting 해주기
         val okHttpClient = OkHttpClient().newBuilder()
-            .connectTimeout(30, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(60, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .writeTimeout(60, TimeUnit.SECONDS)
             .build()
 
         val retrofit = Retrofit.Builder()
@@ -415,15 +406,17 @@ class NoteViewerFragment : Fragment() {
 
         val bundle = Bundle()
         bundle.putString("dialogText", "문제를 생성하는 중입니다...")
+        Log.d("GetPro","#2")
         loadingDialog.arguments = bundle
         loadingDialog.show(requireActivity().supportFragmentManager, loadingDialog.tag)
 
-
+        Log.d("GetPro","#1")
         Log.d("TO QUIZ TEST", "${toQuiz}")
         val call = apiManager.generateProblem(toQuiz)
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                Log.d("DjangoServer","before response")
                 if (response.isSuccessful) {
                     // 서버로 이미지 전송 성공시
                     Log.d("DjangoServer","send success")
@@ -441,20 +434,6 @@ class NoteViewerFragment : Fragment() {
                         val selections = json.getString("selections")
                         val answers = json.getString("answer")
                         val commentary = json.getString("commentary")
-
-//                        val regexPattern = Regex("\\[([\\s\\S]*?)\\]")  // 수정된 정규식 패턴
-//
-//                        val questions = regexPattern.findAll(json.getString("question")).map { it.groupValues[1] }.toList()
-////                        Log.d("#DETAIL questions:", questions.toString())
-//
-//                        val selections = regexPattern.findAll(json.getString("selections")).map { it.groupValues[1] }.toList()
-////                        Log.d("#DETAIL selections:", selections.toString())
-//
-//                        val answers = regexPattern.findAll(json.getString("answer")).map { it.groupValues[1].toInt() }.toList()
-////                        Log.d("#DETAIL answers:", answers.toString())
-//
-//                        val commentary = regexPattern.findAll(json.getString("commentary")).map { it.groupValues[1] }.toList()
-////                        Log.d("#DETAIL commentary:", commentary.toString())
 
                         Log.d("DjangoServer", "question's Text : $questions")
                         Log.d("DjangoServer", "answer_list's Text : $selections")
