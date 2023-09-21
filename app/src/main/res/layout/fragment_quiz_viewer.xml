@@ -20,7 +20,6 @@
 
 
         <!-- 프로그레스바 -->
-
         <ImageView
             android:id="@+id/img_btn_back"
             android:layout_width="wrap_content"
@@ -34,17 +33,19 @@
             app:layout_constraintVertical_bias="0.25"
             app:srcCompat="@drawable/img_left_cross" />
 
+
         <TextView
+            android:id="@+id/quiz_viewer_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="5dp"
             android:layout_marginTop="4dp"
-            android:layout_marginEnd="308dp"
+            android:layout_marginBottom="6dp"
             android:text="문제"
             android:textColor="@color/black"
             android:textSize="20dp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/progressBar"
             app:layout_constraintStart_toEndOf="@+id/img_btn_back"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -101,14 +102,23 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-<!--    퀴즈 뷰어-->
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/quizViewPager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+    <ScrollView
+        android:layout_width="370dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <!--    퀴즈 뷰어-->
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/quizViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+
+    </ScrollView>
+
+
 
 
 </LinearLayout>

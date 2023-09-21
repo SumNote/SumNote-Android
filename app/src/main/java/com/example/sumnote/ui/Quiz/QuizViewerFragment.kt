@@ -36,6 +36,8 @@ class QuizViewerFragment : Fragment() {
     //txt_current_question_num
     lateinit var currQuizNum : TextView
     lateinit var totalQuizNum : TextView
+    //퀴즈 제목
+    lateinit var quizViewerTitle : TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,12 +48,6 @@ class QuizViewerFragment : Fragment() {
         //퀴즈들을 보여주기 위한 뷰 페이저 가져오기
         var quizViewPager = binding.quizViewPager
 
-        /* 선택한 문제집의 데이터 얻어오기
-        * bundle.putInt("quizId", clickedQuizId)
-        bundle.putString("quiz_doc_title", quizTitle)
-        Log.d("QuizDoc CLICKED", "test : $clickedQuizId")
-        * */
-
         quizzes = mutableListOf()
         //뷰 페이저에 붙일 어댑터 생성
         quizViewAdapter = QuizPagerAdapter(this, quizzes)
@@ -60,20 +56,20 @@ class QuizViewerFragment : Fragment() {
         progressBar = binding.progressBar
         currQuizNum = binding.txtCurrentQuestionNum
         totalQuizNum = binding.txtQuestionNum
+        quizViewerTitle = binding.quizViewerTitle
 
         arguments?.let {
             clickedQuizId = it.getInt("quizId")
             var quizTitle = it.getString("quiz_doc_title")
             Log.d("QuizViewr", "test : $clickedQuizId")
             Log.d("QuizViewr", "test : $quizTitle")
-
+            quizViewerTitle.text = quizTitle //퀴즈 제목 받아오기
 
             //얻어온 정보를 바탕으로 서버에 퀴즈 데이터 요청 + 퀴즈 클래스 생성
             if (clickedQuizId != -1) {
                 //클릭한 문제집에 대한 퀴즈 정보를 서버에 요청
                 Log.d("QuizViewr", "#1")
                 detailQuiz(clickedQuizId)
-
 
                 currQuizNum.text = "1"
                 //현재 뷰 페이지만큼 프로그래스바에 반영하기
@@ -86,8 +82,10 @@ class QuizViewerFragment : Fragment() {
             }
         }
 
-
-
+        //뒤로가기 버튼에 대한 동작처리
+        binding.imgBtnBack.setOnClickListener{
+            findNavController().navigateUp() //뒤로 가기
+        }
 
 
         return binding.root

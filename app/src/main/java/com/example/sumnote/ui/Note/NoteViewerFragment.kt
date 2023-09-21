@@ -270,8 +270,6 @@ class NoteViewerFragment : Fragment() {
             popupMenu.show()
         }
 
-
-
         return binding.root
     }
 
@@ -323,14 +321,6 @@ class NoteViewerFragment : Fragment() {
                         Log.d("#DETAIL Success:", jsonString)
                         Log.d("#DETAIL title:", title)
                         Log.d("#DETAIL content:", content)
-
-                        // [] 안의 값을 모두 파싱하기 위한 정규식
-                        // 1. 정규식에서 [는 별도의 의미를 가지므로, [를 문자열로 사용하기 위해선 \\를 붙여야함
-                        // 2. '.'는 임의의 문자를 의미
-                        // 3. *는 바로 앞 문자나 그룹이 0번 이상 반복됨을 의미
-                        // 4. ?는 앞의 *의 탐욕을 제한 => 한 그룹의 []안의 문자열이 대응될수 있도록
-
-//                        val pattern = Regex("\\[(.*?)\\]")
 
                         //수정된 정규식 패턴
                         val pattern = Regex("\\[([\\s\\S]*?)\\]")
