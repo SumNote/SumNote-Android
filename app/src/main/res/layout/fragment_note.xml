@@ -9,22 +9,22 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="660dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/img_note_background"
         android:orientation="vertical"
         android:id="@+id/note">
 
-    <TextView
-        android:id="@+id/note_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="20dp"
-        android:fontFamily="@font/yeongdeoksea"
-        android:text="데이터 베이스의 이해"
-        android:textColor="@color/detail_note_page_title"
-        android:textSize="40dp"
-        android:textStyle="bold" />
+        <TextView
+            android:id="@+id/note_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/yeongdeoksea"
+            android:text="데이터 베이스의 이해"
+            android:textColor="@color/detail_note_page_title"
+            android:textSize="40dp"
+            android:textStyle="bold" />
 
         <ScrollView
             android:layout_width="wrap_content"

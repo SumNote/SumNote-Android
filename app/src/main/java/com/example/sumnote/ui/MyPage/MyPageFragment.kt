@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -67,21 +68,28 @@ class MyPageFragment : Fragment() {
         }
 
         var switchModeChange = binding.switchModeChange
+        // 복원해야 하는 상태가 있는 경우 여기서 복원
+        if (savedInstanceState != null) {
+            switchModeChange.isChecked = savedInstanceState.getBoolean("switchState")
+        }
+
+        //다크모드 활성화(토글스위치)
+        switchModeChange.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            }
+        }
+
         return binding.root
     }
 
-//    override fun onActivityCreated(savedInstanceState: Bundle?) {
-//        super.onActivityCreated(savedInstanceState)
-//        val button = view?.findViewById<Button>(R.id.goLogin)
-//
-//        button?.setOnClickListener {
-//            val intent = Intent(context, LoginActivity::class.java)
-//            startActivity(intent)
-//
-//        }
-//
-//
-//    }
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        // 필요한 상태를 저장 => 다크모드 진입 관련
+        outState.putBoolean("switchState", binding.switchModeChange.isChecked)
+    }
 
     // 프로필 세팅하기
     fun setInfo(){
