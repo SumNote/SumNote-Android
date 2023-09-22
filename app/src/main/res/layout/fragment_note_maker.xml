@@ -12,6 +12,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:layout_marginHorizontal="20dp"
         android:layout_height="70dp">
 
         <TextView
@@ -30,11 +31,9 @@
 
         <View
             android:id="@+id/view"
-            android:layout_width="338dp"
+            android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:layout_marginStart="36dp"
             android:layout_marginTop="22dp"
-            android:layout_marginEnd="37dp"
             android:layout_marginBottom="7dp"
             android:background="@drawable/empty_square"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -47,11 +46,14 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ImageView
-        android:layout_width="340dp"
-        android:layout_height="460dp"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:scaleType="fitXY"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginHorizontal="20dp"
+        android:scaleType="centerCrop"
         android:src="@drawable/img_reference_image"/>
 
 <!--    글자가 수평으로 잘 보이게 찍어주세요-->
@@ -61,22 +63,12 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/empty_square"
+        android:layout_marginVertical="5dp"
+        android:padding="10dp"
+        android:layout_marginHorizontal="20dp">
 
-
-        <View
-            android:id="@+id/view2"
-            android:layout_width="342dp"
-            android:layout_height="106dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="7dp"
-            android:background="@drawable/empty_square"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5" />
 
         <TextView
             android:id="@+id/textView5"
@@ -85,38 +77,34 @@
             android:layout_marginEnd="64dp"
             android:text="- 글자가 수평으로 잘 보이게 찍어주세요."
             android:textColor="@color/black"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/view2"
-            app:layout_constraintEnd_toEndOf="@+id/view2"
-            app:layout_constraintTop_toTopOf="@+id/view2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="5dp"
             app:layout_constraintVertical_bias="0.073" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:text="- 중요한 단어는 빨간 펜으로 밑줄을 그어주세요."
             android:textColor="@color/black"
-            android:textSize="16dp"
+            android:layout_marginTop="10dp"
+            android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/view2"
-            app:layout_constraintHorizontal_bias="0.384"
-            app:layout_constraintStart_toStartOf="@+id/view2"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
         <TextView
             android:id="@+id/textView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:text="- 지면으로부터 수직으로 찍어주세요."
             android:textColor="@color/black"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/view2"
-            app:layout_constraintHorizontal_bias="0.103"
-            app:layout_constraintStart_toStartOf="@+id/view2"
+            android:layout_marginTop="10dp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
 
@@ -128,25 +116,29 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="10dp"
         android:orientation="horizontal"
-        android:gravity="center"
         android:background="@color/background_color">
 
         <Button
             android:id="@+id/cameraButton"
-            android:layout_width="165dp"
-            android:layout_height="50dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_marginEnd="5dp"
             android:textStyle="bold"
             android:text="카메라"/>
 
         <Button
             android:id="@+id/galleryButton"
-            android:layout_width="165dp"
-            android:layout_height="50dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:layout_marginStart="5dp"
             android:textStyle="bold"
             android:text="갤러리"/>
+
 
     </LinearLayout>
 

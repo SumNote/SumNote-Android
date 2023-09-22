@@ -7,16 +7,12 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageFormat
 import android.graphics.Matrix
-import android.graphics.Rect
 import android.graphics.SurfaceTexture
-import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraCaptureSession
 import android.hardware.camera2.CameraDevice
 import android.hardware.camera2.CameraManager
-import android.hardware.camera2.CameraMetadata
 import android.hardware.camera2.CaptureRequest
 import android.hardware.camera2.TotalCaptureResult
-import android.hardware.camera2.params.MeteringRectangle
 import android.media.ImageReader
 import android.os.Bundle
 import android.os.Environment
@@ -25,15 +21,11 @@ import android.os.HandlerThread
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.Surface
 import android.view.TextureView
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.RelativeLayout
 import android.widget.Toast
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.sumnote.R
@@ -149,7 +141,7 @@ class CameraFragment : Fragment() {
                 width: Int,
                 height: Int
             ) {
-                open_camera() //카메라 실행
+                open_camera(width,height) //카메라 실행
             }
 
             override fun onSurfaceTextureSizeChanged(
@@ -405,7 +397,7 @@ class CameraFragment : Fragment() {
 
     //권한이 허용되어 있는 경우에만 작동 => 권한은 MainActivity에서
     @SuppressLint("MissingPermission")
-    fun open_camera(){
+    fun open_camera(width:Int, height:Int){
         cameraManager.openCamera(cameraManager.cameraIdList[0],object:CameraDevice.StateCallback(){
             override fun onOpened(camera: CameraDevice) {
                 camerDevice = camera //작동시킬 카메라 디바이스 설정?

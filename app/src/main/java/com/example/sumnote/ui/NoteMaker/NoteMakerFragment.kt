@@ -63,7 +63,7 @@ class NoteMakerFragment : Fragment() {
     private val successDialog = SuccessDialog()
 
 
-//    private val baseUrl = "http://192.168.0.21:8000/"
+    //private val baseUrl = "http://192.168.0.23:8000/"
     private val baseUrl = "http://10.0.2.2:8000/" //장고 서버 url
 
 
@@ -218,7 +218,7 @@ class NoteMakerFragment : Fragment() {
 
         apiManager = retrofit.create(ApiManager::class.java)
 
-        val call = apiManager.uploadImageTest(data)
+        val call = apiManager.uploadImage(data)
 
         val bundle = Bundle()
         bundle.putString("dialogText", "노트를 생성하는 중입니다...")
