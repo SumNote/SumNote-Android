@@ -37,11 +37,13 @@
 
         <TextView
             android:id="@+id/quiz_viewer_title"
-            android:layout_width="wrap_content"
+            android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="6dp"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:text="문제"
             android:textColor="@color/question"
             android:textSize="20dp"
