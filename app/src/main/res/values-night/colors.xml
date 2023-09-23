@@ -30,6 +30,12 @@
     <color name="quiz">#FFFFFF</color>
     <color name="content">#EDEEF0</color>
 
+    <!-- 이렇게 찍어주세요! -->
+    <color name="fragment_note_maker_text">#EDEEF0</color>
+    <color name="fragment_note_maker_background">#2B2B2B</color>
+    <color name="fragment_note_maker_btn_text">#EDEEF0</color>
+    <color name="dev_info_break_line">#606060</color>
+
     <!-- 개발자 정보 -->
     <color name="name">#FFFFFF</color>
     <color name="computer_science">#AEA9A9</color>
