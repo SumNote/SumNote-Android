@@ -21,8 +21,8 @@
     <!-- 노트 문서 보기 -->
     <color name="note_background">#333333</color>
     <color name="detail_note_main_title">#AEA9A9</color>
-    <color name="detail_note_page_title">#FFFFFF</color>
-    <color name="detail_note_page_content">#FFFFFF</color>
+    <color name="detail_note_page_title">#DFDFDF</color>
+    <color name="detail_note_page_content">#DFDFDF</color>
 
     <!-- 퀴즈 문서 보기 -->
     <color name="quiz_background">#333333</color>

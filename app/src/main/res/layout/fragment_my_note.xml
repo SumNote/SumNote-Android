@@ -39,6 +39,8 @@
                 android:layout_height="wrap_content"
                 android:text="사용자 이름"
                 android:textColor="@color/user_name"
+                android:textStyle="bold"
+                android:fontFamily="@font/pretendard_regular"
                 android:textSize="14sp" />
 
             <TextView
@@ -47,6 +49,7 @@
                 android:layout_height="wrap_content"
                 android:text="사용자 이메일"
                 android:textColor="@color/user_email"
+                android:fontFamily="@font/pretendard_light"
                 android:textSize="10sp" />
 
         </LinearLayout>

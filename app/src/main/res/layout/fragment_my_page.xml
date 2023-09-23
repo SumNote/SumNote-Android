@@ -33,7 +33,7 @@
                 android:layout_gravity="center"
                 android:fontFamily="@font/pretendard_extra_bold"
                 android:lineSpacingMultiplier="1.1"
-                android:text="SumNote Developer\n Information"
+                android:text="SumNote Developer\nInformation"
                 android:textAlignment="center"
                 android:textColor="@color/green"
                 android:textSize="26dp"
@@ -97,11 +97,15 @@
                     app:layout_constraintTop_toTopOf="@+id/name_minseo" />
 
                 <ImageView
+                    android:id="@+id/imageView4"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginLeft="35dp"
+                    android:layout_marginEnd="2dp"
                     android:src="@drawable/email"
                     app:layout_constraintBottom_toBottomOf="@+id/email1"
+                    app:layout_constraintEnd_toStartOf="@+id/email1"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/email1" />
 
@@ -109,12 +113,14 @@
                     android:id="@+id/email1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginEnd="30dp"
                     android:fontFamily="@font/pretendard_medium"
                     android:text="kms02171@naver.com"
                     android:textColor="@color/developer_email"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/imageView4"
                     app:layout_constraintTop_toBottomOf="@+id/computer1" />
 
                 <TextView
@@ -123,6 +129,7 @@
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/pretendard_regular"
                     android:gravity="center"
+                    android:lineSpacingMultiplier="1.3"
                     android:text="JPA와 SpringBoot를 이용한 API 개발\nNaver Cloud Flatform을 이용한 서버 배포\nAndroid 디자인 개선"
                     android:textAlignment="center"
                     android:textColor="@color/dev_info"
@@ -182,11 +189,15 @@
                     app:layout_constraintTop_toTopOf="@+id/name_taeha" />
 
                 <ImageView
+                    android:id="@+id/imageView5"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginLeft="35dp"
+                    android:layout_marginEnd="2dp"
                     android:src="@drawable/email"
                     app:layout_constraintBottom_toBottomOf="@+id/email2"
+                    app:layout_constraintEnd_toStartOf="@+id/email2"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/email2" />
 
@@ -194,12 +205,14 @@
                     android:id="@+id/email2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginEnd="30dp"
                     android:fontFamily="@font/pretendard_medium"
                     android:text="xogk1128@naver.com"
                     android:textColor="@color/developer_email"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/imageView5"
                     app:layout_constraintTop_toBottomOf="@+id/computer2" />
 
                 <TextView
@@ -209,7 +222,8 @@
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/pretendard_regular"
                     android:gravity="center"
-                    android:text="안드로이드 및 장고 서버 개발\n 클라이언트 서버간 API 통신 구축\n GPT 프롬프트 엔지니어링"
+                    android:lineSpacingMultiplier="1.3"
+                    android:text="안드로이드 및 장고 서버 개발\n클라이언트 서버간 API 통신 구축\nGPT 프롬프트 엔지니어링"
                     android:textAlignment="center"
                     android:textColor="@color/dev_info"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -268,12 +282,16 @@
                     app:layout_constraintTop_toTopOf="@+id/name_choi76" />
 
                 <ImageView
+                    android:id="@+id/imageView6"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginLeft="50dp"
+                    android:layout_marginEnd="2dp"
                     android:fontFamily="@font/pretendard_medium"
                     android:src="@drawable/email"
                     app:layout_constraintBottom_toBottomOf="@+id/email3"
+                    app:layout_constraintEnd_toStartOf="@+id/email3"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/email3" />
 
@@ -281,12 +299,14 @@
                     android:id="@+id/email3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginEnd="45dp"
                     android:fontFamily="@font/pretendard_regular"
                     android:text="y2_12@naver.com"
                     android:textColor="@color/developer_email"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/imageView6"
                     app:layout_constraintTop_toBottomOf="@+id/computer3" />
 
                 <TextView
@@ -295,7 +315,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:gravity="center"
-                    android:text="Android Application 개발 담당\n Django Server 구축 및 개발\n GPT Prompt Engineering"
+                    android:lineSpacingMultiplier="1.3"
+                    android:text="Android Application 개발 담당\nDjango Server 구축 및 개발\nGPT Prompt Engineering"
                     android:textAlignment="center"
                     android:textColor="@color/dev_info"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -355,11 +376,15 @@
                     app:layout_constraintTop_toTopOf="@+id/name_geogmin" />
 
                 <ImageView
+                    android:id="@+id/imageView7"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginEnd="2dp"
                     android:src="@drawable/email"
                     app:layout_constraintBottom_toBottomOf="@+id/email4"
+                    app:layout_constraintEnd_toStartOf="@+id/email4"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/email4" />
 
@@ -367,12 +392,14 @@
                     android:id="@+id/email4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
                     android:layout_marginTop="10dp"
-                    android:layout_marginEnd="20dp"
                     android:fontFamily="@font/pretendard_medium"
                     android:text="gyeongmin@hansung.ac.kr"
                     android:textColor="@color/developer_email"
                     app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/imageView7"
                     app:layout_constraintTop_toBottomOf="@+id/computer4" />
 
                 <TextView
@@ -381,7 +408,8 @@
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/pretendard_regular"
                     android:gravity="center"
-                    android:text="OpenCV를 이용한 객체 탐지\n 광학 문자 인식 및 속도 개선"
+                    android:lineSpacingMultiplier="1.3"
+                    android:text="OpenCV를 이용한 객체 탐지\n광학 문자 인식 및 속도 개선"
                     android:textAlignment="center"
                     android:textColor="@color/dev_info"
                     app:layout_constraintEnd_toEndOf="parent"
