@@ -47,8 +47,6 @@
 
         </ScrollView>
 
-
-
     </LinearLayout>
 
     <LinearLayout
@@ -64,25 +62,30 @@
             android:id="@+id/btn_return_camera"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginEnd="5dp"
-            android:textStyle="bold"
-            android:text="다시찍기"/>
+            android:layout_weight="1"
+            android:background="@drawable/btn_round"
+            android:fontFamily="@font/pretendard_extra_bold"
+            android:letterSpacing="-0.02"
+            android:stateListAnimator="@null"
+            android:text="다시찍기"
+            android:textColor="@color/fragment_new_note_btn_text"
+            android:textSize="20dp" />
 
         <Button
             android:id="@+id/btn_save_note"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
             android:layout_weight="1"
-            android:layout_marginStart="5dp"
-            android:textStyle="bold"
-            android:text="저장하기"/>
-
+            android:background="@drawable/btn_round"
+            android:fontFamily="@font/pretendard_extra_bold"
+            android:letterSpacing="-0.02"
+            android:stateListAnimator="@null"
+            android:text="저장하기"
+            android:textColor="@color/fragment_new_note_btn_text"
+            android:textSize="20dp" />
 
     </LinearLayout>
-
-
-
-
 
 </LinearLayout>

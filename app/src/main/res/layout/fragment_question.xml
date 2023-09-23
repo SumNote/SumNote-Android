@@ -113,7 +113,8 @@
         android:gravity="center"
         android:textColor="@color/quiz"
         android:fontFamily="@font/pretendard_medium"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:lineSpacingMultiplier="1.1"/>
 
     <LinearLayout
         android:layout_width="300dp"
