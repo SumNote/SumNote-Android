@@ -72,7 +72,8 @@ class NewNoteFragment : Fragment(),SelectNoteToSaveDialogInterface {
         // Inflate the layout for this fragment
         _binding = FragmentNewNoteBinding.inflate(inflater, container, false)
         val view = binding.root
-
+        textTitle = "fail"
+        textBook = "fail"
         //번들을 통해 전닯 받은 값 화면에 뿌리기 => 추후 스프링에 전송하여 요약된 결과값 얻는 코드 작성 필요
         arguments?.let {
 

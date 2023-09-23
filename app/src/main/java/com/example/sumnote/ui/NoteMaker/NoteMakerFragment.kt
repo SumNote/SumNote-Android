@@ -101,6 +101,11 @@ class NoteMakerFragment : Fragment() {
 
             getContentImage.launch("image/*")
         }
+
+        //테스트용 => 나중에 지울것
+        binding.howToCapture.setOnClickListener{
+            findNavController().navigate(R.id.action_navigation_note_maker_to_newNoteFragment)
+        }
     }
 
     private val requestMultiplePermission =
