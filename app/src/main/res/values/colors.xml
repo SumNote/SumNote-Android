@@ -4,6 +4,9 @@
     <!-- 배경색 -->
     <color name="background_color">#F9F9F9</color>
 
+    <color name="user_name">#000000</color>
+    <color name="user_email">#AEA9A9</color>
+
     <!-- my note 탭 -->
     <color name="main_recent">#333333</color>
     <color name="main_show_all">#AEA9A9</color>
@@ -26,6 +29,12 @@
     <color name="question">#333333</color>
     <color name="quiz">#000000</color>
     <color name="content">#333333</color>
+
+    <!-- 개발자 정보 -->
+    <color name="name">#000000</color>
+    <color name="computer_science">#AEA9A9</color>
+    <color name="developer_email">#000000</color>
+    <color name="dev_info">#000000</color>
 
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
