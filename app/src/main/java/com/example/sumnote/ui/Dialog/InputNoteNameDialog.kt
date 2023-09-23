@@ -31,6 +31,7 @@ class InputNoteNameDialog(note : UpdateNoteRequest) : DialogFragment() {
     private var note : UpdateNoteRequest
     private lateinit var docTitle : String
     private val successDialog = SuccessDialog()
+    private val failDialog = FailDialog()
 
     //생성자를 통해 유저의 노트아이템 리스트 얻어옴
     init {
@@ -61,6 +62,9 @@ class InputNoteNameDialog(note : UpdateNoteRequest) : DialogFragment() {
         UserApiClient.instance.me { user, error ->
             if (error != null) {
                 Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
+                val dialogBundle = Bundle()
+                dialogBundle.putString("dialogText", "잘못된 계정입니다.")
+                showFailDialog(dialogBundle)
             } else if (user != null) {
                 var email = user.kakaoAccount?.email.toString()
                 serverNote(email)
@@ -78,24 +82,6 @@ class InputNoteNameDialog(note : UpdateNoteRequest) : DialogFragment() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
                     Log.d("#MAKE_NOTE: ", "SUCCESS")
-
-
-//                    findNavController().navigate(R.id.action_newNoteFragment_to_navigation_my_note)
-
-                    // 성공 후 dialog 띄우기
-//                    CoroutineScope(Dispatchers.Main).launch {
-//                        dialog?.dismiss()
-//
-//                        val dialogBundle = Bundle()
-//                        dialogBundle.putString("dialogText", "노트가 저장되었습니다!")
-//                        successDialog.arguments = dialogBundle
-//                        successDialog.show(requireActivity().supportFragmentManager, successDialog.tag)
-//                        withContext(Dispatchers.Default) { delay(1500) }
-//                        successDialog.dismiss()
-//
-//                        findNavController().popBackStack()
-//                    }
-
 
                     CoroutineScope(Dispatchers.Main).launch {
                         dialog?.dismiss()
@@ -120,6 +106,9 @@ class InputNoteNameDialog(note : UpdateNoteRequest) : DialogFragment() {
                 } else {
                     // 통신 성공 but 응답 실패
                     Log.d("#MAKE_NOTE:", "FAILURE")
+                    val dialogBundle = Bundle()
+                    dialogBundle.putString("dialogText", "노트 저장에 실패하였습니다.")
+                    showFailDialog(dialogBundle)
                 }
 
             }
@@ -127,8 +116,29 @@ class InputNoteNameDialog(note : UpdateNoteRequest) : DialogFragment() {
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 // 통신에 실패한 경우
                 Log.d("#MAKE_NOTE FAIL: ", t.localizedMessage)
+                val dialogBundle = Bundle()
+                dialogBundle.putString("dialogText", "노트 저장에 실패하였습니다.")
+                showFailDialog(dialogBundle)
             }
         })
+    }
+
+    private fun showFailDialog(dialogBundle : Bundle) {
+        dialog?.dismiss()
+        CoroutineScope(Dispatchers.Main).launch {
+            failDialog.arguments = dialogBundle
+            failDialog.show(requireActivity().supportFragmentManager, failDialog.tag)
+
+            // 지정된 딜레이 이후에 UI 조작 수행
+            delay(1500)
+
+            // UI 조작은 메인 스레드에서 실행되어야 합니다.
+            withContext(Dispatchers.Main) {
+                failDialog.dismiss()
+
+            }
+        }
+        findNavController().popBackStack()
     }
 
 }

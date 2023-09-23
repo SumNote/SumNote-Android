@@ -23,6 +23,7 @@ import com.example.sumnote.R
 import com.example.sumnote.api.ApiManager
 import com.example.sumnote.databinding.FragmentNoteMakerBinding
 import com.example.sumnote.ui.Dialog.CircleProgressDialog
+import com.example.sumnote.ui.Dialog.FailDialog
 import com.example.sumnote.ui.Dialog.SuccessDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -61,6 +62,7 @@ class NoteMakerFragment : Fragment() {
     // 로딩 dialog
     private val loadingDialog = CircleProgressDialog()
     private val successDialog = SuccessDialog()
+    private val failDialog = FailDialog()
 
 
     //private val baseUrl = "http://192.168.0.23:8000/"
@@ -262,23 +264,41 @@ class NoteMakerFragment : Fragment() {
 
                     } catch (e: JSONException) {
                         Log.e("DjangoServer", "Error parsing JSON: ${e.message}")
-                        loadingDialog.dismiss()
+                        showFailDialog()
                     }
                 } else {
                     Toast.makeText(this@NoteMakerFragment.activity, "Image upload failed", Toast.LENGTH_SHORT).show()
-                    loadingDialog.dismiss()
+                    showFailDialog()
                 }
 
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 Log.e("ImageUpload", "Image upload error: ${t.message}")
-                loadingDialog.dismiss()
+                showFailDialog()
             }
         })
         Log.d("sendImage","sendImageToServer Exit")
     }
 
+    private fun showFailDialog() {
+        loadingDialog.dismiss()
+        CoroutineScope(Dispatchers.Main).launch {
+            val dialogBundle = Bundle()
+            dialogBundle.putString("dialogText", "노트 생성에 실패하였습니다.")
+            failDialog.arguments = dialogBundle
+            failDialog.show(requireActivity().supportFragmentManager, failDialog.tag)
+
+            // 지정된 딜레이 이후에 UI 조작 수행
+            delay(1500)
+
+            // UI 조작은 메인 스레드에서 실행되어야 합니다.
+            withContext(Dispatchers.Main) {
+                failDialog.dismiss()
+
+            }
+        }
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
