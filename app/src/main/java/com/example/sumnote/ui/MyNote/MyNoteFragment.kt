@@ -275,6 +275,9 @@ class MyNoteFragment : Fragment(){
                 userInfo.name = user.kakaoAccount?.profile?.nickname.toString()
                 userInfo.email = user.kakaoAccount?.email.toString()
 
+                binding.userName.text = userInfo.name
+                binding.userEmail.text = userInfo.email
+
                 Log.d("NOTELIST TEST : ", "name : " + userInfo.name + ", email" + userInfo.email)
                 initNoteList(userInfo) //노트 얻어오기
                 initQuizList(userInfo) //퀴즈 얻어오기
