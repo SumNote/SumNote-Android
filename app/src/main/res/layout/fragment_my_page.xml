@@ -24,7 +24,7 @@
                 android:layout_height="120dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="60dp"
-                android:layout_marginBottom="30dp"
+                android:layout_marginBottom="20dp"
                 android:src="@drawable/img_sum_note_logo"/>
 
             <TextView
@@ -33,18 +33,18 @@
                 android:layout_gravity="center"
                 android:fontFamily="@font/pretendard_extra_bold"
                 android:lineSpacingMultiplier="1.1"
-                android:text="SumNote Developer\nInformation"
+                android:text="SumNote\nDeveloper Information"
                 android:textAlignment="center"
                 android:textColor="@color/green"
                 android:textSize="26dp"
                 android:textStyle="bold"
-                android:layout_marginBottom="40dp"/>
+                android:layout_marginBottom="10dp"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_centerInParent="true"
-                android:background="@color/break_line"
+                android:background="@color/dev_info_break_line"
                 android:layout_marginTop="40dp"/>
 
 
@@ -56,8 +56,8 @@
 
                 <ImageView
                     android:id="@+id/minseo"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
                     android:layout_marginHorizontal="30dp"
                     android:src="@drawable/img_minseo"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -74,7 +74,6 @@
                     android:text="강민서"
                     android:textColor="@color/name"
                     android:textSize="25dp"
-                    android:textStyle="bold"
                     app:layout_constraintEnd_toStartOf="@+id/computer1"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintHorizontal_chainStyle="packed"
@@ -148,8 +147,8 @@
 
                 <ImageView
                     android:id="@+id/taeha"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
                     android:layout_marginHorizontal="30dp"
                     android:src="@drawable/img_taeha"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -166,7 +165,6 @@
                     android:text="김태하"
                     android:textColor="@color/name"
                     android:textSize="25dp"
-                    android:textStyle="bold"
                     app:layout_constraintEnd_toStartOf="@+id/computer2"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintHorizontal_chainStyle="packed"
@@ -241,8 +239,8 @@
 
                 <ImageView
                     android:id="@+id/choi76"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
                     android:layout_marginHorizontal="30dp"
                     android:src="@drawable/img_choi76"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -259,7 +257,6 @@
                     android:text="최 강"
                     android:textColor="@color/name"
                     android:textSize="25dp"
-                    android:textStyle="bold"
                     app:layout_constraintEnd_toStartOf="@+id/computer3"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintHorizontal_chainStyle="packed"
@@ -335,8 +332,8 @@
 
                 <ImageView
                     android:id="@+id/geogmin"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
+                    android:layout_width="180dp"
+                    android:layout_height="180dp"
                     android:layout_marginHorizontal="30dp"
                     android:src="@drawable/img_geongmin"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -353,7 +350,6 @@
                     android:text="이경민"
                     android:textColor="@color/name"
                     android:textSize="25dp"
-                    android:textStyle="bold"
                     app:layout_constraintEnd_toStartOf="@+id/computer4"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintHorizontal_chainStyle="packed"
