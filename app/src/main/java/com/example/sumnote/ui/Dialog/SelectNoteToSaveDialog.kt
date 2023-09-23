@@ -49,6 +49,7 @@ class SelectNoteToSaveDialog(
     private lateinit var note : UpdateNoteRequest
 
     private val successDialog = SuccessDialog()
+    private val failDialog = FailDialog()
 
     //생성자를 통해 유저의 노트아이템 리스트 얻어옴
     init {
@@ -119,21 +120,6 @@ class SelectNoteToSaveDialog(
                     Log.d("#SPRING UPDATE:", "SUCCESS")
 
 
-
-                    // 성공 후 dialog 띄우기
-//                    CoroutineScope(Dispatchers.Main).launch {
-//                        dialog?.dismiss()
-//
-//                        val dialogBundle = Bundle()
-//                        dialogBundle.putString("dialogText", "노트가 저장되었습니다!")
-//                        successDialog.arguments = dialogBundle
-//                        successDialog.show(requireActivity().supportFragmentManager, successDialog.tag)
-//                        withContext(Dispatchers.Default) { delay(1500) }
-//                        successDialog.dismiss()
-//
-//                        findNavController().popBackStack()
-//                    }
-
                     CoroutineScope(Dispatchers.Main).launch {
                         dialog?.dismiss()
 
@@ -157,14 +143,35 @@ class SelectNoteToSaveDialog(
                 } else {
                     // 통신 성공 but 응답 실패
                     Log.d("#SPRING UPDATE:", "FAILURE")
+
+                    showFailDialog()
                 }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 // 통신에 실패한 경우
                 Log.d("CONNECTION FAILURE #SPRING SERVER: ", t.localizedMessage)
+
+                showFailDialog()
             }
         })
+    }
+
+    private fun showFailDialog() {
+        CoroutineScope(Dispatchers.Main).launch {
+            val dialogBundle = Bundle()
+            dialogBundle.putString("dialogText", "노트 저장에 실패하였습니다.")
+            failDialog.arguments = dialogBundle
+            failDialog.show(requireActivity().supportFragmentManager, failDialog.tag)
+            // 지정된 딜레이 이후에 UI 조작 수행
+            delay(1500)
+
+            // UI 조작은 메인 스레드에서 실행되어야 합니다.
+            withContext(Dispatchers.Main) {
+                failDialog.dismiss()
+
+            }
+        }
     }
 
 }

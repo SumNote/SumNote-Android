@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginTop="13dp"
-            android:text="나의 퀴즈"
+            android:text="나의 노트"
             android:textColor="@color/detail_note_main_title"
             android:textSize="20dp"
             android:textStyle="bold" />

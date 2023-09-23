@@ -21,6 +21,7 @@ import com.example.sumnote.ui.DTO.CreateQuizRequest
 import com.example.sumnote.ui.DTO.UpdateQuizRequest
 import com.example.sumnote.ui.Dialog.ChangeNoteTitleDialog
 import com.example.sumnote.ui.Dialog.CircleProgressDialog
+import com.example.sumnote.ui.Dialog.FailDialog
 import com.example.sumnote.ui.Dialog.SuccessDialog
 import com.example.sumnote.ui.kakaoLogin.KakaoOauthViewModelFactory
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
@@ -59,6 +60,7 @@ class NoteViewerFragment : Fragment() {
 
     private val loadingDialog = CircleProgressDialog()
     private val successDialog = SuccessDialog()
+    private val failDialog = FailDialog()
 
     // 장고에 보내줄 텍스트
     private lateinit var toQuiz : String
@@ -470,9 +472,13 @@ class NoteViewerFragment : Fragment() {
 
                     } else {
                         Log.e("DjangoServer", "Error parsing JSON")
+                        loadingDialog.dismiss()
+                        showFailDialog()
                     }
                 } else {
                     Log.e("DjangoServer", "Error response")
+                    loadingDialog.dismiss()
+                    showFailDialog()
                 }
 
 
@@ -482,6 +488,7 @@ class NoteViewerFragment : Fragment() {
                 // 통신 실패 처리
                 Log.e("ImageUpload", "Image upload error: ${t.message}")
                 loadingDialog.dismiss()
+                showFailDialog()
             }
         })
         //val call = apiManager.uploadImage(imagePart)
@@ -505,6 +512,7 @@ class NoteViewerFragment : Fragment() {
                     } else {
                         // 통신 성공 but 응답 실패
                         Log.d("#MAKE_QUIZ:", "FAILURE")
+                        showFailDialog()
                     }
 
                 }
@@ -512,8 +520,10 @@ class NoteViewerFragment : Fragment() {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     // 통신에 실패한 경우
                     Log.d("#MAKE_QUIZ FAIL: ", t.localizedMessage)
+                    showFailDialog()
                 }
             })
+
         } else {
             val call = RetrofitBuilder.api.updateQuiz(clickedNoteId, request2)
             call.enqueue(object : Callback<ResponseBody> {
@@ -521,12 +531,11 @@ class NoteViewerFragment : Fragment() {
                     if (response.isSuccessful) {
                         Log.d("#UPDATE_QUIZ: ", "SUCCESS")
 
-
-//                    findNavController().navigate(R.id.action_newNoteFragment_to_navigation_my_note)
                         findNavController().popBackStack()
                     } else {
                         // 통신 성공 but 응답 실패
                         Log.d("#UPDATE_QUIZ:", "FAILURE")
+                        showFailDialog()
                     }
 
                 }
@@ -534,8 +543,27 @@ class NoteViewerFragment : Fragment() {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     // 통신에 실패한 경우
                     Log.d("#UPDATE_QUIZ FAIL: ", t.localizedMessage)
+                    showFailDialog()
                 }
             })
+        }
+    }
+
+    private fun showFailDialog() {
+        CoroutineScope(Dispatchers.Main).launch {
+            val dialogBundle = Bundle()
+            dialogBundle.putString("dialogText", "문제 생성에 실패하였습니다.")
+            failDialog.arguments = dialogBundle
+            failDialog.show(requireActivity().supportFragmentManager, failDialog.tag)
+
+            // 지정된 딜레이 이후에 UI 조작 수행
+            delay(1500)
+
+            // UI 조작은 메인 스레드에서 실행되어야 합니다.
+            withContext(Dispatchers.Main) {
+                failDialog.dismiss()
+
+            }
         }
     }
 }
