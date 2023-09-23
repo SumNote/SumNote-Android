@@ -7,8 +7,9 @@
 
 
     <LinearLayout
-        android:layout_width="350dp"
+        android:layout_width="wrap_content"
         android:layout_height="120dp"
+        android:layout_marginHorizontal="40dp"
         android:layout_gravity="center">
 
         <TextView
@@ -25,9 +26,10 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="330dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="40dp"
         android:layout_marginTop="40dp"
         android:orientation="vertical">
 
@@ -77,8 +79,9 @@
     <TextView
         android:id="@+id/txt_explanation"
         android:visibility="invisible"
-        android:layout_width="350dp"
+        android:layout_width="wrap_content"
         android:layout_height="150dp"
+        android:layout_marginHorizontal="40dp"
         android:layout_gravity="center"
         android:layout_marginTop="30dp"
         android:text="비트 병렬 알고리즘은 비트 연산을 이용하여 데이터를 병렬적으로 처리하는 알고리즘입니다. 따라서 정답은 2번입니다."

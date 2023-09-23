@@ -46,94 +46,10 @@ class MyPageFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMyPageBinding.inflate(inflater, container, false)
-        // ViewModel 인스턴스 생성 후 프로퍼티에 할당
-        kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(requireActivity().application))[KakaoViewModel::class.java]
-
-        binding.test.setOnClickListener {
-//            val dialog = InputNoteNameDialog()
-//            dialog.show(requireActivity().supportFragmentManager, dialog.tag)
-            // 서버 테스트
-        }
-
-        // 프로필 세팅
-        setInfo()
-
-        val logoutBtn = binding.logout
-        logoutBtn.setOnClickListener {
-            kakaoViewModel.kakaoLogout()
-            // 로그아웃 성공 시 실행되는 콜백
-            val intent = Intent(requireContext(), LoginActivity::class.java)
-            startActivity(intent)
-            requireActivity().finish() // Optional: 현재 프래그먼트를 종료하고 LoginActivity만 보여주는 것
-        }
-
-        var switchModeChange = binding.switchModeChange
-        // 복원해야 하는 상태가 있는 경우 여기서 복원
-        if (savedInstanceState != null) {
-            switchModeChange.isChecked = savedInstanceState.getBoolean("switchState")
-        }
-
-        //다크모드 활성화(토글스위치)
-        switchModeChange.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            }
-        }
 
         return binding.root
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        // 필요한 상태를 저장 => 다크모드 진입 관련
-        outState.putBoolean("switchState", binding.switchModeChange.isChecked)
-    }
-
-    // 프로필 세팅하기
-    fun setInfo(){
-
-        // ViewModel에서 가져온 사용자 이름을 TextView에 설정
-//        kakaoViewModel.kakaoUser.observe(viewLifecycleOwner) { user ->
-//            binding.nickname.text = user.name
-//        }
-
-        // 사용자 정보 요청 (기본)
-        UserApiClient.instance.me { user, error ->
-            if (error != null) {
-                Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
-            }
-            else if (user != null) {
-                //이름
-                val nickname = binding.nickname
-                nickname.text = user.kakaoAccount?.profile?.nickname.toString()
-
-                //이메일
-                val email = binding.userEmail
-                email.text = user.kakaoAccount?.email
-
-                // 프로필 사진
-                val profile = binding.usrProfile
-                val imageUrl = user.kakaoAccount?.profile?.thumbnailImageUrl
-                // 이미지 로딩 라이브러리 (Glide, Picasso 등)를 사용하여 URL 이미지 설정 시:
-                Glide.with(this)
-                    .load(imageUrl)
-                    .into(profile)
-            }
-        }
-    }
-
-
-
-    // 테스트 용
-    private fun showLoading() {
-        CoroutineScope(Dispatchers.Main).launch {
-            loadingDialog.show(requireActivity().supportFragmentManager, loadingDialog.tag)
-            withContext(Dispatchers.Default) { delay(3000) }
-            loadingDialog.dismiss()
-        }
-    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
