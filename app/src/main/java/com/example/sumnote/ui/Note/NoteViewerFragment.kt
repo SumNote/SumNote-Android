@@ -53,8 +53,8 @@ class NoteViewerFragment : Fragment() {
     private var clickedNoteId : Int = -1
 
     lateinit var apiManager: ApiManager
-//    private val baseUrl = "http://10.0.2.2:8000/"
-    private val baseUrl = "http://52.78.216.84:80/"
+    //private val baseUrl = "http://10.0.2.2:8000/"
+    private val baseUrl = "http://3.35.138.31:8000/"
 
     private lateinit var kakaoViewModel: KakaoViewModel
 
@@ -388,9 +388,9 @@ class NoteViewerFragment : Fragment() {
         Log.d("GetPro","#1")
         // timeout setting 해주기
         val okHttpClient = OkHttpClient().newBuilder()
-            .connectTimeout(60, TimeUnit.SECONDS)
-            .readTimeout(60, TimeUnit.SECONDS)
-            .writeTimeout(60, TimeUnit.SECONDS)
+            .connectTimeout(80, TimeUnit.SECONDS)
+            .readTimeout(80, TimeUnit.SECONDS)
+            .writeTimeout(80, TimeUnit.SECONDS)
             .build()
 
         val retrofit = Retrofit.Builder()

@@ -17,7 +17,6 @@
         <!--        local test-->
         <domain includeSubdomains="true">172.20.10.2</domain>
 
-        <domain includeSubdomains="true">192.168.0.23</domain>
-        <domain includeSubdomains="true">52.78.216.84</domain>
+        <domain includeSubdomains="true">3.35.138.31</domain>
     </domain-config>
 </network-security-config>
