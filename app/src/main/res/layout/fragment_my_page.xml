@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".ui.MyPage.MyPageFragment"
     android:id="@+id/fragment_my_page"
-    android:background="@color/white_200"
+    android:background="@color/background_color"
     android:orientation="vertical">
     
 
@@ -23,7 +23,7 @@
                 android:layout_width="80dp"
                 android:layout_height="120dp"
                 android:layout_gravity="center"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="60dp"
                 android:layout_marginBottom="30dp"
                 android:src="@drawable/img_sum_note_logo"/>
 
@@ -31,25 +31,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:textAlignment="center"
-                android:textSize="26dp"
+                android:fontFamily="@font/pretendard_extra_bold"
+                android:lineSpacingMultiplier="1.1"
                 android:text="SumNote Developer\n Information"
+                android:textAlignment="center"
                 android:textColor="@color/green"
-                android:textStyle="bold"/>
+                android:textSize="26dp"
+                android:textStyle="bold"
+                android:layout_marginBottom="40dp"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_centerInParent="true"
-                android:background="@color/gray"
+                android:background="@color/break_line"
                 android:layout_marginTop="40dp"/>
-            
+
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_marginTop="50dp"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:layout_marginTop="50dp">
 
                 <ImageView
                     android:id="@+id/minseo"
@@ -57,20 +60,24 @@
                     android:layout_height="200dp"
                     android:layout_marginHorizontal="30dp"
                     android:src="@drawable/img_minseo"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/name_minseo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="4dp"
+                    android:fontFamily="@font/pretendard_extra_bold"
                     android:text="강민서"
-                    android:textColor="@color/black"
+                    android:textColor="@color/name"
                     android:textSize="25dp"
                     android:textStyle="bold"
-                    android:layout_marginLeft="22dp"
-                    android:layout_marginTop="10dp"
+                    app:layout_constraintEnd_toStartOf="@+id/computer1"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/minseo" />
 
@@ -78,53 +85,59 @@
                     android:id="@+id/computer1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:textSize="20dp"
+                    android:layout_marginStart="4dp"
+                    android:fontFamily="@font/pretendard_medium"
                     android:text="컴퓨터공학부"
-                    android:layout_marginRight="28dp"
+                    android:textColor="@color/computer_science"
+                    android:textSize="20dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/name_minseo"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/minseo"/>
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/name_minseo"
+                    app:layout_constraintTop_toTopOf="@+id/name_minseo" />
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@+id/name_minseo"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="35dp"
+                    android:src="@drawable/email"
+                    app:layout_constraintBottom_toBottomOf="@+id/email1"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginLeft="45dp"
-                    android:layout_marginTop="10dp"
-                    android:src="@drawable/img_email_icon"/>
+                    app:layout_constraintTop_toTopOf="@+id/email1" />
 
                 <TextView
                     android:id="@+id/email1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="kms02171@naver.com"
-                    app:layout_constraintTop_toBottomOf="@+id/computer1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginEnd="30dp"
                     android:layout_marginTop="10dp"
-                    android:textColor="@color/black"/>
+                    android:layout_marginEnd="30dp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:text="kms02171@naver.com"
+                    android:textColor="@color/developer_email"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/computer1" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:text="JPA와 SpringBoot를 이용한 API 개발\nNaver Cloud Flatform을 이용한 서버 배포\nAndroid 디자인 개선"
-                    app:layout_constraintTop_toBottomOf="@+id/email1"
-                    android:gravity="center"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="10dp"
-                    android:textColor="@color/black"/>
+                    android:fontFamily="@font/pretendard_regular"
+                    android:gravity="center"
+                    android:text="JPA와 SpringBoot를 이용한 API 개발\nNaver Cloud Flatform을 이용한 서버 배포\nAndroid 디자인 개선"
+                    android:textAlignment="center"
+                    android:textColor="@color/dev_info"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/email1" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_marginTop="50dp"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:layout_marginTop="50dp">
 
                 <ImageView
                     android:id="@+id/taeha"
@@ -132,20 +145,24 @@
                     android:layout_height="200dp"
                     android:layout_marginHorizontal="30dp"
                     android:src="@drawable/img_taeha"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/name_taeha"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="4dp"
+                    android:fontFamily="@font/pretendard_extra_bold"
                     android:text="김태하"
-                    android:textColor="@color/black"
+                    android:textColor="@color/name"
                     android:textSize="25dp"
                     android:textStyle="bold"
-                    android:layout_marginLeft="22dp"
-                    android:layout_marginTop="10dp"
+                    app:layout_constraintEnd_toStartOf="@+id/computer2"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/taeha" />
 
@@ -153,53 +170,60 @@
                     android:id="@+id/computer2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:textSize="20dp"
+                    android:layout_marginStart="4dp"
+                    android:fontFamily="@font/pretendard_medium"
                     android:text="컴퓨터공학부"
-                    android:layout_marginRight="28dp"
+                    android:textColor="@color/computer_science"
+                    android:textSize="20dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/name_taeha"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/taeha"/>
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/name_taeha"
+                    app:layout_constraintTop_toTopOf="@+id/name_taeha" />
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@+id/name_taeha"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="35dp"
+                    android:src="@drawable/email"
+                    app:layout_constraintBottom_toBottomOf="@+id/email2"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginLeft="45dp"
-                    android:layout_marginTop="10dp"
-                    android:src="@drawable/img_email_icon"/>
+                    app:layout_constraintTop_toTopOf="@+id/email2" />
 
                 <TextView
                     android:id="@+id/email2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="xogk1128@naver.com"
-                    app:layout_constraintTop_toBottomOf="@+id/computer2"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginEnd="30dp"
                     android:layout_marginTop="10dp"
-                    android:textColor="@color/black"/>
+                    android:layout_marginEnd="30dp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:text="xogk1128@naver.com"
+                    android:textColor="@color/developer_email"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/computer2" />
 
                 <TextView
+                    android:id="@+id/textView4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:text="안드로이드 및 장고 서버 개발\n 클라이언트 서버간 API 통신 구축\n GPT 프롬프트 엔지니어링"
-                    app:layout_constraintTop_toBottomOf="@+id/email2"
-                    android:gravity="center"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="10dp"
-                    android:textColor="@color/black"/>
+                    android:fontFamily="@font/pretendard_regular"
+                    android:gravity="center"
+                    android:text="안드로이드 및 장고 서버 개발\n 클라이언트 서버간 API 통신 구축\n GPT 프롬프트 엔지니어링"
+                    android:textAlignment="center"
+                    android:textColor="@color/dev_info"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/email2" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_marginTop="50dp"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:layout_marginTop="50dp">
 
                 <ImageView
                     android:id="@+id/choi76"
@@ -207,20 +231,24 @@
                     android:layout_height="200dp"
                     android:layout_marginHorizontal="30dp"
                     android:src="@drawable/img_choi76"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/name_choi76"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="4dp"
+                    android:fontFamily="@font/pretendard_extra_bold"
                     android:text="최 강"
-                    android:textColor="@color/black"
+                    android:textColor="@color/name"
                     android:textSize="25dp"
                     android:textStyle="bold"
-                    android:layout_marginLeft="39dp"
-                    android:layout_marginTop="10dp"
+                    app:layout_constraintEnd_toStartOf="@+id/computer3"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/choi76" />
 
@@ -228,54 +256,61 @@
                     android:id="@+id/computer3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:textSize="20dp"
+                    android:layout_marginStart="4dp"
+                    android:fontFamily="@font/pretendard_medium"
                     android:text="컴퓨터공학부"
-                    android:layout_marginRight="28dp"
+                    android:textColor="@color/computer_science"
+                    android:textSize="20dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/name_choi76"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/choi76"/>
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/name_choi76"
+                    app:layout_constraintTop_toTopOf="@+id/name_choi76" />
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@+id/name_choi76"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="50dp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:src="@drawable/email"
+                    app:layout_constraintBottom_toBottomOf="@+id/email3"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginLeft="45dp"
-                    android:layout_marginTop="10dp"
-                    android:src="@drawable/img_email_icon"/>
+                    app:layout_constraintTop_toTopOf="@+id/email3" />
 
                 <TextView
                     android:id="@+id/email3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="y2_12@naver.com"
-                    app:layout_constraintTop_toBottomOf="@+id/computer3"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginEnd="50dp"
                     android:layout_marginTop="10dp"
-                    android:textColor="@color/black"/>
+                    android:layout_marginEnd="45dp"
+                    android:fontFamily="@font/pretendard_regular"
+                    android:text="y2_12@naver.com"
+                    android:textColor="@color/developer_email"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/computer3" />
 
                 <TextView
+                    android:id="@+id/textView7"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:text="Android Application 개발 담당\n Django Server 구축 및 개발\n GPT Prompt Engineering"
-                    app:layout_constraintTop_toBottomOf="@+id/email3"
-                    android:gravity="center"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="10dp"
-                    android:textColor="@color/black"/>
+                    android:gravity="center"
+                    android:text="Android Application 개발 담당\n Django Server 구축 및 개발\n GPT Prompt Engineering"
+                    android:textAlignment="center"
+                    android:textColor="@color/dev_info"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/email3" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_marginTop="50dp"
-                android:layout_marginBottom="50dp"
                 android:layout_width="250dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:layout_marginTop="50dp"
+                android:layout_marginBottom="50dp">
 
                 <ImageView
                     android:id="@+id/geogmin"
@@ -283,20 +318,24 @@
                     android:layout_height="200dp"
                     android:layout_marginHorizontal="30dp"
                     android:src="@drawable/img_geongmin"
-                    app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/name_geogmin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="4dp"
+                    android:fontFamily="@font/pretendard_extra_bold"
                     android:text="이경민"
-                    android:textColor="@color/black"
+                    android:textColor="@color/name"
                     android:textSize="25dp"
                     android:textStyle="bold"
-                    android:layout_marginLeft="22dp"
-                    android:layout_marginTop="10dp"
+                    app:layout_constraintEnd_toStartOf="@+id/computer4"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/geogmin" />
 
@@ -304,44 +343,50 @@
                     android:id="@+id/computer4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:textSize="20dp"
+                    android:layout_marginStart="4dp"
+                    android:fontFamily="@font/pretendard_medium"
                     android:text="컴퓨터공학부"
-                    android:layout_marginRight="28dp"
+                    android:textColor="@color/computer_science"
+                    android:textSize="20dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/name_geogmin"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/geogmin"/>
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toEndOf="@+id/name_geogmin"
+                    app:layout_constraintTop_toTopOf="@+id/name_geogmin" />
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintTop_toBottomOf="@+id/name_geogmin"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_marginLeft="20dp"
+                    android:src="@drawable/email"
+                    app:layout_constraintBottom_toBottomOf="@+id/email4"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginLeft="35dp"
-                    android:layout_marginTop="10dp"
-                    android:src="@drawable/img_email_icon"/>
+                    app:layout_constraintTop_toTopOf="@+id/email4" />
 
                 <TextView
                     android:id="@+id/email4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="gyeongmin@hansung.ac.kr"
-                    app:layout_constraintTop_toBottomOf="@+id/computer4"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:layout_marginEnd="20dp"
                     android:layout_marginTop="10dp"
-                    android:textColor="@color/black"/>
+                    android:layout_marginEnd="20dp"
+                    android:fontFamily="@font/pretendard_medium"
+                    android:text="gyeongmin@hansung.ac.kr"
+                    android:textColor="@color/developer_email"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/computer4" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:text="OpenCV를 이용한 객체 탐지\n 광학 문자 인식 및 속도 개선"
-                    app:layout_constraintTop_toBottomOf="@+id/email4"
-                    android:gravity="center"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     android:layout_marginTop="10dp"
-                    android:textColor="@color/black"/>
+                    android:fontFamily="@font/pretendard_regular"
+                    android:gravity="center"
+                    android:text="OpenCV를 이용한 객체 탐지\n 광학 문자 인식 및 속도 개선"
+                    android:textAlignment="center"
+                    android:textColor="@color/dev_info"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/email4" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
