@@ -18,6 +18,9 @@
     <color name="list_time">#AEA9A9</color>
     <color name="break_line">#D9D9D9</color>
 
+    <!-- 새 노트 만들기 -->
+    <color name="fragment_new_note_btn_text">#FFFFFF</color>
+
     <!-- 노트 문서 보기 -->
     <color name="note_background">#F9F9F9</color>
     <color name="detail_note_main_title">#333333</color>

@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white_200">
+    android:background="@color/background_color">
 
 <!--    뒤로가기, 나의 노트-->
     <LinearLayout
@@ -25,6 +25,7 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="13dp"
             android:text="나의 퀴즈"
+            android:fontFamily="@font/pretendard_bold"
             android:textColor="@color/detail_note_main_title"
             android:textSize="20dp"
             android:textStyle="bold" />
