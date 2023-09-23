@@ -53,8 +53,8 @@ class NoteViewerFragment : Fragment() {
     private var clickedNoteId : Int = -1
 
     lateinit var apiManager: ApiManager
-    private val baseUrl = "http://10.0.2.2:8000/"
-//    private val baseUrl = "http://43.201.71.53:80/"
+//    private val baseUrl = "http://10.0.2.2:8000/"
+    private val baseUrl = "http://52.78.216.84:80/"
 
     private lateinit var kakaoViewModel: KakaoViewModel
 

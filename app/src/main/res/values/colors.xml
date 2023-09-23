@@ -4,6 +4,9 @@
     <!-- 배경색 -->
     <color name="background_color">#F9F9F9</color>
 
+    <color name="user_name">#000000</color>
+    <color name="user_email">#AEA9A9</color>
+
     <!-- my note 탭 -->
     <color name="main_recent">#333333</color>
     <color name="main_show_all">#AEA9A9</color>

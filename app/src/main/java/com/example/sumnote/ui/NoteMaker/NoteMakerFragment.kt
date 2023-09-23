@@ -66,7 +66,7 @@ class NoteMakerFragment : Fragment() {
 
 
     //private val baseUrl = "http://192.168.0.23:8000/"
-    private val baseUrl = "http://10.0.2.2:8000/" //장고 서버 url
+    private val baseUrl = "http://52.78.216.84:80/" //장고 서버 url
 
 
     // 요청하고자 하는 권한들

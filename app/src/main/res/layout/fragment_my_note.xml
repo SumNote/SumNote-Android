@@ -13,7 +13,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:background="@color/background_color">
+        android:background="@color/background_color"
+        android:gravity="center_vertical">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/usr_profile"
@@ -24,6 +25,31 @@
             android:background="@android:color/transparent"
             android:src="@drawable/img_default_user"
             app:civ_border_overlay="true" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="10dp">
+
+            <!-- 두 번째 TextView: 이메일 -->
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="사용자 이름"
+                android:textColor="@color/user_name"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/user_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="사용자 이메일"
+                android:textColor="@color/user_email"
+                android:textSize="10sp" />
+
+        </LinearLayout>
 
         <View
             android:layout_width="0dp"
