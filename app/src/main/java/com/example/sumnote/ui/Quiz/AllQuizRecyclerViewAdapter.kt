@@ -72,7 +72,7 @@ class AllQuizRecyclerViewAdapter(
         //이미지는 position에 해당하는 값으로
         // 이미지의 리소스 ID 얻어오기
         val imageNumber = (position % 9) + 1 //모듈러연산 => img_note의 개수를 벗어나지 않도록
-        val imageName = "img_note_$imageNumber"
+        val imageName = "img_quiz_$imageNumber"
         val resId = holder.itemView.context.resources.getIdentifier(imageName, "drawable", holder.itemView.context.packageName)
         holder.noteImage.setImageResource(resId)
     }
