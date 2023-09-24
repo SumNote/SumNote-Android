@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -23,10 +24,16 @@ import com.example.sumnote.ui.kakaoLogin.KakaoOauthViewModelFactory
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
 import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
 import com.example.sumnote.ui.DTO.User
+import com.example.sumnote.ui.Dialog.ChangeNoteTitleDialog
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.kakao.sdk.user.UserApiClient
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -78,6 +85,39 @@ class MyNoteFragment : Fragment(){
         kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(requireActivity().application))[KakaoViewModel::class.java]
 
         getUser() //로그인 한 유저에 대한 노트 및 퀴즈 리스트 받아오기
+
+        val menuButton = binding.etcBtn
+        menuButton.setOnClickListener {
+            // 팝업 메뉴를 생성하고 표시
+            val popupMenu = PopupMenu(requireContext(), menuButton)
+            val inflater = popupMenu.menuInflater
+            inflater.inflate(R.menu.my_note_menu, popupMenu.menu)
+
+            // 팝업 메뉴 아이템에 클릭 리스너를 추가
+            popupMenu.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    // 퀴즈 생성
+                    R.id.create_quiz -> {
+                        // 로그아웃
+                        UserApiClient.instance.logout { error ->
+                            if (error != null) {
+                                Log.e("LOGOUT_ERR", "로그아웃 실패. SDK에서 토큰 삭제됨", error)
+                            }
+                            else {
+                                Log.i("LOGOUT_ERR", "로그아웃 성공. SDK에서 토큰 삭제됨")
+                            }
+                        }
+
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+
+            // 팝업 메뉴를 표시합니다.
+            popupMenu.show()
+        }
 
         noteRecyclerViewAdapter = NoteRecyclerViewAdapter(noteList, object: NoteRecyclerViewAdapter.OnItemClickListener {
             override fun onNoteItemClick(position: Int) {
