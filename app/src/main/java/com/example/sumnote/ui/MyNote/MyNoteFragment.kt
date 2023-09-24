@@ -1,5 +1,6 @@
 package com.example.sumnote.ui.MyNote
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -14,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.example.sumnote.LoginActivity
 import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentMyNoteBinding
 import com.example.sumnote.ui.Note.NoteItem
@@ -97,13 +99,16 @@ class MyNoteFragment : Fragment(){
             popupMenu.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
                     // 퀴즈 생성
-                    R.id.create_quiz -> {
+                    R.id.logout -> {
                         // 로그아웃
                         UserApiClient.instance.logout { error ->
                             if (error != null) {
                                 Log.e("LOGOUT_ERR", "로그아웃 실패. SDK에서 토큰 삭제됨", error)
                             }
                             else {
+                                val intent = Intent(requireContext(), LoginActivity::class.java)
+                                startActivity(intent)
+                                requireActivity().finish()
                                 Log.i("LOGOUT_ERR", "로그아웃 성공. SDK에서 토큰 삭제됨")
                             }
                         }
