@@ -31,6 +31,7 @@ class QuizViewerFragment : Fragment() {
     private lateinit var quizViewAdapter: QuizPagerAdapter
     private lateinit var quizzes: MutableList<Quiz>
 
+    //커밋용
     //프로그래스 바
     lateinit var progressBar : ProgressBar
     //txt_current_question_num
