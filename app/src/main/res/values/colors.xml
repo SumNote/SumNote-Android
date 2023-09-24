@@ -47,8 +47,13 @@
 
     <!-- 노트 이름 입력받기 다이얼로그 -->
     <color name="input_note_name_text">#07C97C</color>
+    <color name="input_note_name_edit_bg">#F9F9F9</color>
+    <color name="input_note_name_line">#C7E7DA</color>
     <color name="input_note_name_bg">#F9F9F9</color>
-    <color name="complete">#FFFFFF</color>
+    <color name="complete">#F9F9F9</color>
+
+    <!-- 저장 방식 선택 -->
+    <color name="save_to_new_note_text">#000000</color>
 
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>

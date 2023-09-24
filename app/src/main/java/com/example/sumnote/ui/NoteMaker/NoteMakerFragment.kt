@@ -65,8 +65,8 @@ class NoteMakerFragment : Fragment() {
     private val failDialog = FailDialog()
 
 
-//    private val baseUrl = "http://3.35.138.31:8000/"
-    private val baseUrl = "http://10.0.2.2:8000/" //장고 서버 url
+    private val baseUrl = "http://3.35.138.31:8000/"
+//    private val baseUrl = "http://10.0.2.2:8000/" //장고 서버 url
 
 
     // 요청하고자 하는 권한들
