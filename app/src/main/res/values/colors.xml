@@ -45,6 +45,11 @@
     <color name="dev_info">#000000</color>
     <color name="dev_info_break_line">#D9D9D9</color>
 
+    <!-- 노트 이름 입력받기 다이얼로그 -->
+    <color name="input_note_name_text">#07C97C</color>
+    <color name="input_note_name_bg">#F9F9F9</color>
+    <color name="complete">#FFFFFF</color>
+
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
