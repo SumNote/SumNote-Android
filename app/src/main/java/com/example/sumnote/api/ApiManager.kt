@@ -3,7 +3,6 @@ package com.example.sumnote.api
 import com.example.sumnote.ui.DTO.ChangeNoteTitleRequest
 import com.example.sumnote.ui.DTO.CreateNoteRequest
 import com.example.sumnote.ui.DTO.CreateQuizRequest
-import com.example.sumnote.ui.DTO.Summary
 import com.example.sumnote.ui.DTO.UpdateQuizRequest
 import com.example.sumnote.ui.DTO.User
 import com.example.sumnote.ui.Dialog.UpdateNoteRequest
