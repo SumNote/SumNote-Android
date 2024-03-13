@@ -4,9 +4,7 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.ContentResolver
 import android.content.ContentValues
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -36,6 +34,7 @@ import okhttp3.ResponseBody
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
@@ -50,8 +49,6 @@ class NoteMakerFragment : Fragment() {
     private val binding get() = _binding!!
 
     lateinit var contentResolver: ContentResolver
-
-    lateinit var apiManager: ApiManager
 
     // 로딩 dialog
     private val loadingDialog = CircleProgressDialog()
@@ -78,11 +75,27 @@ class NoteMakerFragment : Fragment() {
                 }
             }
             contentResolver = requireContext().contentResolver
-            //openDialog(requireContext())
-            // Note: 사진 찍는 것은 비동기로 처리됨 -> 여기다 서버 전송 코드 적으면 이미지 가져오기 전에 먼저 처리됨
             pictureUri = createImageFile()
             getTakePicture.launch(pictureUri)
         }
+
+
+    // 클래스 멤버로 OkHttpClient와 Retrofit 인스턴스를 선언하여 재사용
+    private val okHttpClient: OkHttpClient by lazy {
+        OkHttpClient.Builder()
+            .connectTimeout(100, TimeUnit.SECONDS)
+            .readTimeout(100, TimeUnit.SECONDS)
+            .writeTimeout(100, TimeUnit.SECONDS)
+            .build()
+    }
+
+    private val retrofit: Retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl(baseUrl)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
 
 
     // Life Cycle
@@ -130,7 +143,6 @@ class NoteMakerFragment : Fragment() {
     // 이미지 파일 얻어오기
     private val getContentImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri.let {
-            Log.d("##NoteMakerFragment", "Selected IMAGE URI: $it")
             if (it != null) {
                 // 사용자의 확인을 받아서 처리
                 showConfirmationDialog(it) {
@@ -143,7 +155,6 @@ class NoteMakerFragment : Fragment() {
     // pdf 파일 로드용
     private val getContentPdf = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {
-            Log.d("##NoteMakerFragment", "Selected PDF URI: $it")
             if (it != null) {
                 // 사용자의 확인을 받아서 처리
                 showConfirmationDialog(it) {
@@ -165,109 +176,36 @@ class NoteMakerFragment : Fragment() {
 
 
     private fun sendImageToServer(uri: Uri) {
-        Log.d("##NoteMakerFragment: ","call sendImageToServer")
-        contentResolver = requireContext().contentResolver
-        val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
-        } else {
-            MediaStore.Images.Media.getBitmap(contentResolver, uri)
-        }
-
-        val file = File(requireContext().cacheDir, "cache.jpg")
-        requireContext().contentResolver.openInputStream(uri)?.use { input ->
-            FileOutputStream(file).use { output ->
-                input.copyTo(output)
+        // 이미지 파일을 임시 파일로 복사
+        val file = File(requireContext().cacheDir, "temp_image.jpg").apply {
+            requireContext().contentResolver.openInputStream(uri)?.use { input ->
+                FileOutputStream(this).use { output ->
+                    input.copyTo(output)
+                }
             }
         }
 
+        // 네트워크 요청 준비
+        val requestBody = file.asRequestBody("image/*".toMediaTypeOrNull())
+        val multipartBody = MultipartBody.Part.createFormData("image", file.name, requestBody)
 
-        //개선한 방식 => 파일 객체 그 자체를 보내도록 코드 변경
-        val body = file.asRequestBody(
-            "image/*".toMediaTypeOrNull()
-        )
-
-        //폼 데이터 형식으로 key : image, value : data로 파일 전송
-        val data = MultipartBody.Part.createFormData(
-            name = "image",
-            filename = file.name,
-            body = body
-        )
-
-
-        val okHttpClient = OkHttpClient().newBuilder()
-            .connectTimeout(100, TimeUnit.SECONDS)
-            .readTimeout(100, TimeUnit.SECONDS)
-            .writeTimeout(100, TimeUnit.SECONDS)
-            .build()
-
-        val retrofit = Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-
-        apiManager = retrofit.create(ApiManager::class.java)
-
-        val call = apiManager.uploadImage(data)
 
         val bundle = Bundle()
         bundle.putString("dialogText", "노트를 생성하는 중입니다...")
         loadingDialog.arguments = bundle
         loadingDialog.show(requireActivity().supportFragmentManager, loadingDialog.tag)
 
-        call.enqueue(object : retrofit2.Callback<ResponseBody> {
+        // API 호출
+        retrofit.create(ApiManager::class.java).uploadImage(multipartBody).enqueue(object : retrofit2.Callback<ResponseBody> {
+
             override fun onResponse(call: Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
-                if (response.isSuccessful) {
-                    Log.d("DjangoServer","send success")
-                    Toast.makeText(this@NoteMakerFragment.activity, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
-
-                    val responseBody = response.body()?.string()
-                    try {
-                        val jsonObject = JSONObject(responseBody)
-                        val textBook = jsonObject.getString("text")
-                        Log.d("DjangoServer", "Text Book's Text : $textBook")
-                        val textGpt = jsonObject.getString("sum_result")
-                        Log.d("DjangoServer", "Text GPT's Text : $textGpt")
-                        val noteTitle = jsonObject.getString("title")
-                        val summary = jsonObject.getString("summary")
-
-                        val bundle = Bundle()
-                        bundle.putString("title", noteTitle)
-                        bundle.putString("textBook", summary)
-
-
-                        // 성공 후 dialog 띄우기
-                        CoroutineScope(Dispatchers.Main).launch {
-                            loadingDialog.dismiss()
-                            val dialogBundle = Bundle()
-                            dialogBundle.putString("dialogText", "노트가 성공적으로 생성되었습니다!")
-                            successDialog.arguments = dialogBundle
-                            successDialog.show(requireActivity().supportFragmentManager, successDialog.tag)
-                            withContext(Dispatchers.Default) { delay(1500) }
-                            successDialog.dismiss()
-
-                            //생성된 노트 화면으로 이동
-                            findNavController().navigate(R.id.action_navigation_note_maker_to_newNoteFragment,bundle)
-                        }
-
-                    } catch (e: JSONException) {
-                        Log.e("DjangoServer", "Error parsing JSON: ${e.message}")
-                        showFailDialog()
-                    }
-                } else {
-                    Toast.makeText(this@NoteMakerFragment.activity, "Image upload failed", Toast.LENGTH_SHORT).show()
-                    showFailDialog()
-                }
-
+                handleResponse(response)
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Log.e("ImageUpload", "Image upload error: ${t.message}")
-                showFailDialog()
+                handleError(t)
             }
         })
-        Log.d("sendImage","sendImageToServer Exit")
     }
 
     // 파일을 전송할건지 취소할 것인지 여부를 선택 받음
@@ -283,10 +221,90 @@ class NoteMakerFragment : Fragment() {
         }
     }
 
+    // 이미지 전송 관련 성공/실패 여부
+    private fun handleResponse(response: Response<ResponseBody>) {
+        if (response.isSuccessful) {
+            //Toast.makeText(this@NoteMakerFragment.activity, "이미지가 전송에 성공하였습니다.", Toast.LENGTH_SHORT).show()
 
-    private fun sendPdfToServer(uri: Uri) {
+            val responseBody = response.body()?.string()
+            try {
+                val jsonObject = JSONObject(responseBody)
+                val textBook = jsonObject.getString("text")
+                Log.d("FastAPI", "Text Book's Text : $textBook")
+                val textGpt = jsonObject.getString("sum_result")
+                Log.d("FastAPI", "Text GPT's Text : $textGpt")
+                val noteTitle = jsonObject.getString("title")
+                val summary = jsonObject.getString("summary")
 
+                val bundle = Bundle()
+                bundle.putString("title", noteTitle)
+                bundle.putString("textBook", summary)
+
+
+                // 성공 후 dialog 띄우기
+                CoroutineScope(Dispatchers.Main).launch {
+                    loadingDialog.dismiss()
+                    val dialogBundle = Bundle()
+                    dialogBundle.putString("dialogText", "노트가 성공적으로 생성되었습니다!")
+                    successDialog.arguments = dialogBundle
+                    successDialog.show(requireActivity().supportFragmentManager, successDialog.tag)
+                    withContext(Dispatchers.Default) { delay(1500) }
+                    successDialog.dismiss()
+
+                    //생성된 노트 화면으로 이동
+                    findNavController().navigate(R.id.action_navigation_note_maker_to_newNoteFragment,bundle)
+                }
+
+            } catch (e: JSONException) {
+                Log.e("FastAPI", "Error parsing JSON: ${e.message}")
+                showFailDialog()
+            }
+        } else {
+            Toast.makeText(this@NoteMakerFragment.activity, "이미지 전송에 실패하였습니다.", Toast.LENGTH_SHORT).show()
+            showFailDialog()
+        }
     }
+
+    private fun handleError(t: Throwable) {
+        Log.e("ImageUpload", "Image upload error: ${t.message}")
+        showFailDialog()
+    }
+
+
+    // pdf 파일 multipart로 fastAPI서버로 전송 -> GPT 노트 얻어오기
+    private fun sendPdfToServer(uri: Uri) {
+        // PDF 파일을 임시 파일로 복사
+        val file = File(requireContext().cacheDir, "temp_pdf.pdf").apply {
+            requireContext().contentResolver.openInputStream(uri)?.use { input ->
+                FileOutputStream(this).use { output ->
+                    input.copyTo(output)
+                }
+            }
+        }
+
+        // 네트워크 요청 준비
+        val requestBody = file.asRequestBody("application/pdf".toMediaTypeOrNull())
+        val multipartBody = MultipartBody.Part.createFormData("pdf", file.name, requestBody)
+
+        val bundle = Bundle().apply {
+            putString("dialogText", "PDF 파일을 업로드하는 중입니다...")
+        }
+        loadingDialog.arguments = bundle
+        loadingDialog.show(requireActivity().supportFragmentManager, loadingDialog.tag)
+
+        // API 호출
+        retrofit.create(ApiManager::class.java).uploadPdf(multipartBody).enqueue(object : retrofit2.Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
+                handleResponse(response)
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                handleError(t)
+            }
+        })
+    }
+
+
 
     // 노트 생성 실패시
     private fun showFailDialog() {

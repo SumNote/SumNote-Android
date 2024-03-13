@@ -24,6 +24,11 @@ interface ApiManager {
     @POST("image-to-text")
     fun uploadImage(@Part image: MultipartBody.Part): Call<ResponseBody>
 
+    // pdf 파일 바탕으로 노트 생성
+    @Multipart
+    @POST("pdf-to-text")
+    fun uploadPdf(@Part pdf: MultipartBody.Part): Call<ResponseBody>
+
     // 요약 내용 body에 담아서 보내기
     @POST("gen-problem")
     fun generateProblem(@Body summary : String): Call<ResponseBody>
