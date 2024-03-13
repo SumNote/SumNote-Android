@@ -232,16 +232,15 @@ class NoteMakerFragment : Fragment() {
     // 이미지 전송 관련 성공/실패 여부
     private fun handleResponse(response: Response<ResponseBody>) {
         if (response.isSuccessful) {
-            Log.d("DjangoServer","send success")
-            Toast.makeText(this@NoteMakerFragment.activity, "Image uploaded successfully", Toast.LENGTH_SHORT).show()
+            //Toast.makeText(this@NoteMakerFragment.activity, "이미지가 전송에 성공하였습니다.", Toast.LENGTH_SHORT).show()
 
             val responseBody = response.body()?.string()
             try {
                 val jsonObject = JSONObject(responseBody)
                 val textBook = jsonObject.getString("text")
-                Log.d("DjangoServer", "Text Book's Text : $textBook")
+                Log.d("FastAPI", "Text Book's Text : $textBook")
                 val textGpt = jsonObject.getString("sum_result")
-                Log.d("DjangoServer", "Text GPT's Text : $textGpt")
+                Log.d("FastAPI", "Text GPT's Text : $textGpt")
                 val noteTitle = jsonObject.getString("title")
                 val summary = jsonObject.getString("summary")
 
@@ -265,11 +264,11 @@ class NoteMakerFragment : Fragment() {
                 }
 
             } catch (e: JSONException) {
-                Log.e("DjangoServer", "Error parsing JSON: ${e.message}")
+                Log.e("FastAPI", "Error parsing JSON: ${e.message}")
                 showFailDialog()
             }
         } else {
-            Toast.makeText(this@NoteMakerFragment.activity, "Image upload failed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@NoteMakerFragment.activity, "이미지 전송에 실패하였습니다.", Toast.LENGTH_SHORT).show()
             showFailDialog()
         }
     }
@@ -280,10 +279,40 @@ class NoteMakerFragment : Fragment() {
     }
 
 
-
+    // pdf 파일 multipart로 fastAPI서버로 전송 -> GPT 노트 얻어오기
     private fun sendPdfToServer(uri: Uri) {
+        // PDF 파일을 임시 파일로 복사
+        val file = File(requireContext().cacheDir, "temp_pdf.pdf").apply {
+            requireContext().contentResolver.openInputStream(uri)?.use { input ->
+                FileOutputStream(this).use { output ->
+                    input.copyTo(output)
+                }
+            }
+        }
 
+        // 네트워크 요청 준비
+        val requestBody = file.asRequestBody("application/pdf".toMediaTypeOrNull())
+        val multipartBody = MultipartBody.Part.createFormData("pdf", file.name, requestBody)
+
+        val bundle = Bundle().apply {
+            putString("dialogText", "PDF 파일을 업로드하는 중입니다...")
+        }
+        loadingDialog.arguments = bundle
+        loadingDialog.show(requireActivity().supportFragmentManager, loadingDialog.tag)
+
+        // API 호출
+        retrofit.create(ApiManager::class.java).uploadPdf(multipartBody).enqueue(object : retrofit2.Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
+                handleResponse(response)
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                handleError(t)
+            }
+        })
     }
+
+
 
     // 노트 생성 실패시
     private fun showFailDialog() {
