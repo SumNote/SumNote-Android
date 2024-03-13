@@ -4,9 +4,7 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.ContentResolver
 import android.content.ContentValues
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -52,8 +50,6 @@ class NoteMakerFragment : Fragment() {
 
     lateinit var contentResolver: ContentResolver
 
-    lateinit var apiManager: ApiManager
-
     // 로딩 dialog
     private val loadingDialog = CircleProgressDialog()
     private val successDialog = SuccessDialog()
@@ -79,8 +75,6 @@ class NoteMakerFragment : Fragment() {
                 }
             }
             contentResolver = requireContext().contentResolver
-            //openDialog(requireContext())
-            // Note: 사진 찍는 것은 비동기로 처리됨 -> 여기다 서버 전송 코드 적으면 이미지 가져오기 전에 먼저 처리됨
             pictureUri = createImageFile()
             getTakePicture.launch(pictureUri)
         }
@@ -149,7 +143,6 @@ class NoteMakerFragment : Fragment() {
     // 이미지 파일 얻어오기
     private val getContentImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri.let {
-            Log.d("##NoteMakerFragment", "Selected IMAGE URI: $it")
             if (it != null) {
                 // 사용자의 확인을 받아서 처리
                 showConfirmationDialog(it) {
@@ -162,7 +155,6 @@ class NoteMakerFragment : Fragment() {
     // pdf 파일 로드용
     private val getContentPdf = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri?.let {
-            Log.d("##NoteMakerFragment", "Selected PDF URI: $it")
             if (it != null) {
                 // 사용자의 확인을 받아서 처리
                 showConfirmationDialog(it) {
