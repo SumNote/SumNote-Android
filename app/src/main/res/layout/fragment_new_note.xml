@@ -68,7 +68,7 @@
             android:fontFamily="@font/pretendard_extra_bold"
             android:letterSpacing="-0.02"
             android:stateListAnimator="@null"
-            android:text="다시찍기"
+            android:text="취소"
             android:textColor="@color/fragment_new_note_btn_text"
             android:textSize="20dp" />
 
@@ -82,7 +82,7 @@
             android:fontFamily="@font/pretendard_extra_bold"
             android:letterSpacing="-0.02"
             android:stateListAnimator="@null"
-            android:text="저장하기"
+            android:text="저장"
             android:textColor="@color/fragment_new_note_btn_text"
             android:textSize="20dp" />
 
