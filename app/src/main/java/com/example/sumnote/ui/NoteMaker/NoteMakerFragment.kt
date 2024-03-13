@@ -1,9 +1,9 @@
 package com.example.sumnote.ui.NoteMaker
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.ContentResolver
 import android.content.ContentValues
-import android.content.Context
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -13,10 +13,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.sumnote.R
@@ -35,12 +33,9 @@ import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.ResponseBody
-import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
@@ -58,16 +53,15 @@ class NoteMakerFragment : Fragment() {
 
     lateinit var apiManager: ApiManager
 
-
     // 로딩 dialog
     private val loadingDialog = CircleProgressDialog()
     private val successDialog = SuccessDialog()
     private val failDialog = FailDialog()
 
+    // private val baseUrl = "http://3.35.138.31:8000/"
+    private val baseUrl = "http://10.0.2.2:8000/" //fastAPI 서버 url
 
-    private val baseUrl = "http://3.35.138.31:8000/"
-//    private val baseUrl = "http://10.0.2.2:8000/" //장고 서버 url
-
+    var pictureUri: Uri? = null // 촬영한 사진에 대한 uri
 
     // 요청하고자 하는 권한들
     private val permissionList = arrayOf(
@@ -75,38 +69,6 @@ class NoteMakerFragment : Fragment() {
         Manifest.permission.WRITE_EXTERNAL_STORAGE,
         Manifest.permission.READ_EXTERNAL_STORAGE
     )
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentNoteMakerBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-
-        //카메라 촬영 버튼
-        binding.cameraButton.setOnClickListener{
-            // 카메라 권환 확인 및 카메라 열기
-            Log.d("#NOTEMAKER DEBUG: ","camera 1")
-            requestMultiplePermission.launch(permissionList)
-        }
-
-        //갤러리 버튼
-        binding.galleryButton.setOnClickListener{
-            Log.d("#NOTEMAKER DEBUG: ","gallery 1")
-
-            getContentImage.launch("image/*")
-        }
-
-        //테스트용 => 나중에 지울것
-        binding.howToCapture.setOnClickListener{
-            findNavController().navigate(R.id.action_navigation_note_maker_to_newNoteFragment)
-        }
-    }
 
     private val requestMultiplePermission =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { results ->
@@ -122,29 +84,37 @@ class NoteMakerFragment : Fragment() {
             getTakePicture.launch(pictureUri)
         }
 
-    private fun openDialog(context: Context) {
-        val dialogLayout = layoutInflater.inflate(R.layout.dialog_select_image_method, null)
-        val dialogBuild = AlertDialog.Builder(context).apply {
-            setView(dialogLayout)
+
+    // Life Cycle
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentNoteMakerBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // 카메라 촬영 버튼
+        binding.cameraButton.setOnClickListener{
+            // 카메라 권환 확인 및 카메라 열기
+            requestMultiplePermission.launch(permissionList)
         }
-        val dialog = dialogBuild.create().apply { show() }
 
-        val cameraAddBtn = dialogLayout.findViewById<Button>(R.id.dialog_btn_camera)
-        val fileAddBtn = dialogLayout.findViewById<Button>(R.id.dialog_btn_file)
-
-        cameraAddBtn.setOnClickListener {
-            // Create an image file
-            pictureUri = createImageFile()
-            getTakePicture.launch(pictureUri)
-
-            // Note: 사진 찍는 것은 비동기로 처리됨 -> 여기다 서버 전송 코드 적으면 이미지 가져오기 전에 먼저 처리됨
-            dialog.dismiss()
+        // 갤러리 버튼
+        binding.galleryButton.setOnClickListener{
+            getContentImage.launch("image/*") // 이미지 로드
         }
 
-        fileAddBtn.setOnClickListener {
-            getContentImage.launch("image/*")
-            dialog.dismiss()
+        // pdf 파일 로드
+        binding.pdfButton.setOnClickListener {
+            // PDF 파일만 선택하도록 "application/pdf" MIME 타입 지정
+            getContentPdf.launch("application/pdf")
         }
+
     }
 
     private fun createImageFile(): Uri? {
@@ -157,31 +127,45 @@ class NoteMakerFragment : Fragment() {
     }
 
 
-    // 파일 불러오기
+    // 이미지 파일 얻어오기
     private val getContentImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri.let {
-            Log.d("#NOTEMAKER DEBUG: ","call getContentImage")
+            Log.d("##NoteMakerFragment", "Selected IMAGE URI: $it")
             if (it != null) {
-                sendImageToServer(it)
+                // 사용자의 확인을 받아서 처리
+                showConfirmationDialog(it) {
+                    sendImageToServer(it) // 사용자가 '확인'을 누른 경우에만 이미지를 서버로 전송
+                }
             }
         }
     }
 
-    // 카메라를 실행한 후 찍은 사진을 저장
-    var pictureUri: Uri? = null
+    // pdf 파일 로드용
+    private val getContentPdf = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {
+            Log.d("##NoteMakerFragment", "Selected PDF URI: $it")
+            if (it != null) {
+                // 사용자의 확인을 받아서 처리
+                showConfirmationDialog(it) {
+                    sendPdfToServer(it) // 사용자가 '확인'을 누른 경우에만 PDF를 서버로 전송
+                }
+            }
+        }
+    }
+
+    // 카메라로 촬영한 이미지 얻어오기
     private val getTakePicture = registerForActivityResult(ActivityResultContracts.TakePicture()) {
         if(it) {
             pictureUri?.let { uri ->
-                // binding.mainImg.setImageURI(uri)
-                // Note: 카메라로 사진 촬영 직후 서버에 이미지 전송하기
-                Log.d("#NOTEMAKER DEBUG: ","6")
                 sendImageToServer(uri)
             }
         }
     }
 
+
+
     private fun sendImageToServer(uri: Uri) {
-        Log.d("#NOTEMAKER DEBUG: ","call sendImageToServer")
+        Log.d("##NoteMakerFragment: ","call sendImageToServer")
         contentResolver = requireContext().contentResolver
         val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             ImageDecoder.decodeBitmap(ImageDecoder.createSource(contentResolver, uri))
@@ -286,6 +270,25 @@ class NoteMakerFragment : Fragment() {
         Log.d("sendImage","sendImageToServer Exit")
     }
 
+    // 파일을 전송할건지 취소할 것인지 여부를 선택 받음
+    fun showConfirmationDialog(uri: Uri, onConfirm: () -> Unit) {
+        AlertDialog.Builder(requireContext()).apply {
+            setTitle("파일 전송 확인")
+            setMessage("선택한 파일을 서버로 전송하시겠습니까?")
+            setPositiveButton("확인") { dialog, which ->
+                onConfirm() // 사용자가 '확인'을 클릭하면 콜백을 호출
+            }
+            setNegativeButton("취소", null) // '취소'를 클릭하면 아무것도 하지 않음
+            show()
+        }
+    }
+
+
+    private fun sendPdfToServer(uri: Uri) {
+
+    }
+
+    // 노트 생성 실패시
     private fun showFailDialog() {
         loadingDialog.dismiss()
         CoroutineScope(Dispatchers.Main).launch {
