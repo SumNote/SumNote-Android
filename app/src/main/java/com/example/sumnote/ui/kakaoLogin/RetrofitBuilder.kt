@@ -10,8 +10,8 @@ object RetrofitBuilder {
     init{
         val gson = GsonBuilder().setLenient().create()
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://223.130.132.249:8080/") // 요청 보내는 API 서버 url. /로 끝나야 함함
-            .addConverterFactory(GsonConverterFactory.create(gson)) // Gson을 역직렬화
+            .baseUrl("http://10.0.2.2:8080/")// 개발 머신의 로컬 호스트
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
         api = retrofit.create(ApiManager::class.java)
     }

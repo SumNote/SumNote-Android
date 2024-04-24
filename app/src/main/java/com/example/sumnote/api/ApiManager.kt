@@ -6,9 +6,15 @@ import com.example.sumnote.ui.DTO.CreateQuizRequest
 import com.example.sumnote.ui.DTO.UpdateQuizRequest
 import com.example.sumnote.ui.DTO.User
 import com.example.sumnote.ui.Dialog.UpdateNoteRequest
+import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
+import com.google.gson.GsonBuilder
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -20,6 +26,11 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ApiManager {
+
+    /**
+     * FastAPI Server API
+     * */
+
     @Multipart
     @POST("image-to-text")
     fun uploadImage(@Part image: MultipartBody.Part): Call<ResponseBody>
@@ -33,13 +44,18 @@ interface ApiManager {
     @POST("gen-problem")
     fun generateProblem(@Body summary : String): Call<ResponseBody>
 
-    //안드로이드 스튜디오 캠 카메라 화질 이슈로 ocr이 제대로 되지 않기 때문에, 테스트 용으로 작성함
+    // Test
     @Multipart
     @POST("image-to-text-test")
     fun uploadImageTest(@Part image: MultipartBody.Part): Call<ResponseBody>
 
-    // login
-    @POST("login")
+
+    /**
+     * Spring Server API
+     * */
+
+    // 카카오 로그인
+    @POST("api/member/login")
     fun getLoginResponse(@Body user: User): Call<ResponseBody>
 
     // 노트 리스트 가져오기
@@ -65,8 +81,6 @@ interface ApiManager {
     // 노트 삭제하기
     @DELETE("sum-note/{id}")
     fun deleteNote(@Path("id") id : Int): Call<ResponseBody>
-
-
     // 퀴즈 만들기
     @POST("quiz")
     fun createQuiz(@Body request: CreateQuizRequest): Call<ResponseBody>
@@ -82,4 +96,29 @@ interface ApiManager {
     // 퀴즈 내용 추가하기
     @PUT("quiz/content/{id}")
     fun updateQuiz(@Path("id") id : Int, @Body request2: UpdateQuizRequest): Call<ResponseBody>
+}
+
+
+object SpringRetrofit {
+    private const val BASE_URL = "http://10.0.2.2:8080/"
+
+    val instance: Retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+}
+
+object FastAPIRetrofit {
+    private const val BASE_URL = "http://10.0.2.2:8000/"
+
+    val instance: Retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
 }
