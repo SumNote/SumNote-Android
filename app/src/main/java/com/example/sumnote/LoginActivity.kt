@@ -9,6 +9,8 @@ import android.util.Log
 import android.view.WindowManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
+import com.example.sumnote.api.ApiManager
+import com.example.sumnote.api.SpringRetrofit
 import com.example.sumnote.databinding.ActivityLoginBinding
 import com.example.sumnote.ui.kakaoLogin.KakaoOauthViewModelFactory
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
@@ -20,11 +22,13 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.Retrofit
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var kakaoViewModel: KakaoViewModel
     private lateinit var binding: ActivityLoginBinding
+    private lateinit var apiService : ApiManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +36,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(application))[KakaoViewModel::class.java]
+        apiService = SpringRetrofit.instance.create(ApiManager::class.java) // Get SpringRetrofit
 
         val intent = Intent(this, MainActivity::class.java)
         binding.btnLogin.apply {
@@ -79,7 +84,7 @@ class LoginActivity : AppCompatActivity() {
     private fun springLogin(user: User) {
 
         Log.d("#LoginActivity : ", "call springLogin")
-        val call = RetrofitBuilder.api.getLoginResponse(user)
+        val call = apiService.getLoginResponse(user)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
