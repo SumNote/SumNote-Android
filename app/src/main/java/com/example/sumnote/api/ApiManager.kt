@@ -38,8 +38,8 @@ interface ApiManager {
     @POST("image-to-text-test")
     fun uploadImageTest(@Part image: MultipartBody.Part): Call<ResponseBody>
 
-    // login
-    @POST("login")
+    // 카카오 로그인
+    @POST("api/member/login")
     fun getLoginResponse(@Body user: User): Call<ResponseBody>
 
     // 노트 리스트 가져오기

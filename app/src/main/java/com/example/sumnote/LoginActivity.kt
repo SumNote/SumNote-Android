@@ -24,48 +24,34 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var kakaoViewModel: KakaoViewModel
     private lateinit var binding: ActivityLoginBinding
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        // Optional: Add a listener to splash screen
-//        splashScreen.setOnExitAnimationListener { splashScreenProvider ->
-//            val fadeOut = ObjectAnimator.ofFloat(splashScreenProvider.view, View.ALPHA, 0f)
-//            fadeOut.duration = 500L
-//            fadeOut.start()
-//        }
-        // ViewModelProvider를 통해 ViewModel 인스턴스 생성
         kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(application))[KakaoViewModel::class.java]
 
         val intent = Intent(this, MainActivity::class.java)
-        //로그인 버튼 클릭시 : 카카오 로그인 수행하고 MainActivity로 넘어가기
         binding.btnLogin.apply {
             setOnClickListener{
-                Log.d("btnClick : ","btn_login_clicked")
-                //이곳에 카카오 로그인 관련 로직 작성 필요
+                Log.d("#LoginActivity : ", "Login Btn Clicked")
                 kakaoViewModel.kakaoLogin()
             }
         }
 
-        // 로그인 완료까지 대기하는 코드 작성 (예: LiveData, Flow, 코루틴의 delay 등)
-        Log.d("test", "activity start")
         kakaoViewModel.isLoggedIn.asLiveData().observe(this) { isLoggedIn ->
-            // 로그인이 완료되면 getInfo()와 startActivity(intent) 호출
-            if (isLoggedIn) {
-                getInfo()
-                startActivity(intent)
+            if (isLoggedIn) { // 카카오 로그인 성공시 -> 스프링 서버로 로그인 요청
+                loginRequest() // log check & call Login API
+                startActivity(intent) // Call Application Main Activity
             }
         }
 
         // 상태바 숨기기
         window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-
-
     }
-    fun getInfo(){
+
+    private fun loginRequest(){
         // 사용자 정보 요청 (기본)
         UserApiClient.instance.me { user, error ->
             if (error != null) {
@@ -81,32 +67,30 @@ class LoginActivity : AppCompatActivity() {
                 val userInfo = User()
                 userInfo.name = user.kakaoAccount?.profile?.nickname.toString()
                 userInfo.email = user.kakaoAccount?.email.toString()
-//                kakaoViewModel.kakaoUser.value = userInfo
 
-
-                Login(userInfo)
+                springLogin(userInfo) // Spring Login Request
             }
         }
     }
 
-    // Spring 서버와 통신하는 코드
-    fun Login(user: User) {
+    // 스프링 서버에 로그인 요청
+    private fun springLogin(user: User) {
 
+        Log.d("#LoginActivity : ", "call springLogin")
         val call = RetrofitBuilder.api.getLoginResponse(user)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
-                    Log.d("#LOGIN Success:", "SUCCESS")
-
+                    Log.d("#LoginActivity : ", "springLogin Success")
                 } else {
-                    // 통신 성공 but 응답 실패
-                    Log.d("#LOGIN SERVER:", "FAILURE")
+                    // 통신에는 성공하였으나 응답 실패
+                    Log.d("#LoginActivity :  ", "springLogin Response Fail")
                 }
             }
 
+            // 스프링 서버 통신 실패
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                // 통신에 실패한 경우
-                Log.d("CONNECTION FAILURE #SPRING SERVER: ", t.localizedMessage)
+                Log.d("#LoginActivity : ", "springLogin onFailure ${t.localizedMessage}")
             }
         })
 
