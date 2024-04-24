@@ -1,6 +1,8 @@
 package com.example.sumnote
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -82,6 +84,11 @@ class LoginActivity : AppCompatActivity() {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
                     Log.d("#LoginActivity : ", "springLogin Success")
+                    // 로그인 성공시 사용자 토큰 SharedPreference에 저장
+                    response.headers()["Authorization"]?.let{ token ->
+                        Log.d("#LoginActivity : ", "token is $token")
+                        saveToken(token)
+                    }
                 } else {
                     // 통신에는 성공하였으나 응답 실패
                     Log.d("#LoginActivity :  ", "springLogin Response Fail")
@@ -95,4 +102,18 @@ class LoginActivity : AppCompatActivity() {
         })
 
     }
+
+    // 공유 저장소에 사용자 토큰 저장 -> 추후 Spring 관련 모든 API 호출시 사용
+    private fun saveToken(token: String) {
+        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        sharedPreferences.edit().putString("token", token).apply()
+    }
+
+    // 사용자 저장소에서 토큰 가져오는 예시 => RetrofitBuilder 클래스에 저장하는 방식 고려
+    private fun getToken(): String? {
+        val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        return sharedPreferences.getString("token", null)
+    }
+
+
 }
