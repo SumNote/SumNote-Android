@@ -42,6 +42,11 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalDateTime
+import android.content.SharedPreferences
+import android.content.Context
+import com.example.sumnote.MainActivity
+import com.example.sumnote.api.ApiManager
+import com.example.sumnote.api.SpringRetrofit
 
 class MyNoteFragment : Fragment(){
 
@@ -53,6 +58,8 @@ class MyNoteFragment : Fragment(){
     private var quizList = ArrayList<QuizListItem>()
     private lateinit var noteRecyclerViewAdapter: NoteRecyclerViewAdapter
     private lateinit var quizRecyclerViewAdapter: QuizRecyclerViewAdapter
+
+    private lateinit var apiService : ApiManager
 
 //    override fun onResume() {
 //        super.onResume()
@@ -67,6 +74,7 @@ class MyNoteFragment : Fragment(){
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMyNoteBinding.inflate(inflater, container, false)
+        apiService = SpringRetrofit.instance.create(ApiManager::class.java) // Get SpringRetrofit
 
         return binding.root
     }
@@ -74,6 +82,12 @@ class MyNoteFragment : Fragment(){
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    // 사용자 저장소에서 토큰 가져오는 예시 => RetrofitBuilder 클래스에 저장하는 방식 고려
+    private fun getToken(): String? {
+        val sharedPreferences = this.activity?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        return sharedPreferences?.getString("token", null)
     }
 
     //뷰 생성 시점
@@ -128,8 +142,8 @@ class MyNoteFragment : Fragment(){
             override fun onNoteItemClick(position: Int) {
 
                 // 클릭한 노트 아이디 가져오기
-                val clickedNoteId = noteList[position].id
-                val noteTitle = noteList[position].sum_doc_title
+                val clickedNoteId = noteList[position].noteId
+                val noteTitle = noteList[position].title
 
                 // 번들을 생성하고 클릭한 노트 아이디를 추가
                 val bundle = Bundle()
@@ -213,7 +227,7 @@ class MyNoteFragment : Fragment(){
 
     // Response 데이터 클래스를 정의합니다.
     data class Result(
-        @SerializedName("noteList") val noteList: List<NoteItem>
+        @SerializedName("data") val noteList: List<NoteItem>
     )
 
     //서버로부터 노트 목록 받아오기
@@ -221,7 +235,8 @@ class MyNoteFragment : Fragment(){
 
         Log.d("getUser() TEST", user.name + " and " + user.email)
 
-        val call = RetrofitBuilder.api.getSumNotes(user.email.toString())
+        val token = MainActivity.prefs.getString("token", "")
+        val call = RetrofitBuilder.api.getSumNotes(token, "all")
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
@@ -236,13 +251,13 @@ class MyNoteFragment : Fragment(){
                         // 'noteList'에 포함된 노트 목록에 접근합니다.
                         val notes = result.noteList
                         for (note in notes) {
-                            println("ID: ${note.id}")
-                            println("Title: ${note.sum_doc_title}")
+                            println("ID: ${note.noteId}")
+                            println("Title: ${note.title}")
 //                            println("Content: ${note.generatedDate}")
-                            println("Created At: ${note.created_at}")
-                            Log.d("GET NOTELIST" , "ID : ${note.id} title : ${note.sum_doc_title} created_at : ${note.created_at}")
+                            println("Created At: ${note.createdAt}")
+                            Log.d("GET NOTELIST" , "ID : ${note.noteId} title : ${note.title} created_at : ${note.createdAt}")
 
-                            val myNote = NoteItem(note.id, note.sum_doc_title, note.created_at)
+                            val myNote = NoteItem(note.noteId, note.title, note.createdAt, note.lastModifiedAt)
                             addNoteList(myNote)
                         }
 
@@ -334,7 +349,7 @@ class MyNoteFragment : Fragment(){
     private fun addNoteList(note : NoteItem){
 
         // 중복 체크: 이미 리스트에 같은 ID의 노트가 있는지 확인
-        val isDuplicate = noteList.any { it.id == note.id }
+        val isDuplicate = noteList.any { it.noteId == note.noteId }
 
         if (!isDuplicate) {
             if (noteList.size < 10) {

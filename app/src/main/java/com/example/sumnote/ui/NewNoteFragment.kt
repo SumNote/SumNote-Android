@@ -21,7 +21,10 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.navigation.fragment.findNavController
+import com.example.sumnote.MainActivity
 import com.example.sumnote.R
+import com.example.sumnote.api.ApiManager
+import com.example.sumnote.api.SpringRetrofit
 import com.example.sumnote.databinding.FragmentNewNoteBinding
 import com.example.sumnote.ui.DTO.CreateNoteRequest
 import com.example.sumnote.ui.DTO.Summary
@@ -52,6 +55,8 @@ class NewNoteFragment : Fragment(),SelectNoteToSaveDialogInterface {
     private var _binding: FragmentNewNoteBinding? = null
     private val binding get() = _binding!!
 
+    private lateinit var apiService : ApiManager
+
     private lateinit var textTitle: String // ocr을 통해 얻어온 교과서의 텍스트들
     private lateinit var textBook: String // ocr을 통해 얻어온 교과서의 텍스트들
 
@@ -63,6 +68,7 @@ class NewNoteFragment : Fragment(),SelectNoteToSaveDialogInterface {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        apiService = SpringRetrofit.instance.create(ApiManager::class.java) // Get SpringRetrofit
     }
 
     override fun onCreateView(
@@ -117,7 +123,9 @@ class NewNoteFragment : Fragment(),SelectNoteToSaveDialogInterface {
 
         Log.d("#NewNoteFragment initNoteList : ", user.name + " and " + user.email)
 
-        val call = RetrofitBuilder.api.getSumNotes(user.email.toString())
+        val token = MainActivity.prefs.getString("token", "")
+        val call = apiService.getSumNotes(token, "all")
+
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
@@ -132,8 +140,8 @@ class NewNoteFragment : Fragment(),SelectNoteToSaveDialogInterface {
                         noteList = result.noteList // 사용자 계정에 저장된 노트 리스트 얻어오기
                         //로그 테스트용
                         for (note in noteList) {
-                            Log.d("#NewNoteFragment Note Created : ","${note.sum_doc_title}")
-                            noteTitles.add(note.sum_doc_title)
+                            Log.d("#NewNoteFragment Note Created : ","${note.title}")
+                            noteTitles.add(note.title)
                         }
                     } else {
                         // 응답 본문이 null인 경우 처리
@@ -214,6 +222,7 @@ class NewNoteFragment : Fragment(),SelectNoteToSaveDialogInterface {
 
     //리스트 클릭에 대한 동작 정의
     override fun onYesButtonClick(id: Int) {
+
     }
 
     //뷰 -> 비트맵 전환 : 이미지 저장을 위해

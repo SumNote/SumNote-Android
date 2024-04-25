@@ -77,7 +77,7 @@ class SelectNoteToSaveDialog(
 
         //제대로 노트리스트 가져왔는지 확인
         for(note in noteList){
-            Log.d("#noteDialog Check","${note.sum_doc_title}")
+            Log.d("#noteDialog Check","${note.title}")
         }
 
         val selectableNoteListAdapter = SelectableNoteRecyclerViewAdapter(noteList, LayoutInflater.from(requireContext()), this)
@@ -93,7 +93,7 @@ class SelectNoteToSaveDialog(
         // RecyclerView 아이템이 클릭되었을 때 실행할 코드를 여기에 작성합니다.
         // position은 클릭된 아이템의 인덱스입니다.
         // 예를 들어, 선택한 아이템의 정보를 얻거나 특정 동작을 수행하는 등의 작업을 수행할 수 있습니다.
-        val clickedNoteId = noteList[position].id
+        val clickedNoteId = noteList[position].noteId
 
         updateNote(clickedNoteId)
     }
@@ -237,9 +237,9 @@ class SelectableNoteRecyclerViewAdapter(
     // 4. 세팅해둔 텍스트뷰에 값 채워줌
     override fun onBindViewHolder(holder: ViewHoler, position: Int) {
         //홀더(위에서 생성한 홀더)에 값 할당
-        holder.title.text = itemList[position].sum_doc_title
+        holder.title.text = itemList[position].title
 //        holder.generatedDate.text = itemList[position].generatedDate
-        holder.generatedDate.text = itemList[position].created_at
+        holder.generatedDate.text = itemList[position].createdAt
 
         //이미지는 position에 해당하는 값으로
         // 이미지의 리소스 ID 얻어오기

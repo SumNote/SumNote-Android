@@ -11,10 +11,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.sumnote.databinding.ActivityMainBinding
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
+import com.example.sumnote.util.PreferenceUtil
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        lateinit var prefs: PreferenceUtil
+    }
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var kakaoViewModel: KakaoViewModel
@@ -28,6 +33,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        prefs = PreferenceUtil(applicationContext)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 

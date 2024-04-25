@@ -1,5 +1,7 @@
 package com.example.sumnote.api
 
+import android.util.Log
+import com.example.sumnote.MainActivity
 import com.example.sumnote.ui.DTO.ChangeNoteTitleRequest
 import com.example.sumnote.ui.DTO.CreateNoteRequest
 import com.example.sumnote.ui.DTO.CreateQuizRequest
@@ -8,8 +10,11 @@ import com.example.sumnote.ui.DTO.User
 import com.example.sumnote.ui.Dialog.UpdateNoteRequest
 import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
 import com.google.gson.GsonBuilder
+import okhttp3.Interceptor
 import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -18,12 +23,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
+import java.io.IOException
 
 interface ApiManager {
 
@@ -59,28 +66,31 @@ interface ApiManager {
     fun getLoginResponse(@Body user: User): Call<ResponseBody>
 
     // 노트 리스트 가져오기
-    @GET("sum-notes")
-    fun getSumNotes(@Query("email") email: String): Call<ResponseBody>
+    @GET("api/sum-note")
+    fun getSumNotes(@Header("Authorization") token: String, @Query("type") type: String): Call<ResponseBody>
+//    fun getSumNotes(@Query("type") type: String): Call<ResponseBody>
 
     // 노트 만들기
-    @POST("sum-note")
+    @POST("api/sum-note")
     fun createNote(@Body request: CreateNoteRequest): Call<ResponseBody>
 
     // 노트 조회하기
-    @GET("sum-note/{id}")
+    @GET("api/sum-note/{id}")
     fun detailNote(@Path("id") id : Int): Call<ResponseBody>
 
     // 노트 내용 추가하기
-    @PUT("sum-note/content/{id}")
+    @PUT("api/sum-note/content/{id}")
     fun updateNote(@Path("id") id : Int, @Body request: UpdateNoteRequest): Call<ResponseBody>
 
     // 노트 제목 수정하기
-    @PUT("sum-note/title/{id}")
+    @PUT("api/sum-note/title/{id}")
     fun updateNoteTitle(@Path("id") id : Int, @Body request: ChangeNoteTitleRequest): Call<ResponseBody>
 
     // 노트 삭제하기
-    @DELETE("sum-note/{id}")
+    @DELETE("api/sum-note/{id}")
     fun deleteNote(@Path("id") id : Int): Call<ResponseBody>
+
+
     // 퀴즈 만들기
     @POST("quiz")
     fun createQuiz(@Body request: CreateQuizRequest): Call<ResponseBody>
@@ -108,7 +118,6 @@ object SpringRetrofit {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
-
 }
 
 object FastAPIRetrofit {
