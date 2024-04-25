@@ -11,7 +11,10 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.sumnote.MainActivity
 import com.example.sumnote.R
+import com.example.sumnote.api.ApiManager
+import com.example.sumnote.api.SpringRetrofit
 import com.example.sumnote.databinding.FragmentAllNoteBinding
 import com.example.sumnote.ui.DTO.User
 import com.example.sumnote.ui.MyNote.MyNoteFragment
@@ -36,6 +39,8 @@ class AllNoteFragment : Fragment() {
     private lateinit var allNoteRecyclerViewAdapter: AllNoteRecyclerViewAdapter
     private lateinit var kakaoViewModel: KakaoViewModel
 
+    private lateinit var apiService : ApiManager
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,6 +50,7 @@ class AllNoteFragment : Fragment() {
         _binding = FragmentAllNoteBinding.inflate(inflater, container, false)
         kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(requireActivity().application))[KakaoViewModel::class.java]
 
+        apiService = SpringRetrofit.instance.create(ApiManager::class.java) // Get SpringRetrofit
         //사용자 정보 얻어오기
         getUser()
 
@@ -54,8 +60,8 @@ class AllNoteFragment : Fragment() {
                 override fun onAllNoteItemClick(position: Int){
                     //position을 같이 넣어야 함을 잊지말것
                     // 클릭한 노트 아이디 가져오기
-                    val clickedNoteId = noteList[position].id
-                    val noteTitle = noteList[position].sum_doc_title
+                    val clickedNoteId = noteList[position].noteId
+                    val noteTitle = noteList[position].title
 
                     // 번들을 생성하고 클릭한 노트 아이디를 추가
                     val bundle = Bundle()
@@ -93,8 +99,8 @@ class AllNoteFragment : Fragment() {
 
         Log.d("getUser() TEST", user.name + " and " + user.email)
 
-
-        val call = RetrofitBuilder.api.getSumNotes(user.email.toString())
+        val token = MainActivity.prefs.getString("token", "")
+        val call = apiService.getSumNotes(token,"home")
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
@@ -107,15 +113,15 @@ class AllNoteFragment : Fragment() {
                         val result = gson.fromJson(jsonString, MyNoteFragment.Result::class.java)
 
                         // 'noteList'에 포함된 노트 목록에 접근합니다.
-                        val noteList = result.noteList
-                        for (note in noteList) {
-                            println("ID: ${note.id}")
-                            println("Title: ${note.sum_doc_title}")
-//                            println("Content: ${note.generatedDate}")
-                            println("Created At: ${note.created_at}")
-                            Log.d("GET NOTELIST" , "ID : ${note.id} title : ${note.sum_doc_title} created_at : ${note.created_at}")
+                        val notes = result.noteList
+                        for (note in notes) {
+                            println("ID: ${note.noteId}")
+                            println("Title: ${note.title}")
 
-                            val myNote = NoteItem(note.id, note.sum_doc_title,note.created_at)
+                            println("Created At: ${note.createdAt}")
+                            Log.d("GET NOTELIST" , "ID : ${note.noteId} title : ${note.title} created_at : ${note.createdAt}")
+
+                            val myNote = NoteItem(note.noteId, note.title, note.createdAt, note.lastModifiedAt)
                             addNoteList(myNote)
                         }
 
@@ -157,7 +163,7 @@ class AllNoteFragment : Fragment() {
     private fun addNoteList(note : NoteItem){
 
         // 중복 체크: 이미 리스트에 같은 ID의 노트가 있는지 확인
-        val isDuplicate = noteList.any { it.id == note.id }
+        val isDuplicate = noteList.any { it.noteId == note.noteId }
 
         if (!isDuplicate) {
             noteList.add(0, note)

@@ -46,10 +46,10 @@ class NoteRecyclerViewAdapter(
             //intent 활용하여 페이지 변환하는 부분 작성할 것
             itemView.setOnClickListener{
                 val position: Int = absoluteAdapterPosition //아이템 위치 가져오기
-                val titleText = itemList[position].sum_doc_title
+                val titleText = itemList[position].title
 //                val getnDate = itemList[position].generatedDate
-                val getnDate = itemList[position].created_at
-                val id = itemList[position].id
+                val getnDate = itemList[position].createdAt
+                val id = itemList[position].noteId
                 Log.d("noteList", "$titleText,$getnDate,$id")
                 onItemClickListener.onNoteItemClick(position) //클릭 리스너로 현재 위치(아이템 아이디)를 보냄
             }
@@ -76,9 +76,9 @@ class NoteRecyclerViewAdapter(
     // 4. 세팅해둔 텍스트뷰에 값 채워줌
     override fun onBindViewHolder(holder: ViewHoler, position: Int) {
         //홀더(위에서 생성한 홀더)에 값 할당
-        holder.title.text = itemList[position].sum_doc_title
+        holder.title.text = itemList[position].title
 //        holder.generatedDate.text = itemList[position].generatedDate
-        holder.generatedDate.text = itemList[position].created_at
+        holder.generatedDate.text = itemList[position].createdAt
 
         //이미지는 position에 해당하는 값으로
         // 이미지의 리소스 ID 얻어오기
