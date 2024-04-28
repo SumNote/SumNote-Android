@@ -20,14 +20,14 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import androidx.navigation.fragment.findNavController
+import com.example.sumnote.MainActivity
+import com.example.sumnote.ui.DTO.NotePage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-
-data class UpdateNoteRequest(val addTitle : String, val addContent : String)
 class SelectNoteToSaveDialog(
     noteList: List<NoteItem>,
     selectNoteToSaveDialogInterface: SelectNoteToSaveDialogInterface
@@ -38,7 +38,7 @@ class SelectNoteToSaveDialog(
     private var selectNoteToSaveDialogInterface: SelectNoteToSaveDialogInterface? = null
 
     private var noteList :List<NoteItem> = emptyList()
-    private lateinit var note : UpdateNoteRequest
+    private lateinit var note : NotePage
 
     private val successDialog = SuccessDialog()
     private val failDialog = FailDialog()
@@ -96,16 +96,17 @@ class SelectNoteToSaveDialog(
     }
 
     // 생성자를 통해 데이터를 설정하는 메서드
-    fun setNoteList(note: UpdateNoteRequest) {
+    fun setNoteList(note: NotePage) {
         this.note = note
     }
 
     //서버로부터 클릭한 노트에 대한 페이지 요청
     private fun updateNote(clickedNoteId : Int){
 
-        Log.d("#SPRING UPDATE DATA:", "${clickedNoteId}, ${note.addTitle}, ${note.addContent}")
+        Log.d("#SelectNoteToSaveDialog UPDATE DATA:", "${clickedNoteId}, ${note.title}, ${note.content}")
 
-        val call = RetrofitBuilder.api.updateNote(clickedNoteId, note)
+        val token = MainActivity.prefs.getString("token", "")
+        val call = RetrofitBuilder.api.updateNote(token, clickedNoteId, note)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {

@@ -3,9 +3,9 @@ package com.example.sumnote.api
 import com.example.sumnote.ui.DTO.ChangeNoteTitleRequest
 import com.example.sumnote.ui.DTO.Request.CreateNoteRequest
 import com.example.sumnote.ui.DTO.CreateQuizRequest
+import com.example.sumnote.ui.DTO.NotePage
 import com.example.sumnote.ui.DTO.UpdateQuizRequest
 import com.example.sumnote.ui.DTO.User
-import com.example.sumnote.ui.Dialog.UpdateNoteRequest
 import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -69,8 +69,8 @@ interface ApiManager {
     fun detailNote(@Header("Authorization") token: String, @Path("id") id : Int): Call<ResponseBody>
 
     // 노트 내용 추가하기
-    @PUT("api/sum-note/content/{id}")
-    fun updateNote(@Path("id") id : Int, @Body request: UpdateNoteRequest): Call<ResponseBody>
+    @PUT("api/sum-note/{id}/add")
+    fun updateNote(@Header("Authorization") token: String, @Path("id") id : Int, @Body request: NotePage): Call<ResponseBody>
 
     // 노트 제목 수정하기
     @PUT("api/sum-note/{id}/title")

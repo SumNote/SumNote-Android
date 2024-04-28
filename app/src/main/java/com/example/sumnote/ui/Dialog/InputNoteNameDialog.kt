@@ -25,8 +25,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class InputNoteNameDialog(note : UpdateNoteRequest) : DialogFragment() {
-    private var note : UpdateNoteRequest
+class InputNoteNameDialog(note : NotePage) : DialogFragment() {
+    private var note : NotePage
     private lateinit var docTitle : String
     private val successDialog = SuccessDialog()
     private val failDialog = FailDialog()
@@ -76,8 +76,8 @@ class InputNoteNameDialog(note : UpdateNoteRequest) : DialogFragment() {
     private fun serverNote() {
 
         val token = MainActivity.prefs.getString("token", "")
-        val request = CreateNoteRequest(Note(docTitle),  listOf(NotePage(note.addTitle, note.addContent)))
-        Log.d("#InputNoteNameDialog , MAKE_NOTE DATA:", "${docTitle}, ${note.addTitle}, ${note.addContent},")
+        val request = CreateNoteRequest(Note(docTitle),  listOf(NotePage(note.title, note.content)))
+        Log.d("#InputNoteNameDialog , MAKE_NOTE DATA:", "${docTitle}, ${note.title}, ${note.content},")
 
         val call = RetrofitBuilder.api.createNote(token, request)
         call.enqueue(object : Callback<ResponseBody> {
