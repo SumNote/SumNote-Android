@@ -72,7 +72,7 @@ interface ApiManager {
 
     // 노트 만들기
     @POST("api/sum-note")
-    fun createNote(@Body request: CreateNoteRequest): Call<ResponseBody>
+    fun createNote(@Header("Authorization") token: String, @Body request: CreateNoteRequest): Call<ResponseBody>
 
     // 노트 조회하기
     @GET("api/sum-note/{id}")
