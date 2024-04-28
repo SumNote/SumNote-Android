@@ -1,7 +1,5 @@
 package com.example.sumnote.ui.Dialog
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,14 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
-import com.example.sumnote.R
+import com.example.sumnote.MainActivity
+import com.example.sumnote.api.ApiManager
+import com.example.sumnote.api.SpringRetrofit
 import com.example.sumnote.databinding.InputNoteNameDialogBinding
-import com.example.sumnote.databinding.ProgressDialogBinding
 import com.example.sumnote.ui.DTO.CreateNoteRequest
-import com.example.sumnote.ui.Note.NoteItem
-import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
-import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
-import com.kakao.sdk.user.UserApiClient
+import com.example.sumnote.ui.DTO.Note
+import com.example.sumnote.ui.DTO.NotePage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -32,6 +29,7 @@ class InputNoteNameDialog(note : UpdateNoteRequest) : DialogFragment() {
     private lateinit var docTitle : String
     private val successDialog = SuccessDialog()
     private val failDialog = FailDialog()
+    private lateinit var apiService : ApiManager
 
     //생성자를 통해 유저의 노트아이템 리스트 얻어옴
     init {
@@ -42,6 +40,8 @@ class InputNoteNameDialog(note : UpdateNoteRequest) : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        apiService = SpringRetrofit.instance.create(ApiManager::class.java) // Get SpringRetrofit
+
         val binding = InputNoteNameDialogBinding.inflate(inflater, container, false)
 
         dialog?.setCanceledOnTouchOutside(false) // 주변 터치 방지
@@ -51,33 +51,37 @@ class InputNoteNameDialog(note : UpdateNoteRequest) : DialogFragment() {
             docTitle = binding.editText.text.toString()
             if (docTitle == "")
                 docTitle = "New Note"
-            makeNote()
+            serverNote()
         }
 
         return binding.root
     }
 
-    private fun makeNote() {
-        // 사용자 정보 요청 (기본)
-        UserApiClient.instance.me { user, error ->
-            if (error != null) {
-                Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
-                val dialogBundle = Bundle()
-                dialogBundle.putString("dialogText", "잘못된 계정입니다.")
-                showFailDialog(dialogBundle)
-            } else if (user != null) {
-                var email = user.kakaoAccount?.email.toString()
-                serverNote(email)
-            }
-        }
+    // 토큰이 있기 때문에 필요없음
+//    private fun makeNote() {
+//        // 사용자 정보 요청 (기본)
+//        UserApiClient.instance.me { user, error ->
+//            if (error != null) {
+//                Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
+//                val dialogBundle = Bundle()
+//                dialogBundle.putString("dialogText", "잘못된 계정입니다.")
+//                showFailDialog(dialogBundle)
+//            } else if (user != null) {
+//                var email = user.kakaoAccount?.email.toString()
+//                serverNote(email)
+//            }
+//        }
+//
+//    }
 
-    }
+    // 노트를 새롭게 저장하기
+    private fun serverNote() {
 
-    private fun serverNote(email: String) {
+        val token = MainActivity.prefs.getString("token", "")
+        val request = CreateNoteRequest(Note(docTitle),  listOf(NotePage(note.addTitle, note.addContent)))
+        Log.d("#InputNoteNameDialog , MAKE_NOTE DATA:", "${docTitle}, ${note.addTitle}, ${note.addContent},")
 
-        val request = CreateNoteRequest(email, docTitle, note.addTitle, note.addContent)
-        Log.d("#MAKE_NOTE DATA:", "${email}, ${docTitle}, ${note.addTitle}, ${note.addContent},")
-        val call = RetrofitBuilder.api.createNote(request)
+        val call = apiService.createNote(token, request)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
