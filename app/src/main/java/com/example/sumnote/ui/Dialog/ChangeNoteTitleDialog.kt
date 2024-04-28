@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import com.example.sumnote.MainActivity
 import com.example.sumnote.databinding.InputNoteNameDialogBinding
 import com.example.sumnote.ui.DTO.ChangeNoteTitleRequest
 import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
@@ -50,26 +51,29 @@ class ChangeNoteTitleDialog(clickedNoteId : Int) : DialogFragment() {
     private fun updateTitle(){
 
         val request = ChangeNoteTitleRequest(docTitle)
-        val call = RetrofitBuilder.api.updateNoteTitle(clickedNoteId, request)
+
+        val token = MainActivity.prefs.getString("token", "")
+        val call = RetrofitBuilder.api.updateNoteTitle(token, clickedNoteId, request)
+        Log.d("#ChangeNoteTitleDialog clickedNoteId: ", "${clickedNoteId}")
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(
                 call: Call<ResponseBody>,
                 response: Response<ResponseBody>
             ) {
                 if (response.isSuccessful) {
-                    Log.d("#MAKE_QUIZ: ", "SUCCESS")
+                    Log.d("#ChangeNoteTitleDialog changeTitle: ", "SUCCESS")
 
                     onWorkComplete(docTitle)
                 } else {
                     // 통신 성공 but 응답 실패
-                    Log.d("#MAKE_QUIZ:", "FAILURE")
+                    Log.d("#ChangeNoteTitleDialog changeTitle:", "FAILURE")
                 }
 
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 // 통신에 실패한 경우
-                Log.d("#MAKE_QUIZ FAIL: ", t.localizedMessage)
+                Log.d("#ChangeNoteTitleDialog FAIL: ", t.localizedMessage)
             }
         })
 

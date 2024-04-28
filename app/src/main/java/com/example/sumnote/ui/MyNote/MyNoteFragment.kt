@@ -85,9 +85,7 @@ class MyNoteFragment : Fragment(){
 
         kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(requireActivity().application))[KakaoViewModel::class.java]
 
-//        getUser() //로그인 한 유저에 대한 노트 및 퀴즈 리스트 받아오기
-        initNoteList()
-        initQuizList()
+        getUser() //로그인 한 유저에 대한 노트 및 퀴즈 리스트 받아오기
 
         val menuButton = binding.etcBtn
         menuButton.setOnClickListener {
@@ -310,27 +308,27 @@ class MyNoteFragment : Fragment(){
     }
 
 
-//    private fun getUser() {
-//        noteList = ArrayList()
-//        quizList = ArrayList()
-//        // 사용자 정보 요청 (기본)
-//        UserApiClient.instance.me { user, error ->
-//            if (error != null) {
-//                Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
-//            } else if (user != null) {
-//                var userInfo = User()
-//                userInfo.name = user.kakaoAccount?.profile?.nickname.toString()
-//                userInfo.email = user.kakaoAccount?.email.toString()
-//
-//                binding.userName.text = userInfo.name
-//                binding.userEmail.text = userInfo.email
-//
-//                Log.d("NOTELIST TEST : ", "name : " + userInfo.name + ", email" + userInfo.email)
-//                initNoteList(userInfo) //노트 얻어오기
-//                initQuizList(userInfo) //퀴즈 얻어오기
-//            }
-//        }
-//    }
+    private fun getUser() {
+        noteList = ArrayList()
+        quizList = ArrayList()
+        // 사용자 정보 요청 (기본)
+        UserApiClient.instance.me { user, error ->
+            if (error != null) {
+                Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
+            } else if (user != null) {
+                var userInfo = User()
+                userInfo.name = user.kakaoAccount?.profile?.nickname.toString()
+                userInfo.email = user.kakaoAccount?.email.toString()
+
+                binding.userName.text = userInfo.name
+                binding.userEmail.text = userInfo.email
+
+                Log.d("NOTELIST TEST : ", "name : " + userInfo.name + ", email" + userInfo.email)
+                initNoteList() //노트 얻어오기
+                initQuizList() //퀴즈 얻어오기
+            }
+        }
+    }
 
     private fun addNoteList(note : NoteItem){
 

@@ -73,8 +73,8 @@ interface ApiManager {
     fun updateNote(@Path("id") id : Int, @Body request: UpdateNoteRequest): Call<ResponseBody>
 
     // 노트 제목 수정하기
-    @PUT("api/sum-note/title/{id}")
-    fun updateNoteTitle(@Path("id") id : Int, @Body request: ChangeNoteTitleRequest): Call<ResponseBody>
+    @PUT("api/sum-note/{id}/title")
+    fun updateNoteTitle(@Header("Authorization") token: String, @Path("id") id : Int, @Body request: ChangeNoteTitleRequest): Call<ResponseBody>
 
     // 노트 삭제하기
     @DELETE("api/sum-note/{id}")
