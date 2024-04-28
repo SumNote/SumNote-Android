@@ -80,34 +80,35 @@ class NewNoteFragment : Fragment(),SelectNoteToSaveDialogInterface {
 
         }
 
-        getUser() // 카카오 사용자 정보 얻어오기 => 저장하기 클릭시 현재 노트 목록 보여주기 위함
+//        getUser() // 카카오 사용자 정보 얻어오기 => 저장하기 클릭시 현재 노트 목록 보여주기 위함
+        initNoteList()
         return view
     }
 
     //카카오 사용자 정보 얻어오기
-    private fun getUser() {
+//    private fun getUser() {
+//
+//        // 사용자 정보 요청 (기본)
+//        UserApiClient.instance.me { user, error ->
+//            if (error != null) {
+//                Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
+//            } else if (user != null) {
+//                var userInfo = User()
+//                userInfo.name = user.kakaoAccount?.profile?.nickname.toString()
+//                userInfo.email = user.kakaoAccount?.email.toString()
+//
+//                Log.d("NOTELIST TEST : ", "name : " + userInfo.name + ", email" + userInfo.email)
+//                initNoteList(userInfo)
+//            }
+//        }
+//
+//    }
 
-        // 사용자 정보 요청 (기본)
-        UserApiClient.instance.me { user, error ->
-            if (error != null) {
-                Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
-            } else if (user != null) {
-                var userInfo = User()
-                userInfo.name = user.kakaoAccount?.profile?.nickname.toString()
-                userInfo.email = user.kakaoAccount?.email.toString()
 
-                Log.d("NOTELIST TEST : ", "name : " + userInfo.name + ", email" + userInfo.email)
-                initNoteList(userInfo)
-            }
-        }
+    //토큰 활용 저장된 노트 목록 얻어오기
+    private fun initNoteList(){
 
-    }
-
-
-    //사용자 계정에 저장된 노트 목록 얻어오기
-    private fun initNoteList(user : User){
-
-        Log.d("#NewNoteFragment initNoteList : ", user.name + " and " + user.email)
+//        Log.d("#NewNoteFragment initNoteList : ", user.name + " and " + user.email)
 
         val token = MainActivity.prefs.getString("token", "")
         val call = RetrofitBuilder.api.getSumNotes(token, "all")

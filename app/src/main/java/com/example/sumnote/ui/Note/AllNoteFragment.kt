@@ -49,7 +49,8 @@ class AllNoteFragment : Fragment() {
         kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(requireActivity().application))[KakaoViewModel::class.java]
 
         //사용자 정보 얻어오기
-        getUser()
+//        getUser()
+        initNoteList()
 
         //모든 노트 보기 리사이클러뷰 적용
         allNoteRecyclerViewAdapter = AllNoteRecyclerViewAdapter(noteList, LayoutInflater.from(this.context),
@@ -92,9 +93,9 @@ class AllNoteFragment : Fragment() {
         _binding = null
     }
 
-    private fun initNoteList(user : User){
+    private fun initNoteList(){
 
-        Log.d("getUser() TEST", user.name + " and " + user.email)
+//        Log.d("getUser() TEST", user.name + " and " + user.email)
 
         val token = MainActivity.prefs.getString("token", "")
         val call = RetrofitBuilder.api.getSumNotes(token,"home")
@@ -139,23 +140,23 @@ class AllNoteFragment : Fragment() {
         })
     }
 
-    private fun getUser() {
-
-        // 사용자 정보 요청 (기본)
-        UserApiClient.instance.me { user, error ->
-            if (error != null) {
-                Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
-            } else if (user != null) {
-                var userInfo = User()
-                userInfo.name = user.kakaoAccount?.profile?.nickname.toString()
-                userInfo.email = user.kakaoAccount?.email.toString()
-
-                Log.d("NOTELIST TEST : ", "name : " + userInfo.name + ", email" + userInfo.email)
-                initNoteList(userInfo)
-            }
-        }
-
-    }
+//    private fun getUser() {
+//
+//        // 사용자 정보 요청 (기본)
+//        UserApiClient.instance.me { user, error ->
+//            if (error != null) {
+//                Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
+//            } else if (user != null) {
+//                var userInfo = User()
+//                userInfo.name = user.kakaoAccount?.profile?.nickname.toString()
+//                userInfo.email = user.kakaoAccount?.email.toString()
+//
+//                Log.d("NOTELIST TEST : ", "name : " + userInfo.name + ", email" + userInfo.email)
+//                initNoteList(userInfo)
+//            }
+//        }
+//
+//    }
 
     private fun addNoteList(note : NoteItem){
 
