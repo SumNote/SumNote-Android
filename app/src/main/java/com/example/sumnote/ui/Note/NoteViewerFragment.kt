@@ -16,7 +16,6 @@ import com.example.sumnote.MainActivity
 import com.example.sumnote.R
 import com.example.sumnote.api.ApiManager
 import com.example.sumnote.databinding.FragmentNoteViewerBinding
-import com.example.sumnote.ui.DTO.Request.CreateNoteRequest
 import com.example.sumnote.ui.DTO.CreateQuizRequest
 import com.example.sumnote.ui.DTO.Response.ResponseNoteDetail
 import com.example.sumnote.ui.DTO.UpdateQuizRequest

@@ -13,21 +13,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.sumnote.MainActivity
 import com.example.sumnote.R
-import com.example.sumnote.api.ApiManager
-import com.example.sumnote.api.SpringRetrofit
 import com.example.sumnote.databinding.FragmentAllNoteBinding
-import com.example.sumnote.ui.DTO.User
 import com.example.sumnote.ui.MyNote.MyNoteFragment
 import com.example.sumnote.ui.kakaoLogin.KakaoOauthViewModelFactory
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
 import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
 import com.google.gson.Gson
-import com.kakao.sdk.user.UserApiClient
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.time.LocalDateTime
 
 
 class AllNoteFragment : Fragment() {
