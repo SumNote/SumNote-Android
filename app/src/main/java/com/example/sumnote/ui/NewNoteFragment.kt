@@ -18,12 +18,12 @@ import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.example.sumnote.MainActivity
 import com.example.sumnote.databinding.FragmentNewNoteBinding
+import com.example.sumnote.ui.DTO.NotePage
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
 import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
 import com.example.sumnote.ui.DTO.User
 import com.example.sumnote.ui.Dialog.SelectNoteToSaveDialog
 import com.example.sumnote.ui.Dialog.SelectNoteToSaveDialogInterface
-import com.example.sumnote.ui.Dialog.UpdateNoteRequest
 import com.example.sumnote.ui.MyNote.MyNoteFragment
 import com.example.sumnote.ui.Note.NoteItem
 import com.google.gson.Gson
@@ -195,7 +195,7 @@ class NewNoteFragment : Fragment(),SelectNoteToSaveDialogInterface {
         binding.btnSaveNote.setOnClickListener {
             val dialog = SelectNoteToSaveDialog(noteList,this)
 
-            val note = UpdateNoteRequest("[${textTitle}]", "[${textBook}]")
+            val note = NotePage("${textTitle}", "${textBook}")
             // 다이얼로그에 데이터 설정
             dialog.setNoteList(note)
 
