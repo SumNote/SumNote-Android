@@ -90,7 +90,9 @@ class MyNoteFragment : Fragment(){
 
         kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(requireActivity().application))[KakaoViewModel::class.java]
 
-        getUser() //로그인 한 유저에 대한 노트 및 퀴즈 리스트 받아오기
+//        getUser() //로그인 한 유저에 대한 노트 및 퀴즈 리스트 받아오기
+        initNoteList()
+        initQuizList()
 
         val menuButton = binding.etcBtn
         menuButton.setOnClickListener {
@@ -221,9 +223,9 @@ class MyNoteFragment : Fragment(){
     )
 
     //서버로부터 노트 목록 받아오기
-    private fun initNoteList(user : User){
+    private fun initNoteList(){
 
-        Log.d("getUser() TEST", user.name + " and " + user.email)
+//        Log.d("getUser() TEST", user.name + " and " + user.email)
 
         val token = MainActivity.prefs.getString("token", "")
         val call = apiService.getSumNotes(token, "all")
@@ -275,11 +277,11 @@ class MyNoteFragment : Fragment(){
         @SerializedName("quizList") val quizList: List<QuizListItem>
     )
     //사용자 퀴즈 목록 얻어오기
-    private fun initQuizList(user : User){
+    private fun initQuizList(){
 
-        Log.d("getUser() TEST", user.name + " and " + user.email)
+//        Log.d("getUser() TEST", user.name + " and " + user.email)
 
-        val call = RetrofitBuilder.api.getQuizList(user.email.toString())
+        val call = RetrofitBuilder.api.getQuizList("")
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
@@ -313,28 +315,27 @@ class MyNoteFragment : Fragment(){
     }
 
 
-    private fun getUser() {
-        noteList = ArrayList()
-        quizList = ArrayList()
-        // 사용자 정보 요청 (기본)
-        UserApiClient.instance.me { user, error ->
-            if (error != null) {
-                Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
-            } else if (user != null) {
-                var userInfo = User()
-                userInfo.name = user.kakaoAccount?.profile?.nickname.toString()
-                userInfo.email = user.kakaoAccount?.email.toString()
-
-                binding.userName.text = userInfo.name
-                binding.userEmail.text = userInfo.email
-
-                Log.d("NOTELIST TEST : ", "name : " + userInfo.name + ", email" + userInfo.email)
-                initNoteList(userInfo) //노트 얻어오기
-                initQuizList(userInfo) //퀴즈 얻어오기
-            }
-        }
-
-    }
+//    private fun getUser() {
+//        noteList = ArrayList()
+//        quizList = ArrayList()
+//        // 사용자 정보 요청 (기본)
+//        UserApiClient.instance.me { user, error ->
+//            if (error != null) {
+//                Log.e(KakaoViewModel.TAG, "사용자 정보 요청 실패", error)
+//            } else if (user != null) {
+//                var userInfo = User()
+//                userInfo.name = user.kakaoAccount?.profile?.nickname.toString()
+//                userInfo.email = user.kakaoAccount?.email.toString()
+//
+//                binding.userName.text = userInfo.name
+//                binding.userEmail.text = userInfo.email
+//
+//                Log.d("NOTELIST TEST : ", "name : " + userInfo.name + ", email" + userInfo.email)
+//                initNoteList(userInfo) //노트 얻어오기
+//                initQuizList(userInfo) //퀴즈 얻어오기
+//            }
+//        }
+//    }
 
     private fun addNoteList(note : NoteItem){
 
