@@ -14,6 +14,7 @@ import com.example.sumnote.databinding.InputNoteNameDialogBinding
 import com.example.sumnote.ui.DTO.Request.CreateNoteRequest
 import com.example.sumnote.ui.DTO.Note
 import com.example.sumnote.ui.DTO.NotePage
+import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -29,7 +30,6 @@ class InputNoteNameDialog(note : UpdateNoteRequest) : DialogFragment() {
     private lateinit var docTitle : String
     private val successDialog = SuccessDialog()
     private val failDialog = FailDialog()
-    private lateinit var apiService : ApiManager
 
     //생성자를 통해 유저의 노트아이템 리스트 얻어옴
     init {
@@ -40,8 +40,6 @@ class InputNoteNameDialog(note : UpdateNoteRequest) : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        apiService = SpringRetrofit.instance.create(ApiManager::class.java) // Get SpringRetrofit
-
         val binding = InputNoteNameDialogBinding.inflate(inflater, container, false)
 
         dialog?.setCanceledOnTouchOutside(false) // 주변 터치 방지
@@ -81,7 +79,7 @@ class InputNoteNameDialog(note : UpdateNoteRequest) : DialogFragment() {
         val request = CreateNoteRequest(Note(docTitle),  listOf(NotePage(note.addTitle, note.addContent)))
         Log.d("#InputNoteNameDialog , MAKE_NOTE DATA:", "${docTitle}, ${note.addTitle}, ${note.addContent},")
 
-        val call = apiService.createNote(token, request)
+        val call = RetrofitBuilder.api.createNote(token, request)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {

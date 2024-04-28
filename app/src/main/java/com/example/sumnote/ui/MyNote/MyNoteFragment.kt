@@ -35,8 +35,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import android.content.Context
 import com.example.sumnote.MainActivity
-import com.example.sumnote.api.ApiManager
-import com.example.sumnote.api.SpringRetrofit
 
 class MyNoteFragment : Fragment(){
 
@@ -48,8 +46,6 @@ class MyNoteFragment : Fragment(){
     private var quizList = ArrayList<QuizListItem>()
     private lateinit var noteRecyclerViewAdapter: NoteRecyclerViewAdapter
     private lateinit var quizRecyclerViewAdapter: QuizRecyclerViewAdapter
-
-    private lateinit var apiService : ApiManager
 
 //    override fun onResume() {
 //        super.onResume()
@@ -64,7 +60,6 @@ class MyNoteFragment : Fragment(){
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMyNoteBinding.inflate(inflater, container, false)
-        apiService = SpringRetrofit.instance.create(ApiManager::class.java) // Get SpringRetrofit
 
         return binding.root
     }
@@ -228,7 +223,7 @@ class MyNoteFragment : Fragment(){
 //        Log.d("getUser() TEST", user.name + " and " + user.email)
 
         val token = MainActivity.prefs.getString("token", "")
-        val call = apiService.getSumNotes(token, "all")
+        val call = RetrofitBuilder.api.getSumNotes(token, "all")
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
