@@ -15,25 +15,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import androidx.navigation.NavOptions
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.navigation.fragment.findNavController
 import com.example.sumnote.MainActivity
-import com.example.sumnote.R
-import com.example.sumnote.api.ApiManager
-import com.example.sumnote.api.SpringRetrofit
 import com.example.sumnote.databinding.FragmentNewNoteBinding
-import com.example.sumnote.ui.DTO.CreateNoteRequest
-import com.example.sumnote.ui.DTO.Summary
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
 import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
 import com.example.sumnote.ui.DTO.User
 import com.example.sumnote.ui.Dialog.SelectNoteToSaveDialog
 import com.example.sumnote.ui.Dialog.SelectNoteToSaveDialogInterface
-import com.example.sumnote.ui.Dialog.SuccessDialog
 import com.example.sumnote.ui.Dialog.UpdateNoteRequest
 import com.example.sumnote.ui.MyNote.MyNoteFragment
 import com.example.sumnote.ui.Note.NoteItem
@@ -55,8 +44,6 @@ class NewNoteFragment : Fragment(),SelectNoteToSaveDialogInterface {
     private var _binding: FragmentNewNoteBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var apiService : ApiManager
-
     private lateinit var textTitle: String // ocr을 통해 얻어온 교과서의 텍스트들
     private lateinit var textBook: String // ocr을 통해 얻어온 교과서의 텍스트들
 
@@ -68,7 +55,6 @@ class NewNoteFragment : Fragment(),SelectNoteToSaveDialogInterface {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        apiService = SpringRetrofit.instance.create(ApiManager::class.java) // Get SpringRetrofit
     }
 
     override fun onCreateView(
@@ -124,7 +110,7 @@ class NewNoteFragment : Fragment(),SelectNoteToSaveDialogInterface {
         Log.d("#NewNoteFragment initNoteList : ", user.name + " and " + user.email)
 
         val token = MainActivity.prefs.getString("token", "")
-        val call = apiService.getSumNotes(token, "all")
+        val call = RetrofitBuilder.api.getSumNotes(token, "all")
 
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
