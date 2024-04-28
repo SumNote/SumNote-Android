@@ -1,8 +1,6 @@
 package com.example.sumnote.ui.Dialog
 
-import android.annotation.SuppressLint
 import android.os.Bundle
-import android.provider.ContactsContract.CommonDataKinds.Note
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,18 +14,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.sumnote.R
 import com.example.sumnote.databinding.SelectNoteToSaveDialogBinding
 import com.example.sumnote.ui.Note.NoteItem
-import com.example.sumnote.ui.Note.Page
 import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
 import okhttp3.ResponseBody
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.navigation.fragment.findNavController
-import com.example.sumnote.ui.DTO.CreateNoteRequest
-import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
-import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

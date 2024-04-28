@@ -102,7 +102,7 @@ class MyNoteFragment : Fragment(){
             // 팝업 메뉴 아이템에 클릭 리스너를 추가
             popupMenu.setOnMenuItemClickListener { item ->
                 when (item.itemId) {
-                    // 퀴즈 생성
+
                     R.id.logout -> {
                         // 로그아웃
                         UserApiClient.instance.logout { error ->

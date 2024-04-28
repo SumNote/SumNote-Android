@@ -1,23 +1,14 @@
 package com.example.sumnote.api
 
-import android.util.Log
-import com.example.sumnote.MainActivity
 import com.example.sumnote.ui.DTO.ChangeNoteTitleRequest
-import com.example.sumnote.ui.DTO.CreateNoteRequest
+import com.example.sumnote.ui.DTO.Request.CreateNoteRequest
 import com.example.sumnote.ui.DTO.CreateQuizRequest
 import com.example.sumnote.ui.DTO.UpdateQuizRequest
 import com.example.sumnote.ui.DTO.User
 import com.example.sumnote.ui.Dialog.UpdateNoteRequest
-import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
-import com.google.gson.GsonBuilder
-import okhttp3.Interceptor
 import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
@@ -30,7 +21,6 @@ import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
-import java.io.IOException
 
 interface ApiManager {
 
@@ -76,7 +66,7 @@ interface ApiManager {
 
     // 노트 조회하기
     @GET("api/sum-note/{id}")
-    fun detailNote(@Path("id") id : Int): Call<ResponseBody>
+    fun detailNote(@Header("Authorization") token: String, @Path("id") id : Int): Call<ResponseBody>
 
     // 노트 내용 추가하기
     @PUT("api/sum-note/content/{id}")

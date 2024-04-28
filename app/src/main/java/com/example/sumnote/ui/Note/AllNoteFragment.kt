@@ -39,8 +39,6 @@ class AllNoteFragment : Fragment() {
     private lateinit var allNoteRecyclerViewAdapter: AllNoteRecyclerViewAdapter
     private lateinit var kakaoViewModel: KakaoViewModel
 
-    private lateinit var apiService : ApiManager
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,7 +48,6 @@ class AllNoteFragment : Fragment() {
         _binding = FragmentAllNoteBinding.inflate(inflater, container, false)
         kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(requireActivity().application))[KakaoViewModel::class.java]
 
-        apiService = SpringRetrofit.instance.create(ApiManager::class.java) // Get SpringRetrofit
         //사용자 정보 얻어오기
         getUser()
 
@@ -100,7 +97,7 @@ class AllNoteFragment : Fragment() {
         Log.d("getUser() TEST", user.name + " and " + user.email)
 
         val token = MainActivity.prefs.getString("token", "")
-        val call = apiService.getSumNotes(token,"home")
+        val call = RetrofitBuilder.api.getSumNotes(token,"home")
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {

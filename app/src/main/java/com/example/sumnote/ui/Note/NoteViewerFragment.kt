@@ -1,8 +1,6 @@
 package com.example.sumnote.ui.Note
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -14,10 +12,13 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.example.sumnote.MainActivity
 import com.example.sumnote.R
 import com.example.sumnote.api.ApiManager
 import com.example.sumnote.databinding.FragmentNoteViewerBinding
+import com.example.sumnote.ui.DTO.Request.CreateNoteRequest
 import com.example.sumnote.ui.DTO.CreateQuizRequest
+import com.example.sumnote.ui.DTO.Response.ResponseNoteDetail
 import com.example.sumnote.ui.DTO.UpdateQuizRequest
 import com.example.sumnote.ui.Dialog.ChangeNoteTitleDialog
 import com.example.sumnote.ui.Dialog.CircleProgressDialog
@@ -26,6 +27,8 @@ import com.example.sumnote.ui.Dialog.SuccessDialog
 import com.example.sumnote.ui.kakaoLogin.KakaoOauthViewModelFactory
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
 import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
+import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,6 +43,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.StringBuilder
 import java.util.concurrent.TimeUnit
 import kotlin.properties.Delegates
 
@@ -252,10 +256,16 @@ class NoteViewerFragment : Fragment() {
         })
     }
 
+    // 노트 조회 Response 용
+    data class NoteDetailResult(
+        @SerializedName("data") val noteList: ResponseNoteDetail
+    )
+
     //서버로부터 클릭한 노트에 대한 페이지 요청
     private fun detailNote(clickedNoteId : Int){
 
-        val call = RetrofitBuilder.api.detailNote(clickedNoteId)
+        val token = MainActivity.prefs.getString("token", "")
+        val call = RetrofitBuilder.api.detailNote(token, clickedNoteId)
         call.enqueue(object : Callback<ResponseBody> {
             @SuppressLint("NotifyDataSetChanged")
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -263,62 +273,36 @@ class NoteViewerFragment : Fragment() {
                     val responseBody = response.body()
                     if (responseBody != null) {
                         val jsonString = responseBody.string()
-                        val json = JSONObject(jsonString)
 
-                        val docTitle = json.getString("sum_doc_title") //클릭한 노트의 제목
+                        val gson = Gson()
+                        val result = gson.fromJson(jsonString, NoteDetailResult::class.java)
 
-                        //노트에 대한 페이지들의 정보 => 파싱 필요 title : [][] .. content : [][]
-                        val title = json.getString("title")
-                        val content = json.getString("content")
+                        // 'noteList'에 포함된 노트 목록에 접근합니다.
+                        val notes = result.noteList
 
-                        quizExist = json.getBoolean("is_quiz_exist")
+                        val docTitle = notes.note.title //클릭한 노트의 제목
 
-                        Log.d("#DETAIL Success:", jsonString)
-                        Log.d("#DETAIL title:", title)
-                        Log.d("#DETAIL content:", content)
+                        // 노트들 각각 페이지에 넣어줌
 
-                        //수정된 정규식 패턴
-                        val pattern = Regex("\\[([\\s\\S]*?)\\]")
+                        val noteDetails = notes.notePages
+                        var sb = StringBuilder()
 
-                        // title 및 content에서 []로 둘러싸인 값을 파싱
-                        val parsedTitles = pattern.findAll(title).map { it.groupValues[1] }.toList()
-                        Log.d("#DETAIL TITLE", "test : " + parsedTitles)
-                        val parsedContents = pattern.findAll(content).map { it.groupValues[1] }.toList()
-                        
+                        for (n in noteDetails) {
+                            val page = Page(
+                                pageTitle = n.title,
+                                summary = n.content
+                            )
 
-                        Log.d("#createdPage : ","$parsedTitles, $parsedContents")
+                            sb.append(n.content).append("\n")
 
-                        // 파싱된 값들의 길이가 동일한지 확인하고, 동일하면 Page 객체를 생성하여 pages에 추가
-                        // 제목으로 3개를 가져왔는데, 내용으로 2개만 가져오는 경우에 대한 예외처리
-                        if (parsedTitles.size == parsedContents.size) {
-                            for (i in parsedTitles.indices) {
-                                var pTitle = parsedTitles[i]
-                                var pSummary = parsedContents[i]
-                                val page = Page(
-                                    pageTitle = parsedTitles[i],
-                                    summary = parsedContents[i]
-                                )
-                                Log.d("#createdPage : ","페이지 제목 : $pTitle 요약정보 $pSummary ")
-                                pages.add(page)
-                            }
-                            noteViewAdapter.notifyDataSetChanged()
-                        } else {
-                            // 타이틀과 컨텐츠의 길이가 다르면 로그를 남깁니다.
-                            Log.e("ParsingError", "Title and content size mismatch!")
+                            Log.d("#NoteViewerFragment createdPage : ","페이지 제목 : ${n.title} 요약정보 ${n.content}")
+                            pages.add(page)
                         }
+                        noteViewAdapter.notifyDataSetChanged()
 
-                        toQuiz = "[${parsedTitles[0]}]\n${parsedContents}"
+                        // 퀴즈를 생성할 때 보내줄 contents
+                        toQuiz = "[${docTitle}]\n${sb}"
 
-                        //기존 코드
-//                        //노트에 대한 페이지들 파싱
-//                        var page = Page(
-//                            pageTitle = title,
-//                            summary = content
-//                        )
-//
-//                        //
-//                        pages.add(page)
-//                        noteViewAdapter.notifyDataSetChanged()
 
                     } else {
                         // 응답 본문이 null인 경우 처리

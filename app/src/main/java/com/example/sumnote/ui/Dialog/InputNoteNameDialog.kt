@@ -11,7 +11,7 @@ import com.example.sumnote.MainActivity
 import com.example.sumnote.api.ApiManager
 import com.example.sumnote.api.SpringRetrofit
 import com.example.sumnote.databinding.InputNoteNameDialogBinding
-import com.example.sumnote.ui.DTO.CreateNoteRequest
+import com.example.sumnote.ui.DTO.Request.CreateNoteRequest
 import com.example.sumnote.ui.DTO.Note
 import com.example.sumnote.ui.DTO.NotePage
 import kotlinx.coroutines.CoroutineScope
