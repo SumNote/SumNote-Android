@@ -1,8 +1,8 @@
 package com.example.sumnote.api
 
 import com.example.sumnote.ui.DTO.ChangeNoteTitleRequest
-import com.example.sumnote.ui.DTO.Request.CreateNoteRequest
 import com.example.sumnote.ui.DTO.CreateQuizRequest
+import com.example.sumnote.ui.DTO.Request.CreateNoteRequest
 import com.example.sumnote.ui.DTO.NotePage
 import com.example.sumnote.ui.DTO.UpdateQuizRequest
 import com.example.sumnote.ui.DTO.User
@@ -82,12 +82,12 @@ interface ApiManager {
 
 
     // 퀴즈 만들기
-    @POST("quiz")
-    fun createQuiz(@Body request: CreateQuizRequest): Call<ResponseBody>
+    @POST("api/quiz")
+    fun createQuiz(@Header("Authorization") token: String, @Body request: CreateQuizRequest): Call<ResponseBody>
 
     //문제집 리스트 가져오기
     @GET("quizzes")
-    fun getQuizList(@Query("email") email: String) : Call<ResponseBody>
+    fun getQuizList(@Header("Authorization") token: String) : Call<ResponseBody>
 
     //선택한 문제집에 대한 퀴즈 가져오기
     @GET("quiz/{id}")

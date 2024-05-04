@@ -17,10 +17,12 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.sumnote.R
 import com.example.sumnote.api.ApiManager
+import com.example.sumnote.api.RetrofitBuilderFastApi
 import com.example.sumnote.databinding.FragmentNoteMakerBinding
 import com.example.sumnote.ui.Dialog.CircleProgressDialog
 import com.example.sumnote.ui.Dialog.FailDialog
 import com.example.sumnote.ui.Dialog.SuccessDialog
+import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -55,9 +57,6 @@ class NoteMakerFragment : Fragment() {
     private val successDialog = SuccessDialog()
     private val failDialog = FailDialog()
 
-    // private val baseUrl = "http://3.35.138.31:8000/"
-    private val baseUrl = "http://10.0.2.2:8000/" //fastAPI 서버 url
-
     var pictureUri: Uri? = null // 촬영한 사진에 대한 uri
 
     // 요청하고자 하는 권한들
@@ -78,25 +77,6 @@ class NoteMakerFragment : Fragment() {
             pictureUri = createImageFile()
             getTakePicture.launch(pictureUri)
         }
-
-
-    // 클래스 멤버로 OkHttpClient와 Retrofit 인스턴스를 선언하여 재사용
-    private val okHttpClient: OkHttpClient by lazy {
-        OkHttpClient.Builder()
-            .connectTimeout(100, TimeUnit.SECONDS)
-            .readTimeout(100, TimeUnit.SECONDS)
-            .writeTimeout(100, TimeUnit.SECONDS)
-            .build()
-    }
-
-    private val retrofit: Retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl(baseUrl)
-            .client(okHttpClient)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
-
 
     // Life Cycle
     override fun onCreateView(
@@ -196,7 +176,8 @@ class NoteMakerFragment : Fragment() {
         loadingDialog.show(requireActivity().supportFragmentManager, loadingDialog.tag)
 
         // API 호출
-        retrofit.create(ApiManager::class.java).uploadImage(multipartBody).enqueue(object : retrofit2.Callback<ResponseBody> {
+        val call = RetrofitBuilderFastApi.api.uploadImage(multipartBody)
+        call.enqueue(object : retrofit2.Callback<ResponseBody> {
 
             override fun onResponse(call: Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
                 handleResponse(response)
@@ -293,7 +274,8 @@ class NoteMakerFragment : Fragment() {
         loadingDialog.show(requireActivity().supportFragmentManager, loadingDialog.tag)
 
         // API 호출
-        retrofit.create(ApiManager::class.java).uploadPdf(multipartBody).enqueue(object : retrofit2.Callback<ResponseBody> {
+        val call = RetrofitBuilderFastApi.api.uploadPdf(multipartBody)
+        call.enqueue(object : retrofit2.Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: retrofit2.Response<ResponseBody>) {
                 handleResponse(response)
             }

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.sumnote.MainActivity
 import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentAllQuizBinding
 import com.example.sumnote.ui.DTO.User
@@ -48,8 +49,8 @@ class AllQuizFragment : Fragment() {
                 override fun onAllQuizItemClick(position: Int) {
                     // 퀴즈 아이템 클릭시 동작
                     // 클릭한 문제집 아이디 가져오기
-                    val clickedQuizId = quizList[position].id
-                    val quizTitle = quizList[position].quiz_doc_title
+                    val clickedQuizId = quizList[position].quiz
+                    val quizTitle = quizList[position].title
 
                     // 번들을 생성하고 클릭한 퀴즈 정보 입력
                     val bundle = Bundle()
@@ -93,17 +94,20 @@ class AllQuizFragment : Fragment() {
     }
 
     data class QuizItemResult(
-        @SerializedName("quizList") val quizList: List<QuizListItem>
+        @SerializedName("data") val quizList: List<QuizListItem>
     )
     //사용자 퀴즈 목록 얻어오기
     private fun initQuizList(user : User){
 
         Log.d("getUser() TEST", user.name + " and " + user.email)
 
-        val call = RetrofitBuilder.api.getQuizList(user.email.toString())
+        val token = MainActivity.prefs.getString("token", "")
+        val call = RetrofitBuilder.api.getQuizList(token)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+
                 if (response.isSuccessful) {
+
                     val responseBody = response.body()
                     if (responseBody != null) {
                         val jsonString = responseBody.string()
@@ -114,7 +118,7 @@ class AllQuizFragment : Fragment() {
 
                         val quizList = result.quizList
                         for(quiz in quizList){
-                            Log.d("#Spring-Quiz",quiz.quiz_doc_title)
+                            Log.d("#Spring-Quiz",quiz.title)
                             addQuizList(quiz)
                         }
                     } else {
@@ -136,7 +140,7 @@ class AllQuizFragment : Fragment() {
     private fun addQuizList(quizListItem: QuizListItem){
 
         // 중복 체크: 이미 리스트에 같은 ID의 노트가 있는지 확인
-        val isDuplicate = quizList.any { it.id == quizListItem.id }
+        val isDuplicate = quizList.any { it.quiz == quizListItem.quiz }
 
         if (!isDuplicate) {
             if (quizList.size < 10) {
