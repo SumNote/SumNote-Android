@@ -93,7 +93,7 @@ class AllNoteFragment : Fragment() {
 //        Log.d("getUser() TEST", user.name + " and " + user.email)
 
         val token = MainActivity.prefs.getString("token", "")
-        val call = RetrofitBuilder.api.getSumNotes(token,"home")
+        val call = RetrofitBuilder.api.getSumNotes(token,"all")
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {

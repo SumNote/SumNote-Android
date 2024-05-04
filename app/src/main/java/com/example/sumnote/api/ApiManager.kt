@@ -86,12 +86,12 @@ interface ApiManager {
     fun createQuiz(@Header("Authorization") token: String, @Body request: CreateQuizRequest): Call<ResponseBody>
 
     //문제집 리스트 가져오기
-    @GET("quizzes")
-    fun getQuizList(@Header("Authorization") token: String) : Call<ResponseBody>
+    @GET("api/quiz")
+    fun getQuizList(@Header("Authorization") token: String, @Query("type") type: String) : Call<ResponseBody>
 
     //선택한 문제집에 대한 퀴즈 가져오기
-    @GET("quiz/{id}")
-    fun detailQuiz(@Path("id") id : Int): Call<ResponseBody>
+    @GET("api/quiz/{id}")
+    fun detailQuiz(@Header("Authorization") token: String, @Path("id") id : Int): Call<ResponseBody>
 
     // 퀴즈 내용 추가하기
     @PUT("quiz/content/{id}")
