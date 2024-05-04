@@ -102,7 +102,7 @@ class AllQuizFragment : Fragment() {
         Log.d("getUser() TEST", user.name + " and " + user.email)
 
         val token = MainActivity.prefs.getString("token", "")
-        val call = RetrofitBuilder.api.getQuizList(token)
+        val call = RetrofitBuilder.api.getQuizList(token, "all")
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
 

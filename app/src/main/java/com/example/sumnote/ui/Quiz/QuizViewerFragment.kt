@@ -12,11 +12,15 @@ import android.widget.TextView
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
+import com.example.sumnote.MainActivity
 import com.example.sumnote.databinding.FragmentQuizViewerBinding
+import com.example.sumnote.ui.DTO.Response.GetOneQuiz
 import com.example.sumnote.ui.Note.NotePagerAdapter
 import com.example.sumnote.ui.Note.NoteViewerFragment
 import com.example.sumnote.ui.Note.Page
 import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
+import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import retrofit2.Call
@@ -92,9 +96,16 @@ class QuizViewerFragment : Fragment() {
         return binding.root
     }
 
+
+    data class QuizDetailResult(
+        @SerializedName("data") val quizList: GetOneQuiz
+    )
+
     //서버로부터 클릭한 노트에 대한 페이지 요청
     private fun detailQuiz(clickedQuizId: Int) {
-        val call = RetrofitBuilder.api.detailQuiz(clickedQuizId)
+
+        val token = MainActivity.prefs.getString("token", "")
+        val call = RetrofitBuilder.api.detailQuiz(token, clickedQuizId)
         call.enqueue(object : Callback<ResponseBody> {
             @SuppressLint("NotifyDataSetChanged")
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -102,55 +113,89 @@ class QuizViewerFragment : Fragment() {
                     val responseBody = response.body()
                     if (responseBody != null) {
                         val jsonString = responseBody.string()
-                        val json = JSONObject(jsonString)
 
-                        // 로그 출력 형식 통일
-                        Log.d("#QUIZVIWER DETAIL Success:", jsonString)
+                        val gson = Gson()
+                        val result = gson.fromJson(jsonString, QuizDetailResult::class.java)
 
-                        val regexPattern = Regex("\\[([\\s\\S]*?)\\]")  // 수정된 정규식 패턴
+                        val quizList = result.quizList
 
-                        val questions = regexPattern.findAll(json.getString("question")).map { it.groupValues[1] }.toList()
-                        Log.d("#QUIZVIWER DETAIL questions:", questions.toString())
-
-                        val selections = regexPattern.findAll(json.getString("selections")).map { it.groupValues[1] }.toList()
-                        Log.d("#QUIZVIWER selections:", selections.toString())
-
-                        val answers = regexPattern.findAll(json.getString("answer")).map { it.groupValues[1].toInt() }.toList()
-                        Log.d("#QUIZVIWER answers:", answers.toString())
-
-                        val commentary = regexPattern.findAll(json.getString("commentary")).map { it.groupValues[1] }.toList()
-                        Log.d("#QUIZVIWER commentary:", commentary.toString())
-
-                        if (questions.size == answers.size && answers.size == commentary.size) {
-                            quizzes.clear()
-                            for (index in questions.indices) {
-                                val start = index * 4
-                                val end = (index + 1) * 4
-                                val answerList = ArrayList(selections.subList(start, end))
-
-                                val quiz = Quiz(
-                                    query = questions[index],
-                                    answerList = answerList,
-                                    answerNum = answers[index],
-                                    explanation = commentary[index]
-                                )
-                                Log.d("#QUIZVIWER query",quiz.query)
-                                Log.d("#QUIZVIWER answerList",quiz.answerList.toString())
-                                Log.d("#QUIZVIWER answerNum",quiz.answerNum.toString())
-                                Log.d("#QUIZVIWER explanation",quiz.explanation)
-                                quizzes.add(quiz)
+                        quizzes.clear()
+                        for (q in quizList.quiz) {
+                            val answerList = ArrayList<String>()
+                            for (s in q.selection) {
+                                answerList.add(s.selection)
                             }
 
-                            Log.d("#DETAIL RESULT SIZE",quizzes.size.toString())
-                            progressBar.max = quizzes.size
-                            totalQuizNum.text = "/" + quizzes.size.toString() //총 문제 수 지정
-                            Log.d("ProgressBarSize", quizzes.size.toString())
-                            quizViewAdapter.notifyDataSetChanged()
+                            val quiz = Quiz(
+                                query = q.question,
+                                answerList = answerList,
+                                answerNum = q.answer.toInt(),
+                                explanation = q.commentary
+                            )
+                            Log.d("#QUIZVIWER query",quiz.query)
+                            Log.d("#QUIZVIWER answerList",quiz.answerList.toString())
+                            Log.d("#QUIZVIWER answerNum",quiz.answerNum.toString())
+                            Log.d("#QUIZVIWER explanation",quiz.explanation)
+                            quizzes.add(quiz)
                         }
-                        else {
-                            // 데이터 길이 불일치 로그 처리
-                            Log.e("ParsingError", "Questions, answers, and commentary size mismatch!")
-                        }
+
+                        Log.d("#DETAIL RESULT SIZE",quizzes.size.toString())
+                        progressBar.max = quizzes.size
+                        totalQuizNum.text = "/" + quizzes.size.toString() //총 문제 수 지정
+                        Log.d("ProgressBarSize", quizzes.size.toString())
+                        quizViewAdapter.notifyDataSetChanged()
+
+
+
+//                        val json = JSONObject(jsonString)
+//
+//                        // 로그 출력 형식 통일
+//                        Log.d("#QUIZVIWER DETAIL Success:", jsonString)
+//
+//                        val regexPattern = Regex("\\[([\\s\\S]*?)\\]")  // 수정된 정규식 패턴
+//
+//                        val questions = regexPattern.findAll(json.getString("question")).map { it.groupValues[1] }.toList()
+//                        Log.d("#QUIZVIWER DETAIL questions:", questions.toString())
+//
+//                        val selections = regexPattern.findAll(json.getString("selections")).map { it.groupValues[1] }.toList()
+//                        Log.d("#QUIZVIWER selections:", selections.toString())
+//
+//                        val answers = regexPattern.findAll(json.getString("answer")).map { it.groupValues[1].toInt() }.toList()
+//                        Log.d("#QUIZVIWER answers:", answers.toString())
+//
+//                        val commentary = regexPattern.findAll(json.getString("commentary")).map { it.groupValues[1] }.toList()
+//                        Log.d("#QUIZVIWER commentary:", commentary.toString())
+//
+//                        if (questions.size == answers.size && answers.size == commentary.size) {
+//                            quizzes.clear()
+//                            for (index in questions.indices) {
+//                                val start = index * 4
+//                                val end = (index + 1) * 4
+//                                val answerList = ArrayList(selections.subList(start, end))
+//
+//                                val quiz = Quiz(
+//                                    query = questions[index],
+//                                    answerList = answerList,
+//                                    answerNum = answers[index],
+//                                    explanation = commentary[index]
+//                                )
+//                                Log.d("#QUIZVIWER query",quiz.query)
+//                                Log.d("#QUIZVIWER answerList",quiz.answerList.toString())
+//                                Log.d("#QUIZVIWER answerNum",quiz.answerNum.toString())
+//                                Log.d("#QUIZVIWER explanation",quiz.explanation)
+//                                quizzes.add(quiz)
+//                            }
+//
+//                            Log.d("#DETAIL RESULT SIZE",quizzes.size.toString())
+//                            progressBar.max = quizzes.size
+//                            totalQuizNum.text = "/" + quizzes.size.toString() //총 문제 수 지정
+//                            Log.d("ProgressBarSize", quizzes.size.toString())
+//                            quizViewAdapter.notifyDataSetChanged()
+//                        }
+//                        else {
+//                            // 데이터 길이 불일치 로그 처리
+//                            Log.e("ParsingError", "Questions, answers, and commentary size mismatch!")
+//                        }
 
                     } else {
                         // 응답 본문이 null인 경우 처리

@@ -221,7 +221,7 @@ class MyNoteFragment : Fragment(){
 //        Log.d("getUser() TEST", user.name + " and " + user.email)
 
         val token = MainActivity.prefs.getString("token", "")
-        val call = RetrofitBuilder.api.getSumNotes(token, "all")
+        val call = RetrofitBuilder.api.getSumNotes(token, "home")
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
@@ -267,7 +267,7 @@ class MyNoteFragment : Fragment(){
 
 
     data class QuizItemResult(
-        @SerializedName("quizList") val quizList: List<QuizListItem>
+        @SerializedName("data") val quizList: List<QuizListItem>
     )
     //사용자 퀴즈 목록 얻어오기
     private fun initQuizList(){
@@ -275,7 +275,7 @@ class MyNoteFragment : Fragment(){
 //        Log.d("getUser() TEST", user.name + " and " + user.email)
 
         val token = MainActivity.prefs.getString("token", "")
-        val call = RetrofitBuilder.api.getQuizList(token)
+        val call = RetrofitBuilder.api.getQuizList(token, "home")
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
