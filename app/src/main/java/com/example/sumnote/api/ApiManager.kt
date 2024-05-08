@@ -78,7 +78,7 @@ interface ApiManager {
 
     // 노트 삭제하기
     @DELETE("api/sum-note/{id}")
-    fun deleteNote(@Path("id") id : Int): Call<ResponseBody>
+    fun deleteNote(@Header("Authorization") token: String, @Path("id") id : Int): Call<ResponseBody>
 
 
     // 퀴즈 만들기

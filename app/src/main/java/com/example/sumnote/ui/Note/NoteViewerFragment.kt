@@ -238,15 +238,17 @@ class NoteViewerFragment : Fragment() {
     }
 
     private fun deleteNote() {
-        val call = RetrofitBuilder.api.deleteNote(clickedNoteId)
+
+        val token = MainActivity.prefs.getString("token", "")
+        val call = RetrofitBuilder.api.deleteNote(token, clickedNoteId)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
-                    Log.d("#SPRING SERVER:", "DELETE SUCCESS")
+                    Log.d("#NoteViewerFragment :", "DELETE SUCCESS")
 
                 } else {
                     // 통신 성공 but 응답 실패
-
+                    Log.d("#NoteViewerFragment :", "DELETE SUCCESS But Res")
                 }
             }
 
