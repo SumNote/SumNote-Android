@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:gravity="center"
+            android:gravity="left"
             android:text="비트 병렬 알고리즘(Bit-Parallel Algorithm)은 무엇인가요?"
             android:textColor="@color/quiz"
             android:textSize="20dp"
@@ -40,14 +40,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/textView"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            >
 
             <RadioButton
                 android:id="@+id/radioButton1"
+                android:button="@null"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:paddingLeft="12dp"
+                android:paddingHorizontal="12dp"
                 android:text="1. 다중 스레드를 사용하여 비트 연산을 동시에 처리하는 알고리즘입니다."
                 android:textSize="20dp"
                 android:textColor="@color/content"
@@ -56,10 +58,11 @@
 
             <RadioButton
                 android:id="@+id/radioButton2"
+                android:button="@null"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:paddingLeft="12dp"
+                android:paddingHorizontal="12dp"
                 android:text="2. 비트 연산을 이용하여 데이터를 병렬적으로 처리하는 알고리즘입니다."
                 android:textSize="20dp"
                 android:textColor="@color/content"
@@ -68,10 +71,11 @@
 
             <RadioButton
                 android:id="@+id/radioButton3"
+                android:button="@null"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:paddingLeft="12dp"
+                android:paddingHorizontal="12dp"
                 android:text="3. 비트의 상태에 따라 분기하여 연산을 수행하는 알고리즘입니다."
                 android:textSize="20dp"
                 android:textColor="@color/content"
@@ -80,10 +84,11 @@
 
             <RadioButton
                 android:id="@+id/radioButton4"
+                android:button="@null"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:paddingLeft="12dp"
+                android:paddingHorizontal="12dp"
                 android:text="4. 비트를 배열 형태로 저장하여 연속적인 비트 연산을 수행하는 알고리즘입니다."
                 android:textSize="20dp"
                 android:textColor="@color/content"

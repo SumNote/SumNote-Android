@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentQuizBinding
 
@@ -95,6 +96,8 @@ class QuizFragment : Fragment() {
         var explanation = binding.txtExplanation
         explanation.text = quiz.explanation
 
+        val correctAnswerDrawable = ResourcesCompat.getDrawable(resources, R.drawable.correct_answer_border, null)
+        val incorrectAnswerDrawable = ResourcesCompat.getDrawable(resources, R.drawable.incorrect_answer_border, null)
 
         val listener = { buttonView: CompoundButton, isChecked: Boolean ->
             if (isChecked) {
@@ -107,15 +110,21 @@ class QuizFragment : Fragment() {
                 }
                 Log.d("quiz","$selectedAnswer, ${quiz.answerNum}")
                 if (selectedAnswer+1 == quiz.answerNum) {
-                    buttonView.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
+//                    buttonView.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
+                    buttonView.background = correctAnswerDrawable
                     Toast.makeText(context, "정답입니다!", Toast.LENGTH_SHORT).show()
                 } else {
-                    buttonView.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+//                    buttonView.setTextColor(ContextCompat.getColor(requireContext(), R.color.red))
+                    buttonView.background = incorrectAnswerDrawable
                     when(quiz.answerNum) {
-                        1 -> radioButton1.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
-                        2 -> radioButton2.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
-                        3 -> radioButton3.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
-                        4 -> radioButton4.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
+//                        1 -> radioButton1.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
+//                        2 -> radioButton2.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
+//                        3 -> radioButton3.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
+//                        4 -> radioButton4.setTextColor(ContextCompat.getColor(requireContext(), R.color.green))
+                        1 -> radioButton1.background = correctAnswerDrawable
+                        2 -> radioButton2.background = correctAnswerDrawable
+                        3 -> radioButton3.background = correctAnswerDrawable
+                        4 -> radioButton4.background = correctAnswerDrawable
                     }
                     Toast.makeText(context, "틀렸습니다!", Toast.LENGTH_SHORT).show()
                 }
