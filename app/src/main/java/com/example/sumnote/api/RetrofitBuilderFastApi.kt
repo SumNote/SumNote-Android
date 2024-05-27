@@ -19,7 +19,7 @@ object RetrofitBuilderFastApi {
                 .build()
         }
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8000/")// 개발 머신의 로컬 호스트
+            .baseUrl("http://220.76.49.32:8000/")// 개발 머신의 로컬 호스트
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()

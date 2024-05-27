@@ -7,7 +7,7 @@
         <!--        Django-->
         <domain includeSubdomains="true">15.165.186.162</domain>
         <domain includeSubdomains="true">13.125.210.68</domain>
-        <domain includeSubdomains="true">43.201.71.53</domain>
+        <domain includeSubdomains="true">43.203.233.167</domain>
         <!--        localhost-->
         <domain includeSubdomains="true">127.0.0.1</domain>
 

@@ -16,13 +16,11 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.sumnote.R
-import com.example.sumnote.api.ApiManager
 import com.example.sumnote.api.RetrofitBuilderFastApi
 import com.example.sumnote.databinding.FragmentNoteMakerBinding
 import com.example.sumnote.ui.Dialog.CircleProgressDialog
 import com.example.sumnote.ui.Dialog.FailDialog
 import com.example.sumnote.ui.Dialog.SuccessDialog
-import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -30,20 +28,16 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
-import okhttp3.OkHttpClient
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.ResponseBody
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.concurrent.TimeUnit
 
 class NoteMakerFragment : Fragment() {
 

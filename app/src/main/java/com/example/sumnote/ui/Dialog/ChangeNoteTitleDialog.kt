@@ -9,7 +9,7 @@ import androidx.fragment.app.DialogFragment
 import com.example.sumnote.MainActivity
 import com.example.sumnote.databinding.InputNoteNameDialogBinding
 import com.example.sumnote.ui.DTO.ChangeNoteTitleRequest
-import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
+import com.example.sumnote.api.RetrofitBuilder
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback

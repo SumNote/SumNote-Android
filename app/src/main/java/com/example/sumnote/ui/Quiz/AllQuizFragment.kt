@@ -12,10 +12,8 @@ import com.example.sumnote.MainActivity
 import com.example.sumnote.R
 import com.example.sumnote.databinding.FragmentAllQuizBinding
 import com.example.sumnote.ui.DTO.User
-import com.example.sumnote.ui.Note.AllNoteRecyclerViewAdapter
-import com.example.sumnote.ui.Note.NoteItem
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
-import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
+import com.example.sumnote.api.RetrofitBuilder
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import com.kakao.sdk.user.UserApiClient

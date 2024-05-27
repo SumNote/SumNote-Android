@@ -15,14 +15,10 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.sumnote.MainActivity
 import com.example.sumnote.databinding.FragmentQuizViewerBinding
 import com.example.sumnote.ui.DTO.Response.GetOneQuiz
-import com.example.sumnote.ui.Note.NotePagerAdapter
-import com.example.sumnote.ui.Note.NoteViewerFragment
-import com.example.sumnote.ui.Note.Page
-import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
+import com.example.sumnote.api.RetrofitBuilder
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import okhttp3.ResponseBody
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

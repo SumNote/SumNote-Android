@@ -14,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.sumnote.R
 import com.example.sumnote.databinding.SelectNoteToSaveDialogBinding
 import com.example.sumnote.ui.Note.NoteItem
-import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
+import com.example.sumnote.api.RetrofitBuilder
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
