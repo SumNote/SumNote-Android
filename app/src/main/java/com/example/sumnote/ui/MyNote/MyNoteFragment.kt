@@ -23,7 +23,7 @@ import com.example.sumnote.ui.Quiz.QuizListItem
 import com.example.sumnote.ui.Quiz.QuizRecyclerViewAdapter
 import com.example.sumnote.ui.kakaoLogin.KakaoOauthViewModelFactory
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
-import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
+import com.example.sumnote.api.RetrofitBuilder
 import com.example.sumnote.ui.DTO.User
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson

@@ -19,15 +19,12 @@ import androidx.navigation.fragment.findNavController
 import com.example.sumnote.MainActivity
 import com.example.sumnote.databinding.FragmentNewNoteBinding
 import com.example.sumnote.ui.DTO.NotePage
-import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
-import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
-import com.example.sumnote.ui.DTO.User
+import com.example.sumnote.api.RetrofitBuilder
 import com.example.sumnote.ui.Dialog.SelectNoteToSaveDialog
 import com.example.sumnote.ui.Dialog.SelectNoteToSaveDialogInterface
 import com.example.sumnote.ui.MyNote.MyNoteFragment
 import com.example.sumnote.ui.Note.NoteItem
 import com.google.gson.Gson
-import com.kakao.sdk.user.UserApiClient
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback

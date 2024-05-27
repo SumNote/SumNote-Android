@@ -12,6 +12,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.lifecycle.asLiveData
 import com.example.sumnote.R
+import com.example.sumnote.api.RetrofitBuilder
 import com.example.sumnote.ui.DTO.User
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel.Companion.TAG
 import com.kakao.sdk.user.UserApiClient

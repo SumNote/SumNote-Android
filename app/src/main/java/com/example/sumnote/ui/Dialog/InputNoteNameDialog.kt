@@ -8,13 +8,11 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import com.example.sumnote.MainActivity
-import com.example.sumnote.api.ApiManager
-import com.example.sumnote.api.SpringRetrofit
 import com.example.sumnote.databinding.InputNoteNameDialogBinding
 import com.example.sumnote.ui.DTO.Request.CreateNoteRequest
 import com.example.sumnote.ui.DTO.Note
 import com.example.sumnote.ui.DTO.NotePage
-import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
+import com.example.sumnote.api.RetrofitBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

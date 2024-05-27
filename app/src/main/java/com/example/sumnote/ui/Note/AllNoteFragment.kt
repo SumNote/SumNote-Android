@@ -17,7 +17,7 @@ import com.example.sumnote.databinding.FragmentAllNoteBinding
 import com.example.sumnote.ui.MyNote.MyNoteFragment
 import com.example.sumnote.ui.kakaoLogin.KakaoOauthViewModelFactory
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
-import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
+import com.example.sumnote.api.RetrofitBuilder
 import com.google.gson.Gson
 import okhttp3.ResponseBody
 import retrofit2.Call

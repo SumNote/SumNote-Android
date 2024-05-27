@@ -25,7 +25,7 @@ import com.example.sumnote.ui.Dialog.FailDialog
 import com.example.sumnote.ui.Dialog.SuccessDialog
 import com.example.sumnote.ui.kakaoLogin.KakaoOauthViewModelFactory
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
-import com.example.sumnote.ui.kakaoLogin.RetrofitBuilder
+import com.example.sumnote.api.RetrofitBuilder
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
 import kotlinx.coroutines.CoroutineScope
@@ -38,7 +38,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.lang.StringBuilder
-import kotlin.properties.Delegates
 
 
 class NoteViewerFragment : Fragment() {
