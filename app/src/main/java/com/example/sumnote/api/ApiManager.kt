@@ -97,27 +97,3 @@ interface ApiManager {
     @PUT("quiz/content/{id}")
     fun updateQuiz(@Path("id") id : Int, @Body request2: UpdateQuizRequest): Call<ResponseBody>
 }
-
-
-object SpringRetrofit {
-    private const val BASE_URL = "http://10.0.2.2:8080/"
-
-    val instance: Retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
-}
-
-object FastAPIRetrofit {
-    private const val BASE_URL = "http://10.0.2.2:8000/"
-
-    val instance: Retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-    }
-
-}

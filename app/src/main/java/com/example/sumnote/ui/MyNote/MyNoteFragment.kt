@@ -60,7 +60,6 @@ class MyNoteFragment : Fragment(){
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMyNoteBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 

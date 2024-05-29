@@ -9,7 +9,7 @@ import android.view.WindowManager
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import com.example.sumnote.api.ApiManager
-import com.example.sumnote.api.SpringRetrofit
+import com.example.sumnote.api.RetrofitBuilder
 import com.example.sumnote.databinding.ActivityLoginBinding
 import com.example.sumnote.ui.kakaoLogin.KakaoOauthViewModelFactory
 import com.example.sumnote.ui.kakaoLogin.KakaoViewModel
@@ -33,7 +33,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         kakaoViewModel = ViewModelProvider(this, KakaoOauthViewModelFactory(application))[KakaoViewModel::class.java]
-        apiService = SpringRetrofit.instance.create(ApiManager::class.java) // Get SpringRetrofit
+        apiService = RetrofitBuilder.api
 
         val intent = Intent(this, MainActivity::class.java)
         binding.btnLogin.apply {
@@ -80,7 +80,7 @@ class LoginActivity : AppCompatActivity() {
     // 스프링 서버에 로그인 요청
     private fun springLogin(user: User) {
 
-        Log.d("#LoginActivity : ", "call springLogin")
+        Log.d("#LoginActivity : ", "call springLogin : ${user.email} ${user.name}")
         val call = apiService.getLoginResponse(user)
         call.enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {

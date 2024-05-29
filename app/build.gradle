@@ -3,12 +3,9 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
-
 android {
     namespace 'com.example.sumnote'
-    compileSdk 34
+    compileSdk 33
 
     buildFeatures {
         buildConfig true
@@ -31,8 +28,24 @@ android {
             useSupportLibrary true
         }
 
-        buildConfigField "String", "KAKAO_NATIVE_APP_KEY", properties["KAKAO_NATIVE_APP_KEY"]
-        resValue "string", "kakao_oauth_host", properties["kakao_oauth_host"]
+        Properties properties = new Properties()
+        def localPropertiesFile = project.rootProject.file('local.properties')
+        if (localPropertiesFile.exists()) {
+            properties.load(localPropertiesFile.newDataInputStream())
+        }
+
+        if (properties.containsKey("kakao_native_app_key")) {
+            buildConfigField "String", "KAKAO_NATIVE_APP_KEY", "\"${properties['kakao_native_app_key']}\""
+        } else {
+            throw new IllegalStateException("KAKAO_NATIVE_APP_KEY is missing in local.properties")
+        }
+
+        if (properties.containsKey("kakao_oauth_host")) {
+            resValue "string", "kakao_oauth_host", "\"${properties['kakao_oauth_host']}\""
+        } else {
+            throw new IllegalStateException("kakao_oauth_host is missing in local.properties")
+        }
+
     }
 
     buildTypes {
@@ -55,18 +68,16 @@ android {
 }
 
 dependencies {
-
-    //뷰 페이저
+    // 뷰 페이저
     implementation 'com.google.android.material:material:1.9.0'
 
-    //리사이클러뷰
+    // 리사이클러뷰
     implementation 'androidx.recyclerview:recyclerview:1.3.1'
 
+    // Circle ImageView
+    implementation 'de.hdodenhof:circleimageview:3.1.0' // Circle ImageView
 
-    //Circle ImageView
-    implementation 'de.hdodenhof:circleimageview:3.1.0' //Circle ImageView
-
-    //스플래시 API
+    // 스플래시 API
     implementation 'androidx.core:core-splashscreen:1.0.0-alpha01'
 
     implementation "com.kakao.sdk:v2-all:2.15.0" // 전체 모듈 설치, 2.11.0 버전부터 지원
@@ -81,14 +92,13 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 
-    // server(Sprig & Django)
+    // 서버(Sprig & Django)
     implementation 'com.squareup.okhttp3:okhttp:4.10.0'
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation group: "com.squareup.okhttp3", name: 'logging-interceptor', version: '4.10.0'
     // Scalars 변환기 라이브러리
     implementation 'com.squareup.retrofit2:converter-scalars:2.6.4'
-
 
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'

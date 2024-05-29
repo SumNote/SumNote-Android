@@ -49,7 +49,7 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="250dp"
+                android:layout_width="270dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="50dp">
@@ -123,13 +123,13 @@
                     app:layout_constraintTop_toBottomOf="@+id/computer1" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/pretendard_regular"
                     android:gravity="center"
                     android:lineSpacingMultiplier="1.3"
-                    android:text="Kotlin, JPA, SpringBoot를 이용한 API 개발\n클라우드 구축 (VPC, EC2, RDS, Jenkins, Docker)\n애플리케이션 디자인 개선"
+                    android:text="Kotlin, JPA, SpringBoot를 이용한 API 개발\n클라우드 구축 (VPC, EC2, RDS,\n Jenkins, Docker)\n애플리케이션 디자인 개선"
                     android:textAlignment="center"
                     android:textColor="@color/dev_info"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -140,7 +140,7 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="250dp"
+                android:layout_width="270dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="50dp">
@@ -215,7 +215,7 @@
 
                 <TextView
                     android:id="@+id/textView4"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/pretendard_regular"
@@ -232,7 +232,7 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="250dp"
+                android:layout_width="270dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="50dp">
@@ -324,7 +324,7 @@
 
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="250dp"
+                android:layout_width="270dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="50dp"
@@ -399,7 +399,7 @@
                     app:layout_constraintTop_toBottomOf="@+id/computer4" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/pretendard_regular"
