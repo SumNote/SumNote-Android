@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:background="@color/background_color">
 
@@ -36,6 +37,7 @@
 <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/all_quiz_list_recycler_view"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"/>
+    android:layout_height="wrap_content"
+    tools:listitem="@layout/all_quiz_list_item"/>
 
 </LinearLayout>
